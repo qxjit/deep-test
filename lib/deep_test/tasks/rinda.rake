@@ -23,14 +23,14 @@ namespace :deep_test do
   namespace :workers do
     desc "Starts the workers"
     task :start do
-      processes = ENV["PROCESSES"] ? ENV["PROCESSES"].to_i : 1
-      processes.times do
+      2.times do
         Daemons.run_proc "deep_test_worker", :multiple => true, :ARGV => ["start"] do
           test_files = ENV['DEEP_TEST_PATTERN']
-          Dir.glob(test_files).each { |file| p file; load file }
+          Dir.glob(test_files).each { |file| load file }
           blackboard = DeepTest::RindaBlackboard.new
           DeepTest::Worker.new(blackboard).run
         end
+        sleep 0.5
       end
     end
     desc "Stops the workers"
