@@ -31,4 +31,24 @@ unit_tests do
     result = blackboard.take_result
     assert_equal "message printed to stdout", result.output
   end
+  
+  test "retry on deadlock" do
+    blackboard = DeepTest::SimpleTestBlackboard.new
+    blackboard.write_test TestFactory.deadlock_once_test
+    DeepTest::Worker.new(blackboard).run
+    result = blackboard.take_result
+    assert_equal 0, result.error_count
+    assert_equal 0, result.failure_count
+    assert_equal 1, result.assertion_count
+  end
+  
+  test "skip on deadlock twice" do
+    blackboard = DeepTest::SimpleTestBlackboard.new
+    blackboard.write_test TestFactory.deadlock_always_test
+    DeepTest::Worker.new(blackboard).run
+    result = blackboard.take_result
+    assert_equal 0, result.error_count
+    assert_equal 0, result.failure_count
+    assert_equal 0, result.assertion_count
+  end
 end

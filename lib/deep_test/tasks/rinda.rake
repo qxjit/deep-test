@@ -10,6 +10,8 @@ namespace :deep_test do
     desc "Starts the server"
     task :start do
       Daemons.run_proc "deep_test_server", :ARGV => ["start"] do
+        ENV["RAILS_ENV"] = "test"
+        Object.const_set "RAILS_ENV", "test"
         DeepTest::Server.start
       end
       sleep 0.25
@@ -25,6 +27,8 @@ namespace :deep_test do
     task :start do
       2.times do
         Daemons.run_proc "deep_test_worker", :multiple => true, :ARGV => ["start"] do
+          ENV["RAILS_ENV"] = "test"
+          Object.const_set "RAILS_ENV", "test"
           test_files = ENV['DEEP_TEST_PATTERN']
           Dir.glob(test_files).each { |file| load file }
           blackboard = DeepTest::RindaBlackboard.new

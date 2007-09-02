@@ -58,4 +58,14 @@ unit_tests do
     assert_equal Exception, error.exception.class
     assert_equal ex.backtrace, error.exception.backtrace
   end
+  
+  test "failed due to deadlock" do
+    result = Test::Unit::TestResult.new
+    begin
+      raise ActiveRecord::StatementInvalid.new("Deadlock found when trying to get lock")
+    rescue => ex
+      result.add_error Test::Unit::Error.new("test_", ex)
+    end
+    assert_equal true, result.failed_due_to_deadlock?
+  end
 end

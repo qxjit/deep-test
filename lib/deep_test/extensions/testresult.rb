@@ -8,6 +8,10 @@ module Test
         assertion_count.times {result.add_assertion}
         run_count.times {result.add_run}
       end
+      
+      def failed_due_to_deadlock?
+        @errors.any? && !@errors.last.message.to_s.match(/Deadlock found when trying to get lock/).nil?
+      end
     end
   end
 end
