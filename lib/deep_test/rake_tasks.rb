@@ -1,4 +1,2 @@
-$LOAD_PATH.unshift File.dirname(__FILE__)
-require "deep_test"
-task_dir = File.dirname(__FILE__) + "/tasks"
-Dir.glob(task_dir + "/**/*.rake").each { |file| load file }
+require File.dirname(__FILE__) + "/test_task"
+Dir.glob(File.dirname(__FILE__) + "/tasks/**/*.rake").each { |file| load file }

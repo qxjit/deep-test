@@ -5,6 +5,7 @@ module DeepTest
       require 'rinda/tuplespace'
       require 'test/unit'
       require 'test/unit/testresult'
+      require 'deep_test'
       DRb.start_service
       ts = Rinda::TupleSpace.new
       Rinda::RingServer.new(ts)

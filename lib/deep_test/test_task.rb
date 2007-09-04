@@ -1,5 +1,3 @@
-require 'test/unit/ui/console/testrunner'
-
 module DeepTest
   class TestTask
     attr_accessor :pattern
@@ -23,6 +21,7 @@ module DeepTest
           blackboard = DeepTest::RindaBlackboard.new
           supervisor = DeepTest::Supervisor.new blackboard
           supervised_suite = DeepTest::SupervisedTestSuite.new(suite, supervisor)
+          require 'test/unit/ui/console/testrunner'
           Test::Unit::UI::Console::TestRunner.run(supervised_suite, Test::Unit::UI::NORMAL)
           Test::Unit.run = true
         ensure
