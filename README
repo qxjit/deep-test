@@ -1,0 +1,22 @@
+= DeepTest
+
+DeepTest enables tests to run in multiple processes.
+
+== Authors
+
+anonymous z, Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog], David Vollbracht
+
+== Usage
+
+In your Rakefile:
+
+  require "rubygems"
+  require "deep_test/rake_tasks"
+  
+  DeepTest::TestTask "task_name" do |t|
+    t.pattern = "test/**/*_test.rb"
+    t.processes = 2 # optional, defaults to 2
+  end
+
+== License
+Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
