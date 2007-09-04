@@ -30,13 +30,6 @@ unit_tests do
     assert_equal "test/**/*_test.rb", task.pattern
   end
   
-  test "filters are empty" do
-    task = DeepTest::TestTask.new do |t|
-      t.stubs(:define)
-    end
-    assert_equal [], task.filters
-  end
-  
   test "processes defaults to 2" do
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)

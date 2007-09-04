@@ -14,27 +14,14 @@ module DeepTest
       desc "Run '#{@name}' suite using DeepTest"
       task @name => %w[deep_test:server:start deep_test:workers:start] do
         begin
-          require "deep_test"
-          ENV["RAILS_ENV"] = "test"
-          Object.const_set "RAILS_ENV", "test"
-          files = Dir.glob(ENV['DEEP_TEST_PATTERN'])
-          files.each { |file| load file }
-          suite = Test::Unit::AutoRunner::COLLECTORS[:objectspace].call self
-          blackboard = DeepTest::RindaBlackboard.new
-          supervisor = DeepTest::Supervisor.new blackboard
-          supervised_suite = DeepTest::SupervisedTestSuite.new(suite, supervisor)
-          require 'test/unit/ui/console/testrunner'
-          Test::Unit::UI::Console::TestRunner.run(supervised_suite, Test::Unit::UI::NORMAL)
-          Test::Unit.run = true
+          loader = File.expand_path(File.dirname(__FILE__) + "/loader.rb")
+          deep_test_lib = File.expand_path(File.dirname(__FILE__) + "/..")
+          ruby "-I#{deep_test_lib} #{loader} '#{pattern}'"
         ensure
           Rake::Task["deep_test:workers:stop"].invoke
           Rake::Task["deep_test:server:stop"].invoke
         end
       end
-    end
-    
-    def filters
-      []
     end
     
     def pattern
