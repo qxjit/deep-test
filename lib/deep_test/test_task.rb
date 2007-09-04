@@ -9,13 +9,17 @@ module DeepTest
     end
     
     def define
-      ENV['DEEP_TEST_PATTERN'] = Dir.pwd + "/" + pattern
-      ENV['DEEP_TEST_PROCESSES'] = processes.to_s
       desc "Run '#{@name}' suite using DeepTest"
-      task @name => %w[deep_test:server:start deep_test:workers:start] do
+      task @name => %w[deep_test:server:start] do
         begin
-          loader = File.expand_path(File.dirname(__FILE__) + "/loader.rb")
           deep_test_lib = File.expand_path(File.dirname(__FILE__) + "/..")
+          
+          # workers
+          starter = File.expand_path(File.dirname(__FILE__) + "/start_workers.rb")
+          ruby "-I#{deep_test_lib} #{starter} '#{processes}' '#{pattern}'"
+
+          # loader
+          loader = File.expand_path(File.dirname(__FILE__) + "/loader.rb")
           ruby "-I#{deep_test_lib} #{loader} '#{pattern}'"
         ensure
           Rake::Task["deep_test:workers:stop"].invoke
@@ -25,7 +29,7 @@ module DeepTest
     end
     
     def pattern
-      @pattern || "test/**/*_test.rb"
+      Dir.pwd + "/" + (@pattern || "test/**/*_test.rb")
     end
     
     def processes

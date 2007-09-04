@@ -26,20 +26,9 @@ namespace :deep_test do
   namespace :workers do
     desc "Starts the workers"
     task :start do
-      processes = ENV["DEEP_TEST_PROCESSES"].to_i
-      processes.times do
-        Daemons.run_proc "deep_test_worker", :multiple => true, :ARGV => ["start"] do
-          require "deep_test"
-          ENV["RAILS_ENV"] = "test"
-          Object.const_set "RAILS_ENV", "test"
-          test_files = ENV['DEEP_TEST_PATTERN']
-          Dir.glob(test_files).each { |file| load file }
-          blackboard = DeepTest::RindaBlackboard.new
-          DeepTest::Worker.new(blackboard).run
-        end
-        sleep 0.5
-      end
+      raise "deprecated -dan"
     end
+    
     desc "Stops the workers"
     task :stop do
       Daemons.run("deep_test_worker", :ARGV => ["stop"])

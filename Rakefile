@@ -36,7 +36,7 @@ Gem::manage_gems
 specification = Gem::Specification.new do |s|
 	s.name   = "deep_test"
   s.summary = "DeepTest runs tests in multiple processes."
-	s.version = "0.0.1"
+	s.version = "0.0.3"
 	s.author = "Dan Manges, David Vollbracht, anonymous z"
 	s.description = s.summary
 	s.email = "daniel.manges@gmail.com"

@@ -8,26 +8,20 @@ unit_tests do
     end
   end
   
-  test "defined task starts server and workers" do
-    DeepTest::TestTask.any_instance.stubs(:desc)
-    DeepTest::TestTask.any_instance.expects(:task).with { |hash| hash.values == [["deep_test:server:start","deep_test:workers:start"]] }
-    DeepTest::TestTask.new :my_task_name do
-    end
-  end
-  
   test "setting pattern" do
+    pattern = "test/**/x*_test.rb"
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)
-      t.pattern = "test/**/x*_test.rb"
+      t.pattern = pattern
     end
-    assert_equal "test/**/x*_test.rb", task.pattern
+    assert_equal pattern, task.pattern[-pattern.size..-1]
   end
   
   test "default pattern is test/**/*_test.rb" do
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)
     end
-    assert_equal "test/**/*_test.rb", task.pattern
+    assert_equal "test/**/*_test.rb", task.pattern[-"test/**/*_test.rb".size..-1]
   end
   
   test "processes defaults to 2" do
@@ -43,14 +37,5 @@ unit_tests do
       t.stubs(:define)
     end
     assert_equal 42, task.processes
-  end
-  
-  test "processes is set in env variable" do
-    task = DeepTest::TestTask.new do |t|
-      t.processes = 3
-      t.stubs :desc
-      t.stubs :task
-    end
-    assert_equal "3", ENV['DEEP_TEST_PROCESSES']
   end
 end
