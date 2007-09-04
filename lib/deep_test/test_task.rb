@@ -2,7 +2,7 @@ module DeepTest
   class TestTask
     attr_writer :pattern, :processes
 
-    def initialize(name = :test)
+    def initialize(name = :deep_test)
       @name = name
       yield self if block_given?
       define
