@@ -26,7 +26,8 @@ namespace :deep_test do
   namespace :workers do
     desc "Starts the workers"
     task :start do
-      2.times do
+      processes = ENV["DEEP_TEST_PROCESSES"].to_i
+      processes.times do
         Daemons.run_proc "deep_test_worker", :multiple => true, :ARGV => ["start"] do
           require "deep_test"
           ENV["RAILS_ENV"] = "test"

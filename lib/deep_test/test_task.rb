@@ -1,6 +1,6 @@
 module DeepTest
   class TestTask
-    attr_accessor :pattern
+    attr_writer :pattern, :processes
 
     def initialize(name = :test)
       @name = name
@@ -10,6 +10,7 @@ module DeepTest
     
     def define
       ENV['DEEP_TEST_PATTERN'] = Dir.pwd + "/" + pattern
+      ENV['DEEP_TEST_PROCESSES'] = processes.to_s
       desc "Run '#{@name}' suite using DeepTest"
       task @name => %w[deep_test:server:start deep_test:workers:start] do
         begin
@@ -37,6 +38,10 @@ module DeepTest
     
     def pattern
       @pattern || "test/**/*_test.rb"
+    end
+    
+    def processes
+      @processes ? @processes.to_i : 2
     end
   end
 end

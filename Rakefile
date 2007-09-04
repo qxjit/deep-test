@@ -15,6 +15,7 @@ end
 
 DeepTest::TestTask.new :deep_test do |t|
   t.pattern = "test/**/*_test.rb"
+  t.processes = 2
 end
 
 desc "Generate documentation"

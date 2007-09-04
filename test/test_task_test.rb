@@ -36,4 +36,28 @@ unit_tests do
     end
     assert_equal [], task.filters
   end
+  
+  test "processes defaults to 2" do
+    task = DeepTest::TestTask.new do |t|
+      t.stubs(:define)
+    end
+    assert_equal 2, task.processes
+  end
+  
+  test "processes can be set" do
+    task = DeepTest::TestTask.new do |t|
+      t.processes = 42
+      t.stubs(:define)
+    end
+    assert_equal 42, task.processes
+  end
+  
+  test "processes is set in env variable" do
+    task = DeepTest::TestTask.new do |t|
+      t.processes = 3
+      t.stubs :desc
+      t.stubs :task
+    end
+    assert_equal "3", ENV['DEEP_TEST_PROCESSES']
+  end
 end
