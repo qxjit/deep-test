@@ -14,6 +14,7 @@ module DeepTest
       desc "Run '#{@name}' suite using DeepTest"
       task @name => %w[deep_test:server:start deep_test:workers:start] do
         begin
+          require "deep_test"
           ENV["RAILS_ENV"] = "test"
           Object.const_set "RAILS_ENV", "test"
           files = Dir.glob(ENV['DEEP_TEST_PATTERN'])
