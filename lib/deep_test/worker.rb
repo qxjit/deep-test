@@ -8,7 +8,11 @@ module DeepTest
       while test_case = @blackboard.take_test
         result = run_test_case test_case
         result = run_test_case test_case if result.failed_due_to_deadlock?
-        result = Test::Unit::TestResult.new if result.failed_due_to_deadlock?
+        if result.failed_due_to_deadlock?
+          result = Test::Unit::TestResult.new
+          result.add_run
+          result.output = "-deadlock-"
+        end
         @blackboard.write_result result
       end
     end

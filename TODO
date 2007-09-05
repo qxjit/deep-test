@@ -1,1 +1,3 @@
 * Not sure why RAILS_ENV needs to be set in deep_test.  Without doing that, it was loading up in development environment.
+* Graceful handling if workers fail to start.
+* Fix bug where DeepTest::TestTask :test_name => [:dependencies] doesn't work.
