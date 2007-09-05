@@ -8,7 +8,6 @@ require "deep_test/extensions/testresult"
 require "deep_test/extensions/error"
 require "deep_test/extensions/object_extension"
 
-# require "deep_test/loader"
 require "deep_test/rinda_blackboard"
 require "deep_test/server"
 require "deep_test/simple_test_blackboard"

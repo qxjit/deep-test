@@ -2,7 +2,7 @@ module DeepTest
   module StartWorkers
     def self.run(args)
       processes, pattern = args
-      1.to_i.times do
+      processes.to_i.times do
         Daemons.run_proc "deep_test_worker", :multiple => true, :ARGV => ["start"], :backtrace => true, :log_output => true do
           require "deep_test"
           ENV["RAILS_ENV"] = "test"

@@ -15,12 +15,13 @@ module DeepTest
       supervisor = DeepTest::Supervisor.new blackboard
       supervised_suite = DeepTest::SupervisedTestSuite.new(suite, supervisor)
       require 'test/unit/ui/console/testrunner'
-      Test::Unit::UI::Console::TestRunner.run(supervised_suite, Test::Unit::UI::NORMAL)
+      result = Test::Unit::UI::Console::TestRunner.run(supervised_suite, Test::Unit::UI::NORMAL)
       Test::Unit.run = true
-    end
+      return result.passed?
+    end 
   end
 end
 
 if __FILE__ == $0
-  DeepTest::Loader.run ARGV
+  exit DeepTest::Loader.run(ARGV)
 end

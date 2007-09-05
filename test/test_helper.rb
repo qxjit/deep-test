@@ -2,6 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'dust'
 require 'mocha'
+require 'daemons'
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/lib")
 require "deep_test"
 
