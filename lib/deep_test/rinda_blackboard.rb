@@ -21,15 +21,5 @@ module DeepTest
     def write_test(test_case)
       @tuple_space.write ["run_test", test_case.class.to_s, test_case.method_name]
     end
-    
-    class TupleSpaceFactory
-      def self.tuple_space
-        require "rinda/ring"
-        DRb.start_service
-        ring_server = Rinda::RingFinger.primary
-        ts = ring_server.read([:name, :TupleSpace, nil, nil])[2]
-        Rinda::TupleSpaceProxy.new ts      
-      end
-    end
   end
 end
