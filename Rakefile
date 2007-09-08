@@ -56,3 +56,6 @@ Rake::GemPackageTask.new(specification) do |package|
   package.need_zip = true
   package.need_tar = true
 end
+
+Rake::Task[:gem].prerequisites.unshift :deep_test
+Rake::Task[:gem].prerequisites.unshift :test
