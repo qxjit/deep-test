@@ -36,7 +36,7 @@ Gem::manage_gems
 specification = Gem::Specification.new do |s|
 	s.name   = "deep_test"
   s.summary = "DeepTest runs tests in multiple processes."
-	s.version = "1.0.2"
+	s.version = "1.0.3"
 	s.author = "anonymous z, Dan Manges, David Vollbracht"
 	s.description = s.summary
 	s.email = "daniel.manges@gmail.com"
@@ -45,11 +45,11 @@ specification = Gem::Specification.new do |s|
   s.add_dependency "daemons", ">= 1.0.7"
 
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README', 'CHANGELOG']
+  s.extra_rdoc_files = ['README']
   s.rdoc_options << '--title' << "DeepTest" << '--main' << 'README' << '--line-numbers'
 
   s.autorequire = "deep_test"
-  s.files = FileList['{lib,test}/**/*.{rb,rake}', 'CHANGELOG', 'README', 'Rakefile'].to_a
+  s.files = FileList['{lib,test}/**/*.{rb,rake}', 'README', 'Rakefile'].to_a
 end
 
 Rake::GemPackageTask.new(specification) do |package|
