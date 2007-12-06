@@ -6,7 +6,7 @@ require 'rake/contrib/sshpublisher'
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 require "deep_test/rake_tasks"
 
-task :default => :test
+task :default => %w[test deep_test]
 
 Rake::TestTask.new do |t|
   t.pattern = "test/**/*_test.rb"
