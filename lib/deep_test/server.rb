@@ -7,11 +7,6 @@ module DeepTest
       require 'rinda/tuplespace'
       require 'test/unit'
       require 'test/unit/testresult'
-      begin
-        require 'rubygems'
-        require 'spec' 
-      rescue 
-      end 
       require 'deep_test'
       DRb.start_service
       ts = Rinda::TupleSpace.new

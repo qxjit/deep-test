@@ -1,3 +1,4 @@
+require "stringio"
 module DeepTest
   module ObjectExtension
     def capture_stdout

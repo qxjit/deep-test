@@ -9,7 +9,7 @@ namespace :deep_test do
   namespace :server do
     desc "Starts the server"
     task :start do
-      Daemons.run_proc "deep_test_server", :ARGV => ["start"] do
+      Daemons.run_proc "deep_test_server", :ARGV => ["start"], :backtrace => true, :log_output => true do
         require "deep_test"
         ENV["RAILS_ENV"] = "test"
         Object.const_set "RAILS_ENV", "test"
