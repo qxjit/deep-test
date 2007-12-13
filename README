@@ -2,10 +2,6 @@
 
 DeepTest enables tests to run in multiple processes.
 
-== Authors
-
-anonymous z, Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog], David Vollbracht
-
 == Usage
 
 In your Rakefile:
@@ -18,6 +14,14 @@ In your Rakefile:
     t.pattern = "test/**/*_test.rb"
     t.processes = 2 # optional, defaults to 2
   end
+
+== Initial Authors
+
+anonymous z, Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog], David Vollbracht
+
+== Contributors
+
+Alex Chaffee
 
 == License
 Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]

@@ -34,9 +34,10 @@ end
 Gem::manage_gems
 
 specification = Gem::Specification.new do |s|
+  s.platform = Gem::Platform::RUBY
 	s.name   = "deep_test"
   s.summary = "DeepTest runs tests in multiple processes."
-	s.version = "1.0.3"
+	s.version = "1.0.4"
 	s.author = "anonymous z, Dan Manges, David Vollbracht"
 	s.description = s.summary
 	s.email = "daniel.manges@gmail.com"
@@ -59,3 +60,7 @@ end
 
 Rake::Task[:gem].prerequisites.unshift :deep_test
 Rake::Task[:gem].prerequisites.unshift :test
+
+task :tar do
+  system "tar zcf pkg/deep_test.tar.gz --exclude=.svn --exclude='*.tar.gz' --exclude='*.gem' --directory=.. deep_test"
+end
