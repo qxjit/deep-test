@@ -16,7 +16,3 @@ module DeepTest
     end
   end
 end
-
-if __FILE__ == $0
-  DeepTest::Server.start
-end

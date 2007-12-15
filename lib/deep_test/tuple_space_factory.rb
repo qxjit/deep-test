@@ -8,4 +8,4 @@ module DeepTest
       Rinda::TupleSpaceProxy.new ts      
     end
   end
-end    
+end
