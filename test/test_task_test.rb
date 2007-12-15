@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/test_helper"
 unit_tests do
   test "defines a rake task with the name passed to the constructor" do
     DeepTest::TestTask.any_instance.stubs(:desc)
-    DeepTest::TestTask.any_instance.expects(:task).with { |hash| hash.keys == [:my_task_name] }
+    DeepTest::TestTask.any_instance.expects(:task).with(:my_task_name)
     DeepTest::TestTask.new :my_task_name do
     end
   end
