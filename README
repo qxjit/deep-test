@@ -1,6 +1,6 @@
 = DeepTest
 
-DeepTest enables tests to run in multiple processes.
+DeepTest enables tests to run in parallel using multiple processes.
 
 == Usage
 
@@ -10,9 +10,10 @@ In your Rakefile:
   require "deep_test/rake_tasks"
   
   # sample DeepTest task
+
   DeepTest::TestTask.new "task_name" do |t|
+    t.number_of_workers = 2 # optional, defaults to 2
     t.pattern = "test/**/*_test.rb"
-    t.processes = 2 # optional, defaults to 2
   end
 
 == Contributors

@@ -24,18 +24,18 @@ unit_tests do
     assert_equal "test/**/*_test.rb", task.pattern[-"test/**/*_test.rb".size..-1]
   end
   
-  test "processes defaults to 2" do
+  test "number_of_workers defaults to 2" do
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)
     end
-    assert_equal 2, task.processes
+    assert_equal 2, task.number_of_workers
   end
   
-  test "processes can be set" do
+  test "number_of_workers can be set" do
     task = DeepTest::TestTask.new do |t|
-      t.processes = 42
+      t.number_of_workers = 42
       t.stubs(:define)
     end
-    assert_equal 42, task.processes
+    assert_equal 42, task.number_of_workers
   end
 end

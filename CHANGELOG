@@ -1,3 +1,4 @@
 * 1.1.0
 
+* DeepTest::TestTask#processes= is now DeepTest::TestTask#number_of_workers=
 * No longer depend on the Daemons gem, use DeepTest::Warlock instead.

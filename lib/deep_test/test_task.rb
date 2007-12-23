@@ -1,6 +1,7 @@
 module DeepTest
   class TestTask
-    attr_writer :pattern, :processes
+    DEFAULT_NUMBER_OF_WORKERS = 2
+    attr_writer :number_of_workers, :pattern
 
     def initialize(name = :deep_test)
       @name = name
@@ -24,7 +25,7 @@ module DeepTest
           sleep 0.25          
 
           # workers
-          processes.times do |i|
+          number_of_workers.times do |i|
             warlock.start "worker #{i}" do
               srand # re-seed random numbers
               ENV["RAILS_ENV"] = "test"
@@ -44,12 +45,12 @@ module DeepTest
       end
     end
     
+    def number_of_workers
+      @number_of_workers ? @number_of_workers.to_i : DEFAULT_NUMBER_OF_WORKERS
+    end
+
     def pattern
       Dir.pwd + "/" + (@pattern || "test/**/*_test.rb")
-    end
-    
-    def processes
-      @processes ? @processes.to_i : 2
     end
   end
 end

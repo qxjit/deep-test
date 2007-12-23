@@ -14,8 +14,8 @@ Rake::TestTask.new do |t|
 end
 
 DeepTest::TestTask.new :deep_test do |t|
+  t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
-  t.processes = 2
 end
 
 desc "Generate documentation"
