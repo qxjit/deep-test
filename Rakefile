@@ -49,7 +49,7 @@ specification = Gem::Specification.new do |s|
   s.rdoc_options << '--title' << "DeepTest" << '--main' << 'README' << '--line-numbers'
 
   s.autorequire = "deep_test"
-  s.files = FileList['{lib,test}/**/*.{rb,rake}', 'README', 'CHANGELOG', 'Rakefile'].to_a
+  s.files = FileList['{lib,script,test}/**/*.{rb,rake}', 'README', 'CHANGELOG', 'Rakefile'].to_a
 end
 
 Rake::GemPackageTask.new(specification) do |package|

@@ -51,4 +51,8 @@ unit_tests do
     assert_equal 0, result.failure_count
     assert_equal 0, result.assertion_count
   end
+  
+  test "does not fork from rake" do
+    assert !defined?(Rake)
+  end
 end

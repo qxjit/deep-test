@@ -12,36 +12,9 @@ module DeepTest
     def define
       desc "Run '#{@name}' suite using DeepTest"
       task @name do
-        begin
-          deep_test_lib = File.expand_path(File.dirname(__FILE__) + "/..")
-          $LOAD_PATH << deep_test_lib
-          require "deep_test"
-          warlock = DeepTest::Warlock.new
-          
-          # server
-          warlock.start "server" do
-            DeepTest::Server.start
-          end
-          sleep 0.25          
-
-          # workers
-          number_of_workers.times do |i|
-            warlock.start "worker #{i}" do
-              srand # re-seed random numbers
-              ENV["RAILS_ENV"] = "test"
-              Object.const_set "RAILS_ENV", "test"
-              Dir.glob(pattern).each { |file| load file }
-              blackboard = DeepTest::RindaBlackboard.new
-              DeepTest::Worker.new(blackboard).run
-            end
-          end
-
-          # loader
-          loader = File.expand_path(File.dirname(__FILE__) + "/loader.rb")
-          ruby "-I#{deep_test_lib} #{loader} '#{pattern}'"
-        ensure
-          warlock.stop_all if warlock
-        end
+        deep_test_lib = File.expand_path(File.dirname(__FILE__) + "/..")
+        runner = File.expand_path(File.dirname(__FILE__) + "/../../script/run_test_suite.rb")
+        ruby "-I#{deep_test_lib} #{runner} '#{number_of_workers}' '#{pattern}'"
       end
     end
     
