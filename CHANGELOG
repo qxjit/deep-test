@@ -1,8 +1,8 @@
-* SVN
+* 1.1.1 (February 9, 2008)
 
 * No longer fork from Rake process.
 
-* 1.1.0
+* 1.1.0 (December 23, 2007)
 
 * DeepTest::TestTask#processes= is now DeepTest::TestTask#number_of_workers=
 * No longer depend on the Daemons gem, use DeepTest::Warlock instead.
