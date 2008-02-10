@@ -9,9 +9,8 @@ module DeepTest
       require 'test/unit/testresult'
       require 'deep_test'
       DRb.start_service
-      ts = Rinda::TupleSpace.new
-      Rinda::RingServer.new(ts, PORT)
-      puts "Started DeepTest service at #{DRb.uri}"
+      Rinda::RingServer.new(Rinda::TupleSpace.new, PORT)
+      DeepTest.logger.info "Started DeepTest service at #{DRb.uri}"
       DRb.thread.join
     end
   end

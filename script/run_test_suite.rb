@@ -22,7 +22,7 @@ begin
   end
 
   loader_pid = fork do
-    puts "Loader (#{$$})"
+    DeepTest.logger.debug "Loader Starting (#{$$})"
     passed = DeepTest::Loader.run
     exit(passed ? 0 : 1)
   end

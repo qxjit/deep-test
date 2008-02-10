@@ -13,7 +13,7 @@ module DeepTest
         end
         raise "fatal: fork returned nil" if pid.nil?
         @demons << [name, pid]
-        puts "Started #{name} (#{pid})"
+        DeepTest.logger.debug "Started #{name} (#{pid})"
       rescue => e
         puts "exception starting #{name}: #{e}"
         puts "\t" + e.backtrace.join("\n\t")
@@ -34,7 +34,7 @@ module DeepTest
         rescue Errno::ECHILD => e
           puts e
         end
-        puts "Stopped #{name} (#{pid})"
+        DeepTest.logger.debug "Stopped #{name} (#{pid})"
       end
     end
 
