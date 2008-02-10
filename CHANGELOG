@@ -1,3 +1,7 @@
+* 1.1.2 (February 9, 2008)
+
+* Fix bug with run_test_suite script not exiting with correct exit code.
+
 * 1.1.1 (February 9, 2008)
 
 * No longer fork from Rake process.
