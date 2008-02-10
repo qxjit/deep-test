@@ -1,6 +1,6 @@
 module DeepTest
   class Supervisor
-    def initialize(blackboard)
+    def initialize(blackboard = DeepTest::RindaBlackboard.new)
       @blackboard = blackboard
       @count = 0
     end

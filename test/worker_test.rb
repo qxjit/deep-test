@@ -55,4 +55,10 @@ unit_tests do
   test "does not fork from rake" do
     assert !defined?(Rake)
   end
+  
+  test "defaults to using a rinda blackboard" do
+    DeepTest::RindaBlackboard.stubs(:new).returns(:rinda_blackboard)
+    worker = DeepTest::Worker.new
+    assert_equal :rinda_blackboard, worker.instance_variable_get("@blackboard")
+  end
 end

@@ -71,4 +71,10 @@ unit_tests do
      supervisor.read_results Test::Unit::TestResult.new do |channel,name|
      end
   end
+  
+  test "defaults to using a rinda blackboard" do
+    DeepTest::RindaBlackboard.stubs(:new).returns(:rinda_blackboard)
+    supervisor = DeepTest::Supervisor.new
+    assert_equal :rinda_blackboard, supervisor.instance_variable_get("@blackboard")
+  end
 end

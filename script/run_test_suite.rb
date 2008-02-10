@@ -11,27 +11,25 @@ begin
   warlock.start "server" do
     DeepTest::Server.start
   end
-  sleep 0.25          
+  sleep 0.25 # TODO: is this necessary?
 
   # workers
   number_of_workers.to_i.times do |i|
     warlock.start "worker #{i}" do
       srand # re-seed random numbers
       ActiveRecord::Base.connection.reconnect! if defined?(ActiveRecord::Base)
-      blackboard = DeepTest::RindaBlackboard.new
-      DeepTest::Worker.new(blackboard).run
+      DeepTest::Worker.new.run
     end
   end
 
-  passed = false
   loader_pid = fork do
     puts "Loader (#{$$})"
     passed = DeepTest::Loader.run
     exit(passed ? 0 : 1)
   end
   Process.wait(loader_pid)
-  passed = $?.success?
-  passed
+  $?.success?
+  # TODO: i think there's a bug here. exit($?.success? ? 0 : 1)
 ensure
   warlock.stop_all if warlock
 end

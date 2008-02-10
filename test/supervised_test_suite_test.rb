@@ -54,4 +54,10 @@ unit_tests do
     
     assert_equal suite.size, supervised_suite.size
   end
+  
+  test "defaults to using DeepTest::Supervisor" do
+    DeepTest::Supervisor.stubs(:new).returns(:supervisor)
+    supervised_suite = DeepTest::SupervisedTestSuite.new(stub)
+    assert_equal :supervisor, supervised_suite.instance_variable_get("@supervisor")
+  end
 end

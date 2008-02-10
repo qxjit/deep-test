@@ -8,9 +8,7 @@ module DeepTest
     def self.run
       require "deep_test"
       suite = Test::Unit::AutoRunner::COLLECTORS[:objectspace].call NO_FILTERS
-      blackboard = DeepTest::RindaBlackboard.new
-      supervisor = DeepTest::Supervisor.new blackboard
-      supervised_suite = DeepTest::SupervisedTestSuite.new(suite, supervisor)
+      supervised_suite = DeepTest::SupervisedTestSuite.new(suite)
       require 'test/unit/ui/console/testrunner'
       result = Test::Unit::UI::Console::TestRunner.run(supervised_suite, Test::Unit::UI::NORMAL)
       Test::Unit.run = true

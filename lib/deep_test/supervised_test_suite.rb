@@ -1,6 +1,6 @@
 module DeepTest
   class SupervisedTestSuite
-    def initialize(suite, supervisor)
+    def initialize(suite, supervisor = DeepTest::Supervisor.new)
       @suite = suite
       @supervisor = supervisor
     end

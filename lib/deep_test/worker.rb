@@ -1,6 +1,6 @@
 module DeepTest
   class Worker
-    def initialize(blackboard)
+    def initialize(blackboard = DeepTest::RindaBlackboard.new)
       @blackboard = blackboard
     end
 
