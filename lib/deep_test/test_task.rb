@@ -14,7 +14,7 @@ module DeepTest
       task @name do
         deep_test_lib = File.expand_path(File.dirname(__FILE__) + "/..")
         runner = File.expand_path(File.dirname(__FILE__) + "/../../script/run_test_suite.rb")
-        ruby "-I#{deep_test_lib} #{runner} '#{number_of_workers}' '#{pattern}'"
+        ruby "#{runner} '#{number_of_workers}' '#{pattern}'"
       end
     end
     

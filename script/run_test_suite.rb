@@ -1,5 +1,6 @@
 number_of_workers, pattern = ARGV
 begin
+  $LOAD_PATH << File.expand_path(File.dirname(__FILE__) + "/../lib")
   require "deep_test"
   warlock = DeepTest::Warlock.new
   Signal.trap("HUP") { warlock.stop_all; exit 0 }
@@ -7,13 +8,11 @@ begin
   Dir.glob(pattern).each { |file| load file }
   Test::Unit.run = true
   
-  # server
   warlock.start "server" do
     DeepTest::Server.start
   end
-  sleep 0.25 # TODO: is this necessary?
+  sleep 0.5 # TODO: change from sleep to something better... Process.wait?
 
-  # workers
   number_of_workers.to_i.times do |i|
     warlock.start "worker #{i}" do
       srand # re-seed random numbers
