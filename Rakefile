@@ -6,7 +6,7 @@ require 'rake/contrib/sshpublisher'
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 require "deep_test/rake_tasks"
 
-task :default => %w[test deep_test]
+task :default => %w[test failing_test deep_test]
 
 Rake::TestTask.new do |t|
   t.pattern = "test/**/*_test.rb"
@@ -16,6 +16,22 @@ end
 DeepTest::TestTask.new :deep_test do |t|
   t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
+end
+
+DeepTest::TestTask.new :deep_test_failing do |t|
+  t.number_of_workers = 1
+  t.pattern = "test/failing.rb"
+end
+
+# TODO: figure out a better way to test this that doesn't
+#       involve having a failing test in the output of 'rake test'
+task :failing_test do
+  exception = nil
+  begin
+    Rake::Task[:deep_test_failing].invoke
+  rescue => exception
+  end
+  fail "exception should not be nil" if exception.nil?
 end
 
 desc "Generate documentation"

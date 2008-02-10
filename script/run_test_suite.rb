@@ -28,8 +28,7 @@ begin
     exit(passed ? 0 : 1)
   end
   Process.wait(loader_pid)
-  $?.success?
-  # TODO: i think there's a bug here. exit($?.success? ? 0 : 1)
+  exit($?.success? ? 0 : 1)
 ensure
   warlock.stop_all if warlock
 end
