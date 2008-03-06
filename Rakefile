@@ -3,11 +3,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
-gem 'rspec'
-require 'spec/rake/spectask'
-
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
-require "deep_test"
 require "deep_test/rake_tasks"
 
 task :default => %w[test spec failing_test deep_test deep_spec]
