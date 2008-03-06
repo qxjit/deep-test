@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/test_helper"
+require File.dirname(__FILE__) + "/../../../test_helper"
 
 unit_tests do
   test "add_to adds correct run_count" do
@@ -62,7 +62,7 @@ unit_tests do
   test "failed due to deadlock" do
     result = Test::Unit::TestResult.new
     begin
-      raise ActiveRecord::StatementInvalid.new("Deadlock found when trying to get lock")
+      raise FakeDeadlockError.new
     rescue => ex
       result.add_error Test::Unit::Error.new("test_", ex)
     end

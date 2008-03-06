@@ -4,16 +4,16 @@ unit_tests do
   test "a test that is put on can be taken off later" do
     blackboard = DeepTest::SimpleTestBlackboard.new
     test_case = TestFactory.passing_test
-    blackboard.write_test test_case
-    assert_equal test_case, blackboard.take_test
+    blackboard.write_work test_case
+    assert_equal test_case, blackboard.take_work
   end
 
   test "taking a test when all have been taken returns nil" do
     blackboard = DeepTest::SimpleTestBlackboard.new
     test_case = TestFactory.passing_test
-    blackboard.write_test test_case
-    blackboard.take_test
-    assert_nil blackboard.take_test
+    blackboard.write_work test_case
+    blackboard.take_work
+    assert_nil blackboard.take_work
   end
 
   test "a result that is put on can be taken off later" do

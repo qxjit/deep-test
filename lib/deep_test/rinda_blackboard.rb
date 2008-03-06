@@ -1,25 +1,26 @@
 module DeepTest
   class RindaBlackboard
-    def initialize(tuple_space = TupleSpaceFactory.tuple_space)
+    def initialize(options, tuple_space = TupleSpaceFactory.tuple_space)
+      @options = options
       @tuple_space = tuple_space
     end
     
     def take_result
-      result = @tuple_space.take ["test_result", nil], 30
+      result = @tuple_space.take ["test_result", nil], @options.timeout_in_seconds
       result[1]
     end
 
-    def take_test
-      tuple = @tuple_space.take ["run_test", nil, nil], 30
-      eval(tuple[1]).new(tuple[2])
+    def take_work
+      tuple = @tuple_space.take ["deep_work", nil], @options.timeout_in_seconds
+      tuple[1]
     end
 
     def write_result(result)
       @tuple_space.write ["test_result", result]
     end
 
-    def write_test(test_case)
-      @tuple_space.write ["run_test", test_case.class.to_s, test_case.method_name]
+    def write_work(work_unit)
+      @tuple_space.write ["deep_work", work_unit]
     end
   end
 end

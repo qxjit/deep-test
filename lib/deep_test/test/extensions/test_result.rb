@@ -10,7 +10,7 @@ module Test
       end
       
       def failed_due_to_deadlock?
-        @errors.any? && !@errors.last.message.to_s.match(/Deadlock found when trying to get lock/).nil?
+        @errors.any? && DeepTest::DeadlockDetector.due_to_deadlock?(@errors.last)
       end
     end
   end

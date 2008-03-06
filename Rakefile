@@ -3,14 +3,22 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
+gem 'rspec'
+require 'spec/rake/spectask'
+
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
+require "deep_test"
 require "deep_test/rake_tasks"
 
-task :default => %w[test failing_test deep_test]
+task :default => %w[test spec failing_test deep_test deep_spec]
 
 Rake::TestTask.new do |t|
   t.pattern = "test/**/*_test.rb"
   t.libs += ['test', 'lib']
+end
+
+Spec::Rake::SpecTask.new(:spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
 DeepTest::TestTask.new :deep_test do |t|
@@ -18,20 +26,21 @@ DeepTest::TestTask.new :deep_test do |t|
   t.pattern = "test/**/*_test.rb"
 end
 
-DeepTest::TestTask.new :deep_test_failing do |t|
-  t.number_of_workers = 1
-  t.pattern = "test/failing.rb"
+Spec::Rake::SpecTask.new(:deep_spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test :number_of_workers => 2
 end
 
-# TODO: figure out a better way to test this that doesn't
-#       involve having a failing test in the output of 'rake test'
 task :failing_test do
-  exception = nil
-  begin
-    Rake::Task[:deep_test_failing].invoke
-  rescue => exception
+  command = "rake --rakefile test/failing.rake 2>&1"
+  puts command
+  `#{command}`
+  if $?.success?
+    puts "F"
+    fail "****\ntest/failing.rake should have failed\n****"
+  else
+    puts "."
   end
-  fail "exception should not be nil" if exception.nil?
 end
 
 desc "Generate documentation"
