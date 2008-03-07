@@ -1,6 +1,9 @@
 module DeepTest
   class Worker
-    def initialize(blackboard, worker_listener)
+    attr_reader :number
+
+    def initialize(number, blackboard, worker_listener)
+      @number = number
       @blackboard = blackboard
       @listener = worker_listener
     end

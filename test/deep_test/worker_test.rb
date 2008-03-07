@@ -5,7 +5,7 @@ unit_tests do
     blackboard = DeepTest::SimpleTestBlackboard.new
     blackboard.write_work DeepTest::Test::WorkUnit.new(TestFactory.passing_test)
 
-    DeepTest::Worker.new(blackboard,stub_everything).run
+    DeepTest::Worker.new(0, blackboard,stub_everything).run
 
     assert_kind_of Test::Unit::TestResult, blackboard.take_result
   end
@@ -15,7 +15,7 @@ unit_tests do
     blackboard.write_work DeepTest::Test::WorkUnit.new(TestFactory.passing_test)
     blackboard.write_work DeepTest::Test::WorkUnit.new(TestFactory.failing_test)
 
-    DeepTest::Worker.new(blackboard, stub_everything).run
+    DeepTest::Worker.new(0, blackboard, stub_everything).run
 
     result_1 = blackboard.take_result
     result_2 = blackboard.take_result
@@ -27,7 +27,7 @@ unit_tests do
   test "notifies listener that it is starting" do
     blackboard = DeepTest::SimpleTestBlackboard.new
     listener = stub_everything
-    worker = DeepTest::Worker.new(blackboard, listener)
+    worker = DeepTest::Worker.new(0, blackboard, listener)
     listener.expects(:starting).with(worker)
     worker.run
   end
@@ -37,7 +37,7 @@ unit_tests do
     work_unit = DeepTest::Test::WorkUnit.new(TestFactory.passing_test)
     blackboard.write_work work_unit
     listener = stub_everything
-    worker = DeepTest::Worker.new(blackboard, listener)
+    worker = DeepTest::Worker.new(0, blackboard, listener)
     listener.expects(:starting_work).with(worker, work_unit)
     worker.run
   end
@@ -47,9 +47,13 @@ unit_tests do
     work_unit = mock(:run => :result)
     blackboard.write_work work_unit
     listener = stub_everything
-    worker = DeepTest::Worker.new(blackboard, listener)
+    worker = DeepTest::Worker.new(0, blackboard, listener)
     listener.expects(:finished_work).with(worker, work_unit, :result)
     worker.run
+  end
+
+  test "number is available to indentify worker" do
+    assert_equal 1, DeepTest::Worker.new(1, nil, nil).number
   end
   
   test "does not fork from rake" do
