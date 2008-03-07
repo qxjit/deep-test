@@ -21,6 +21,25 @@ module DeepTest
       Options.new(:pattern => '*').pattern.should == '*'
     end
 
+    it "should support worker_listener" do
+      Options.new(:worker_listener => "AListener").
+        worker_listener.should == "AListener"
+    end
+
+    it "should use DeepTest::NullWorkerListener as the default listener" do
+      Options.new({}).worker_listener.should == "DeepTest::NullWorkerListener"
+    end
+    
+    it "should allow worker_listener to be set with class" do
+      class FakeListener; end
+      Options.new(:worker_listener => FakeListener).
+        worker_listener.should == "DeepTest::FakeListener"
+    end
+
+    it "should create a worker_listener instance upon request" do
+      Options.new({}).new_worker_listener.should be_instance_of(DeepTest::NullWorkerListener)
+    end
+
     it "should support strings as well as symbols" do
       Options.new("number_of_workers" => 2).number_of_workers.should == 2
     end
@@ -32,9 +51,9 @@ module DeepTest
     end
 
     it "should convert to command line option string" do
-      options = Options.new(:number_of_workers => 2, :timeout_in_seconds => 3)
+      options = Options.new(:number_of_workers => 1, :timeout_in_seconds => 3)
       options.to_command_line.should == 
-        "--number_of_workers 2 --timeout_in_seconds 3"
+        "--number_of_workers 1 --timeout_in_seconds 3"
     end
 
     it "should parse from command line option string" do
@@ -43,6 +62,11 @@ module DeepTest
       options.number_of_workers.should == 2
       options.timeout_in_seconds.should == 3
       options.pattern.should == '*'
+    end
+
+    it "should use default option value when no command line option is present" do
+      options = Options.from_command_line("")
+      options.number_of_workers.should == 2
     end
   end
 end

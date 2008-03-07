@@ -9,11 +9,11 @@ module DeepTest
 
       def from_command_line(command_line)
         command_line =~ /--#{name} (\S+)(\s|$)/
-        $1.send(@conversion)
+        $1.send(@conversion) if $1
       end
 
       def to_command_line(value)
-        "--#{name} #{value}" if value
+        "--#{name} #{value}" if value && value != default
       end
     end
 
@@ -22,9 +22,14 @@ module DeepTest
         Option.new(:number_of_workers, :to_i, 2),
         Option.new(:pattern, :to_s, nil),
         Option.new(:timeout_in_seconds, :to_i, 30),
+        Option.new(:worker_listener, :to_s, "DeepTest::NullWorkerListener"),
       ]
     end
+
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
+    def worker_listener=(value)
+      @worker_listener = value.to_s
+    end
 
     def self.from_command_line(command_line)
       hash = {}
@@ -41,10 +46,15 @@ module DeepTest
       end
     end
 
+    def new_worker_listener
+      eval(worker_listener).new
+    end
+
     def to_command_line
       command_line = []
       VALID_OPTIONS.each do |option|
-        command_line << option.to_command_line(send(option.name))
+        value = send(option.name)
+        command_line << option.to_command_line(value)
       end
       command_line.compact.join(' ')
     end

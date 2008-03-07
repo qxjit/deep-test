@@ -31,7 +31,9 @@ module DeepTest
         start_worker(worker_num) do
           reseed_random_numbers
           reconnect_to_database
-          DeepTest::Worker.new(RindaBlackboard.new(@options)).run
+          worker = DeepTest::Worker.new(RindaBlackboard.new(@options), 
+                                        @options.new_worker_listener)
+          worker.run
         end
       end        
     end
