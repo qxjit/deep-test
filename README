@@ -54,11 +54,11 @@ loaded, so it is available to be instantiated.
 
 == Contributors
 
-+* anonymous z
-+* Alex Chaffee
-+* Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog]
-+* David Vollbracht[http://davidvollbracht.com/]
-+* Scott Taylor
+* anonymous z
+* Alex Chaffee
+* Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog]
+* David[http://davidvollbracht.com/] Vollbracht[http://davidvollbracht.com/]
+* Scott Taylor
 
 == License
 Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
