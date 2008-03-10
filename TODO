@@ -2,3 +2,5 @@
 * test loader
 * hook to add code before starting a worker
 * Make setting spec_apts and deep_test at the same time more intuitive
+* add failure method to Spec::WorkUnit::ResultReporter for when
+   a before(:all) fails
