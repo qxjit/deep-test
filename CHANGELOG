@@ -1,7 +1,8 @@
-* 1.1.3 (March 6, 2008)
+* 1.1.3 (March 10, 2008)
 
 * Added Support for RSpec
 * Added DeepTest::TestTask#timeout_in_seconds to configure Rinda IO timeouts
+* Added worker_listener to configuration options
 
 * 1.1.2 (February 9, 2008)
 

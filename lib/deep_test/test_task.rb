@@ -39,6 +39,14 @@ module DeepTest
       @options.timeout_in_seconds
     end
 
+    def worker_listener=(listener)
+      @options.worker_listener = listener
+    end
+
+    def worker_listener
+      @options.worker_listener
+    end
+
   private
 
     def runner

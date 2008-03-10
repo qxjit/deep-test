@@ -25,6 +25,33 @@ In your Rakefile:
                 :timeout_in_seconds => 30, # optional, defaults to 30
   end
 
+
+If you want to specify a listener to be notified of worker events:
+
+In my_worker_listener.rb
+  class MyWorkerListener
+    def starting(worker)
+    end
+
+    def starting_work(worker, work_unit)
+    end
+
+    def finished_work(worker, work_unit, result)
+    end
+  end
+
+In your Rakefile
+
+  DeepTest::TestTask.new "task_name" do |t|
+    t.pattern = "test/**/*_test.rb"
+    t.worker_listener = "MyWorkerListener"
+  end
+
+An instance of MyWorkerListener will be created for each worker that is
+started, and will receive events from that worker.  However, you must ensure
+that the MyWorkerListener class is loaded at the time that the test files are
+loaded, so it is available to be instantiated.
+
 == Contributors
 
 +* anonymous z
