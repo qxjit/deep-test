@@ -12,4 +12,25 @@ describe Spec::Rake::SpecTask do
     t.spec_opts.should == ["--require #{deep_test_path}",
                            "--runner 'DeepTest::Spec::Runner:#{options.to_command_line}'"]
   end
+
+  it "should maintain deep_test options if spec_opts is set directly" do
+    t = Spec::Rake::SpecTask.new do |t|
+      t.deep_test({})
+      t.spec_opts = ["anoption"]
+    end
+
+    deep_test_path = File.expand_path(File.dirname(__FILE__) + 
+                                      '/../../../../lib/deep_test')
+    options = DeepTest::Options.new({})
+    t.spec_opts.should == ["--require #{deep_test_path}",
+                           "--runner 'DeepTest::Spec::Runner:#{options.to_command_line}'",
+                           "anoption"]
+  end
+
+  it "should allow spec_opts to be set without deep_test" do
+    t = Spec::Rake::SpecTask.new do |t|
+      t.spec_opts = ["anoption"]
+    end
+    t.spec_opts.should == ["anoption"]
+  end
 end
