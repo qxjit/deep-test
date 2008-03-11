@@ -4,3 +4,7 @@
 * Make setting spec_apts and deep_test at the same time more intuitive
 * add failure method to Spec::WorkUnit::ResultReporter for when
    a before(:all) fails
+* raise error when before/after all are defined
+* Take care of timing issue in ProcessOrchestrator
+* Fix pending example bug
+
