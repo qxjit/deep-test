@@ -1,4 +1,3 @@
 * Graceful handling if workers fail to start.
 * test loader
-* add failure method to Spec::WorkUnit::ResultReporter for when
-   a before(:all) fails
+* Handle old versions of RSpec more gracefully

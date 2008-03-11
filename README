@@ -14,15 +14,17 @@ In your Rakefile:
   DeepTest::TestTask.new "task_name" do |t|
     t.number_of_workers = 2   # optional, defaults to 2
     t.timeout_in_seconds = 30 # optional, defaults to 30
+    t.server_port = 6969      # optional, defaults to 6969
     t.pattern = "test/**/*_test.rb"
   end
 
-  # Sample SpecTask using DeepTest
+  # sample SpecTask using DeepTest
 
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
     t.deep_test :number_of_workers => 2,   # optional, defaults to 2
                 :timeout_in_seconds => 30, # optional, defaults to 30
+                :server_port => 6969       # optional, defaults to 6969
   end
 
 
