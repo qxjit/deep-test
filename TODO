@@ -3,4 +3,3 @@
 * Make setting spec_opts and deep_test at the same time more intuitive
 * add failure method to Spec::WorkUnit::ResultReporter for when
    a before(:all) fails
-* Make DeepTest server port configurable

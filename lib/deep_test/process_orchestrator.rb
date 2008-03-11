@@ -61,7 +61,7 @@ module DeepTest
 
       pid = Process.pid
       @warlock.start("server") do
-        DeepTest::Server.start do
+        DeepTest::Server.start(@options) do
           Process.kill('USR2', pid)
         end
       end

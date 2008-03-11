@@ -31,6 +31,14 @@ module DeepTest
       @options.pattern = Dir.pwd + "/" + pattern
     end
 
+    def server_port=(port)
+      @options.server_port = port
+    end
+
+    def server_port
+      @options.server_port
+    end
+
     def timeout_in_seconds=(seconds)
       @options.timeout_in_seconds = seconds
     end

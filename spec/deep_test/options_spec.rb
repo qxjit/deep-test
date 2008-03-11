@@ -10,6 +10,7 @@ module DeepTest
       options = Options.new({})
       options.number_of_workers.should == 2
       options.timeout_in_seconds.should == 30
+      options.server_port.should == 6969
       options.pattern.should == nil
     end
 
@@ -19,6 +20,10 @@ module DeepTest
 
     it "should support pattern" do
       Options.new(:pattern => '*').pattern.should == '*'
+    end
+
+    it "should support server_port" do
+      Options.new(:server_port => 10).server_port.should == 10
     end
 
     it "should support worker_listener" do

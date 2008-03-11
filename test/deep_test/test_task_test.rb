@@ -20,4 +20,14 @@ unit_tests do
     assert_equal "A", t.instance_variable_get(:@options).worker_listener
     assert_equal "A", t.worker_listener
   end
+
+  test "should support server_port" do
+    t = DeepTest::TestTask.new :deep_test do |t|
+      t.stubs(:desc)
+      t.stubs(:task)
+      t.server_port = 10
+    end
+    assert_equal 10, t.instance_variable_get(:@options).server_port
+    assert_equal 10, t.server_port
+  end
 end

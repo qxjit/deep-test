@@ -22,6 +22,7 @@ module DeepTest
         Option.new(:number_of_workers, :to_i, 2),
         Option.new(:pattern, :to_s, nil),
         Option.new(:timeout_in_seconds, :to_i, 30),
+        Option.new(:server_port, :to_i, 6969),
         Option.new(:worker_listener, :to_s, "DeepTest::NullWorkerListener"),
       ]
     end

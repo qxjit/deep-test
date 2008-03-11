@@ -1,6 +1,6 @@
 module DeepTest
   class RindaBlackboard
-    def initialize(options, tuple_space = TupleSpaceFactory.tuple_space)
+    def initialize(options, tuple_space = TupleSpaceFactory.tuple_space(options))
       @options = options
       @tuple_space = tuple_space
     end
