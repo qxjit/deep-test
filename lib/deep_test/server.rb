@@ -6,6 +6,7 @@ module DeepTest
       DRb.start_service
       Rinda::RingServer.new(Rinda::TupleSpace.new, PORT)
       DeepTest.logger.info "Started DeepTest service at #{DRb.uri}"
+      yield if block_given?
       DRb.thread.join
     end
   end

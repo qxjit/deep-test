@@ -56,8 +56,19 @@ module DeepTest
     end
 
     def start_warlock_server
-      @warlock.start("server") { DeepTest::Server.start }
-      sleep 0.5 # TODO: change from sleep to something better... Process.wait?
+      server_ready = false
+      previous_trap = Signal.trap('USR2') {server_ready = true}
+
+      pid = Process.pid
+      @warlock.start("server") do
+        DeepTest::Server.start do
+          Process.kill('USR2', pid)
+        end
+      end
+
+      Thread.pass until server_ready
+    ensure
+      Signal.trap('USR2', previous_trap)
     end
 
     def stop_all_warlocks
