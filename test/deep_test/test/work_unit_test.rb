@@ -11,12 +11,6 @@ unit_tests do
     assert_equal false, work_unit.run.passed?
   end
 
-  test "returns passed result correctly after being loaded from yaml" do
-    work_unit = DeepTest::Test::WorkUnit.new TestFactory.passing_test
-    work_unit_from_yaml = YAML.load(work_unit.to_yaml)
-    assert_equal true, work_unit_from_yaml.run.passed?
-  end
-
   test "capturing stdout" do
     work_unit = DeepTest::Test::WorkUnit.new TestFactory.passing_test_with_stdout
     assert_equal "message printed to stdout", work_unit.run.output

@@ -9,6 +9,7 @@ end
 require "logger"
 require "rinda/ring"
 require "rinda/tuplespace"
+require "timeout"
 
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
 
