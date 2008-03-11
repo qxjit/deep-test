@@ -36,7 +36,7 @@ module DeepTest
           print result.output if result.output
           example = examples_by_location.delete("#{result.file}:#{result.line}")
           @options.reporter.example_finished(example, result.error)
-          success &= result.error.nil?
+          success &= result.success?
         end
 
         success

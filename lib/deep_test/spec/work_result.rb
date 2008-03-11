@@ -18,6 +18,10 @@ module DeepTest
         DeadlockDetector.due_to_deadlock?(@error)
       end
 
+      def success?
+        error.nil? || ::Spec::Example::ExamplePendingError === error
+      end
+
       def deadlock_result
         WorkResult.new(file, line, example_description, nil, '-deadlock-')
       end

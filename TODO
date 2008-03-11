@@ -6,5 +6,3 @@
    a before(:all) fails
 * raise error when before/after all are defined
 * Take care of timing issue in ProcessOrchestrator
-* Fix pending example bug
-

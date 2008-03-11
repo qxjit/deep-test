@@ -43,6 +43,36 @@ module DeepTest
         worker.wait_until_done
       end
 
+      it "should return success when there are pending examples" do
+        blackboard = SimpleTestBlackboard.new
+        runner = Runner.new(options, Options.new({}), blackboard)
+
+        Class.new(::Spec::Example::ExampleGroup) do
+          it("pending") {pending {1.should == 2}}; 
+        end
+
+        worker = ThreadWorker.new(blackboard, 1)
+        Timeout.timeout(5) do
+          runner.process_work_units.should == true
+        end
+        worker.wait_until_done
+      end
+
+      it "should return failure when a pending example passes" do
+        blackboard = SimpleTestBlackboard.new
+        runner = Runner.new(options, Options.new({}), blackboard)
+
+        Class.new(::Spec::Example::ExampleGroup) do
+          it("pending") {pending {1.should == 1}}; 
+        end
+
+        worker = ThreadWorker.new(blackboard, 1)
+        Timeout.timeout(5) do
+          runner.process_work_units.should == false
+        end
+        worker.wait_until_done
+      end
+
       it "should prints that was produced by specs" do
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)

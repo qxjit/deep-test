@@ -13,5 +13,16 @@ describe Spec::Runner::Reporter do
       reporter.failure(example,RuntimeError.new)
     }.should_not raise_error
   end
+
+  it "should be able to handle a pending example without having any example groups" do
+    example_group = Class.new(Spec::Example::ExampleGroup) do
+      it("example") {pending}
+    end
+    example = example_group.examples.first
+    reporter = Spec::Runner::Reporter.new(options)
+    lambda {
+      reporter.example_finished(example,::Spec::Example::ExamplePendingError.new)
+    }.should_not raise_error
+  end
 end
 
