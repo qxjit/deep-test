@@ -13,18 +13,24 @@ Rake::TestTask.new do |t|
   t.libs += ['test', 'lib']
 end
 
-Spec::Rake::SpecTask.new(:spec) do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-end
-
 DeepTest::TestTask.new :deep_test do |t|
   t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
 end
 
-Spec::Rake::SpecTask.new(:deep_spec) do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.deep_test :number_of_workers => 2
+def rspec_present?
+  defined?(Spec)
+end
+
+if rspec_present?
+  Spec::Rake::SpecTask.new(:spec) do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+  end
+  
+  Spec::Rake::SpecTask.new(:deep_spec) do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.deep_test :number_of_workers => 2
+  end
 end
 
 task :failing_test do
