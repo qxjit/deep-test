@@ -19,6 +19,9 @@ In your Rakefile:
   end
 
   # sample SpecTask using DeepTest
+  
+  require "rubygems"
+  require "deep_spec/spec/extensions/spec_task"
 
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
