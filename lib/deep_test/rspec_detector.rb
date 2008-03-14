@@ -3,14 +3,9 @@ module DeepTest
     def self.if_rspec_available
       begin
         require 'rubygems'
-      rescue LoadError
-      else
-        begin
-          gem 'rspec'
-        rescue Gem::LoadError
-        else
-          yield
-        end
+        gem 'rspec'
+        yield
+      rescue LoadError, Gem::LoadError
       end
     end
   end
