@@ -5,4 +5,3 @@
    - custom methods that call it() fail on the second invocation
 * Log TupleSpace write error
 * change befare(:all)/after(:all) to warn
-* change tuplespace discovery based to include localhost again
