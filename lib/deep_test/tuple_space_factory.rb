@@ -1,12 +1,32 @@
 module DeepTest
   class TupleSpaceFactory
-    def self.tuple_space(options)
-      require "rinda/ring"
-      require "socket"
-      DRb.start_service
-      ts = Rinda::RingFinger.new([Socket.gethostname],options.server_port).lookup_ring_any
-      DeepTest.logger.debug "Connected to DeepTest server at #{ts.__drburi}"
-      Rinda::TupleSpaceProxy.new ts
+    class << self
+      def tuple_space(options)
+        start_drb
+        tuple_space = find_tuple_space(options.server_port)
+        return Rinda::TupleSpaceProxy.new(tuple_space)
+      end
+      
+    private
+    
+      def find_tuple_space(server_port)
+        tuple_space = Rinda::RingFinger.new(hostnames, server_port).lookup_ring_any
+        add_debug_to_logger("Connected to DeepTest server at #{tuple_space.__drburi}")
+        
+        return tuple_space
+      end
+    
+      def start_drb
+        DRb.start_service
+      end
+    
+      def hostnames
+        [Socket.gethostname]
+      end
+      
+      def add_debug_to_logger(message)
+        DeepTest.logger.debug(message)
+      end
     end
   end
 end
