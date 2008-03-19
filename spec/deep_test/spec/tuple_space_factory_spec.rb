@@ -11,8 +11,8 @@ module DeepTest
         @tuple_space = mock("TupleSpace", :__drburi => nil)
         @ring_finger.stub!(:lookup_ring_any).and_return @tuple_space
         
-        Socket.stub!(:gethostname).and_return "escher"
         @hostnames = ["escher"]
+        TupleSpaceFactory.stub!(:hostnames).and_return @hostnames
         @options = OpenStruct.new({:server_port => "2020"})
         
         @fake_logger = mock("logger", :null_object => true)
@@ -32,14 +32,6 @@ module DeepTest
         TupleSpaceFactory.tuple_space(@options)
       end
       
-      it "should create a new RingFinger with the appropriate hostname" do
-        Socket.stub!(:gethostname).and_return "foo_bar"
-        @hostnames = ["foo_bar"]
-        
-        Rinda::RingFinger.should_receive(:new).with(@hostnames, "2020").and_return @ring_finger
-        TupleSpaceFactory.tuple_space(@options)
-      end
-      
       it "should create a new RingFinger with the appropriate socket number" do
         @options.server_port = 4062
         
@@ -55,6 +47,17 @@ module DeepTest
       it "should create a new TupleSpaceProxy with the tuple space previously found" do
         Rinda::TupleSpaceProxy.should_receive(:new).with(@tuple_space)
         TupleSpaceFactory.tuple_space(@options)
+      end
+    end
+    
+    describe "hostnames" do
+      before :each do
+        @hostname = "escher"
+        Socket.stub!(:gethostname).and_return @hostname
+      end
+      
+      it "should return an array with the hostname and 'localhost'" do
+        TupleSpaceFactory.hostnames.should == ["escher", "localhost"]
       end
     end
   end

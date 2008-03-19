@@ -7,6 +7,10 @@ module DeepTest
         return Rinda::TupleSpaceProxy.new(tuple_space)
       end
       
+      def hostnames
+        [Socket.gethostname, "localhost"]
+      end
+      
     private
     
       def find_tuple_space(server_port)
@@ -20,10 +24,6 @@ module DeepTest
         DRb.start_service
       end
     
-      def hostnames
-        [Socket.gethostname]
-      end
-      
       def add_debug_to_logger(message)
         DeepTest.logger.debug(message)
       end
