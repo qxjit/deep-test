@@ -10,7 +10,7 @@ module Spec
       it_should_behave_like "sandboxed rspec_options"
       
       [:append_before, :before, :after, :prepend_before, :append_after, :prepend_after].each do |rspec_method|
-        it "should issue a warning on #{rspec_method}(:all)" do
+        it "should raise a BeforeAfterAllNotSupportedByDeepTestError on #{rspec_method}(:all)" do
           lambda {
             Class.new(Spec::Example::ExampleGroup) do
               self.send(rspec_method, :all) {}
