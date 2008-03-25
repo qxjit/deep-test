@@ -1,6 +1,9 @@
 = DeepTest
 
-DeepTest enables tests to run in parallel using multiple processes.
+DeepTest enables tests to run in parallel using multiple processes.  Processes
+may spawned locally to take advantage of multiple processors on a single
+machine or distributed across many machines to take advantage of distributed
+processing.
 
 == Usage
 
@@ -28,10 +31,13 @@ In your Rakefile:
   end
 
 
-If you want to specify a listener to be notified of worker events:
+=== Specifying a Listener to be Notified of Events
 
 In my_worker_listener.rb
   class MyWorkerListener
+    def before_starting_workers
+    end
+
     def starting(worker)
     end
 
@@ -45,14 +51,49 @@ In my_worker_listener.rb
 In your Rakefile
 
   DeepTest::TestTask.new "task_name" do |t|
-    t.pattern = "test/**/*_test.rb"
+    ... 
     t.worker_listener = "MyWorkerListener"
   end
 
 An instance of MyWorkerListener will be created for each worker that is
 started, and will receive events from that worker.  However, you must ensure
 that the MyWorkerListener class is loaded at the time that the test files are
-loaded, so it is available to be instantiated.
+loaded, so it is available to be instantiated.  You can specify multiple
+listener classes by separating them with a comma.  For more information about
+when events are triggered, see the documentation at
+DeepTest::NullWorkerListener.
+
+
+=== Setting Up A New Database For Each Worker
+
+By default, DeepTest will reinitialize ActiveRecord connections if ActiveRecord
+is loaded when the workers are started.  This means all workers are running
+against the same database.  You may want each worker to use a database
+decidicated to it.  To facilitate this, DeepTest provides a worker listener to
+help you.  If you're using Rails with Mysql, simply configure DeepTest as 
+follows in your Rakefile:
+
+  DeepTest::TestTask.new "task_name" do |t|
+    ...
+    t.worker_listener = "DeepTest::Database::MysqlSetupListener"
+  end
+
+
+Before spawning workers, DeepTest will dump the schema of the database for the
+current Rails environment (usually test).  As each worker starts up, the
+listener will create a database dedicated to that worker and load the schema
+into it.  The database will be dropped when the worker process exits.  
+
+If you're using Mysql but not using Rails, you'll have to create a subclass of
+MysqlSetupListener and override +master_database_config+ and +dump_file_name+,
+as the default implementations of these methods are Rails specific.
+
+
+If you're using a database other than Mysql, read the documentation for
+DeepTest::Database::SetupListener and create a new subclass for your database
+type.  If you do this, please consider contributing your subclass back to the
+project so that it can be included in later releases of DeepTest.
+
 
 == Contributors
 
