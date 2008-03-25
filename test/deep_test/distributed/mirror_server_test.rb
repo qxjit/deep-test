@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "generates a local working copy path based on host and source of request" do
-    Socket.stubs(:gethostname).returns("myhost")
+    Socket.stubs(:gethostname).returns("myhost", "serverhost")
     server = DeepTest::Distributed::MirrorServer.new(:mirror_base_path => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
     DeepTest::Distributed::RSync.expects(:sync).with(options,

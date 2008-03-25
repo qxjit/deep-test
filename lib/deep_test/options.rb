@@ -14,7 +14,6 @@ module DeepTest
     end
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
-    attr_reader :origin_hostname
 
     def ui=(value)
       @ui = value.to_s
@@ -45,6 +44,10 @@ module DeepTest
         eval(listener).new
       end
       ListenerList.new(listeners)
+    end
+
+    def origin_hostname
+      (Socket.gethostname == @origin_hostname) ? 'localhost' : @origin_hostname
     end
 
     # Don't store UI instances in the options instance, which will

@@ -12,7 +12,7 @@ unit_tests do
   end
 
   test "executes non-local rsync with ssh login" do
-    Socket.stubs(:gethostname).returns("host")
+    Socket.stubs(:gethostname).returns("host", "server_host")
     options = DeepTest::Options.new(:sync_options => {:source => "source",
                                                       :password => "the_password"})
 
@@ -32,7 +32,7 @@ unit_tests do
   end
 
   test "includes host in source_location" do
-    Socket.stubs(:gethostname).returns("host")
+    Socket.stubs(:gethostname).returns("host", "server_host")
     options = DeepTest::Options.new(:sync_options => {:source => "source"})
     args = DeepTest::Distributed::RSync::Args.new(options)
 
@@ -40,7 +40,7 @@ unit_tests do
   end
 
   test "includes username in source_location if specified" do
-    Socket.stubs(:gethostname).returns("host")
+    Socket.stubs(:gethostname).returns("host", "server_host")
     options = DeepTest::Options.new(:sync_options => {:source => "source", 
                                                       :username => "user"})
     args = DeepTest::Distributed::RSync::Args.new(options)

@@ -5,5 +5,4 @@
    - custom methods that call it() fail on the second invocation
 * Log blackboard write error
 * change befare(:all)/after(:all) to warn
-* change server hostname to localhost if not running distributed
 * Handle not getting all results make more gracefully

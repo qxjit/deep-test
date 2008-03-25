@@ -131,18 +131,26 @@ module DeepTest
       options.new_workers
     end
 
-    it "should set the hostname when the options are created" do
-      Options.new({}).origin_hostname.should == Socket.gethostname
+    it "should return localhost as origin_hostname current hostname is same as when created" do
+      options = Options.new({})
+      options.origin_hostname.should == 'localhost'
+    end
+
+    it "should hostname at instantiation when current hostname is different" do
+      local_hostname = Socket.gethostname
+      options = Options.new({})
+      Socket.should_receive(:gethostname).and_return("host_of_query")
+      options.origin_hostname.should == local_hostname
     end
 
     it "should be able to calculate mirror_path based on base an sync_options" do
-      Socket.should_receive(:gethostname).and_return("hostname")
+      Socket.should_receive(:gethostname).and_return("hostname", "server_hostname")
       options = Options.new(:sync_options => {:source => "/my/source/path"})
       options.mirror_path("/mirror/base/path").should == 
         "/mirror/base/path/hostname_my_source_path"
     end
 
-   it "should raise a useful error if no source is specified" do
+    it "should raise a useful error if no source is specified" do
       options = DeepTest::Options.new(:sync_options => {})
       lambda {
         options.mirror_path("base")
