@@ -1,33 +1,25 @@
 module DeepTest
   class Options
-    class Option
-      attr_reader :name, :default
-
-      def initialize(name, conversion, default)
-        @name, @conversion, @default = name, conversion, default
-      end
-
-      def from_command_line(command_line)
-        command_line =~ /--#{name} (\S+)(\s|$)/
-        $1.send(@conversion) if $1
-      end
-
-      def to_command_line(value)
-        "--#{name} #{value}" if value && value != default
-      end
-    end
-
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
-        Option.new(:number_of_workers, :to_i, 2),
-        Option.new(:pattern, :to_s, nil),
-        Option.new(:timeout_in_seconds, :to_i, 30),
-        Option.new(:server_port, :to_i, 6969),
-        Option.new(:worker_listener, :to_s, "DeepTest::NullWorkerListener"),
+        Option.new(:distributed_server, Option::String, nil),
+        Option.new(:number_of_workers,  Option::Integer, 2),
+        Option.new(:pattern,            Option::String, nil),
+        Option.new(:server_port,        Option::Integer, 6969),
+        Option.new(:sync_options,       Option::Hash, {}),
+        Option.new(:timeout_in_seconds, Option::Integer, 30),
+        Option.new(:ui,                 Option::String, "DeepTest::UI::Console"),
+        Option.new(:worker_listener,    Option::String, "DeepTest::NullWorkerListener"),
       ]
     end
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
+    attr_reader :origin_hostname
+
+    def ui=(value)
+      @ui = value.to_s
+    end
+
     def worker_listener=(value)
       @worker_listener = value.to_s
     end
@@ -41,14 +33,27 @@ module DeepTest
     end
 
     def initialize(hash)
+      @origin_hostname = Socket.gethostname
       check_option_keys(hash)
       VALID_OPTIONS.each do |option|
         send("#{option.name}=", hash[option.name] || option.default)
       end
     end
 
-    def new_worker_listener
-      eval(worker_listener).new
+    def new_listener_list
+      listeners = worker_listener.split(',').map do |listener|
+        eval(listener).new
+      end
+      ListenerList.new(listeners)
+    end
+
+    # Don't store UI instances in the options instance, which will
+    # need to be dumped over DRb.  UI instances may not be dumpable
+    # and we don't want to have to start yet another DRb Server
+    #
+    UI_INSTANCES = {} unless defined?(UI_INSTANCES)
+    def ui_instance
+      UI_INSTANCES[self] ||= eval(ui).new(self)
     end
 
     def to_command_line
@@ -58,6 +63,21 @@ module DeepTest
         command_line << option.to_command_line(value)
       end
       command_line.compact.join(' ')
+    end
+
+    def mirror_path(base)
+      raise "No source directory specified in sync_options" unless sync_options[:source]
+      relative_mirror_path = origin_hostname + sync_options[:source].gsub('/','_')
+      "#{base}/#{relative_mirror_path}"
+    end
+
+    def new_workers
+      if distributed_server.nil?
+        LocalWorkers.new self
+      else
+        server = Distributed::MirrorServer.connect(self)
+        Distributed::RemoteWorkerClient.new(self, server)
+      end
     end
 
     protected

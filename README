@@ -63,4 +63,6 @@ loaded, so it is available to be instantiated.
 * Scott Taylor
 
 == License
-Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
+DeepTest Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
+RExpect Released under the LGPL[http://www.gnu.org/licenses/lgpl.html]
+For the latest version fo RExpect, visit http://rubyforge.org/projects/rexpect/[http://rubyforge.org/projects/rexpect/]

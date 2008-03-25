@@ -31,7 +31,9 @@ module DeepTest
       end
 
       def read_results(result, count)
+        DeepTest.logger.debug("SupervisedTestSuite: going to read #{count} results")
         while count > 0
+          Thread.pass
           remote_result = @blackboard.take_result
           next unless remote_result
           count -= 1
@@ -40,6 +42,8 @@ module DeepTest
           print remote_result.output if remote_result.output
           yield ::Test::Unit::TestCase::FINISHED, nil if block_given?
         end
+      ensure
+        DeepTest.logger.debug("SupervisedTestSuite: exiting with #{count} results left")
       end
     end
   end

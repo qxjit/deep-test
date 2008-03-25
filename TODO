@@ -3,5 +3,7 @@
 * Handle old versions of RSpec more gracefully
 * Be more intelligent about finding example location based on backtrace
    - custom methods that call it() fail on the second invocation
-* Log TupleSpace write error
+* Log blackboard write error
 * change befare(:all)/after(:all) to warn
+* change server hostname to localhost if not running distributed
+* Handle not getting all results make more gracefully

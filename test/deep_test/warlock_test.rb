@@ -18,4 +18,21 @@ unit_tests do
     Process.stubs(:kill).raises(Exception)
     assert_equal true, warlock.running?(:pid)
   end
+
+  test "demon_count is 0 initially" do
+    assert_equal 0, DeepTest::Warlock.new.demon_count
+  end
+
+  test "add_demon increases demon_count by 1" do
+    warlock = DeepTest::Warlock.new
+    warlock.send(:add_demon, "name", 1)
+    assert_equal 1, warlock.demon_count
+  end
+
+  test "remove_demon increases demon_count by 1" do
+    warlock = DeepTest::Warlock.new
+    warlock.send(:add_demon, "name", 1)
+    warlock.send(:remove_demon, "name", 1)
+    assert_equal 0, warlock.demon_count
+  end
 end

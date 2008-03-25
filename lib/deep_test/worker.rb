@@ -15,6 +15,10 @@ module DeepTest
         result = work_unit.run
         @listener.finished_work(self, work_unit, result)
         @blackboard.write_result result
+        if ENV['DEEP_TEST_SHOW_WORKER_DOTS'] == 'yes'
+          $stdout.print '.'
+          $stdout.flush
+        end
       end
     end
   end

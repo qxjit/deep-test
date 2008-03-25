@@ -14,6 +14,7 @@ class ThreadWorker
   def run
     @work_done = 0
     until @work_done >= @expected_work
+      Thread.pass
       work = @blackboard.take_work
       if work
         @blackboard.write_result work.run 

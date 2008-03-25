@@ -1,3 +1,6 @@
+require "socket"
+
+require File.dirname(__FILE__) + "/option"
 require File.dirname(__FILE__) + "/options"
 require File.dirname(__FILE__) + "/test_task"
 require File.dirname(__FILE__) + "/rspec_detector"

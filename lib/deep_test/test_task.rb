@@ -15,44 +15,20 @@ module DeepTest
       end
     end
 
-    def number_of_workers
-      @options.number_of_workers
-    end
+    Options::VALID_OPTIONS.each do |option|
+      eval <<-end_src
+        def #{option.name}
+          @options.#{option.name}
+        end
 
-    def number_of_workers=(num)
-      @options.number_of_workers = num
-    end
-
-    def pattern
-      @options.pattern
+        def #{option.name}=(value)
+          @options.#{option.name} = value
+        end
+      end_src
     end
 
     def pattern=(pattern)
       @options.pattern = Dir.pwd + "/" + pattern
-    end
-
-    def server_port=(port)
-      @options.server_port = port
-    end
-
-    def server_port
-      @options.server_port
-    end
-
-    def timeout_in_seconds=(seconds)
-      @options.timeout_in_seconds = seconds
-    end
-
-    def timeout_in_seconds
-      @options.timeout_in_seconds
-    end
-
-    def worker_listener=(listener)
-      @options.worker_listener = listener
-    end
-
-    def worker_listener
-      @options.worker_listener
     end
 
   private
