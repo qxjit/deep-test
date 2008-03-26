@@ -45,7 +45,7 @@ module Spec
     private
     
       DeepTestAllBlockWarning = 
-        "Warning: DeepTest will run before(:all) and after(:all) blocks for *every* test that is run.  To remove this warning either convert all before/after blocks to each blocks or set $show_deep_test_all_block_warning to false"
+        "Warning: DeepTest will run before(:all) and after(:all) blocks for *every* test that is run.  To remove this warning either convert all before/after blocks to each blocks or set $show_deep_test_all_block_warning to false" unless defined?(DeepTestAllBlockWarning)
       
       $show_deep_test_all_block_warning = true
 

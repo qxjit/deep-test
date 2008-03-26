@@ -29,9 +29,8 @@ module DeepTest
         examples = example_groups.map {|g| g.send(:examples_to_run)}.flatten
         examples_by_location = {}
         examples.each do |example|
-          file, line, *rest = example.implementation_backtrace.first.split(/:/)
-          examples_by_location["#{file}:#{line}"] = example
-          blackboard.write_work Spec::WorkUnit.new(file, line.to_i)
+          examples_by_location[example.identifier] = example
+          blackboard.write_work Spec::WorkUnit.new(example.identifier)
         end
 
         success = true
@@ -40,7 +39,7 @@ module DeepTest
           result = blackboard.take_result
           next unless result
           print result.output if result.output
-          example = examples_by_location.delete("#{result.file}:#{result.line}")
+          example = examples_by_location.delete(result.identifier)
           @options.reporter.example_finished(example, result.error)
           success &= result.success?
         end

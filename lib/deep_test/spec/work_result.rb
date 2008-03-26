@@ -1,17 +1,13 @@
 module DeepTest
   module Spec
     class WorkResult
-      attr_reader :file, :line, :example_description, :error, :output
-      def initialize(file, line, example_description, error, output)
-        @file, @line, @example_description, @error, @output = 
-         file,  line,  example_description,  error,  output
+      attr_reader :identifier, :error, :output
+      def initialize(identifier, error, output)
+        @identifier, @error, @output = identifier, error, output
       end
 
       def ==(other)
-                       file == other.file &&
-                       line == other.line &&
-        example_description == other.example_description &&
-                      error == other.error 
+        identifier == other.identifier && error == other.error 
       end
 
       def failed_due_to_deadlock?
@@ -23,7 +19,7 @@ module DeepTest
       end
 
       def deadlock_result
-        WorkResult.new(file, line, example_description, nil, '-deadlock-')
+        WorkResult.new(identifier, nil, '-deadlock-')
       end
     end
   end
