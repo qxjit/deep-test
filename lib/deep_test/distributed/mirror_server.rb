@@ -3,7 +3,7 @@ module DeepTest
     class MirrorServer
       DEFAULT_CONFIG = {
         :mirror_base_path => "/tmp",
-        :uri => "druby://#{Socket.gethostname}:8787",
+        :uri => "druby://#{Socket.gethostname}:4022",
         :number_of_workers => 2
       } unless defined?(DEFAULT_CONFIG)
 

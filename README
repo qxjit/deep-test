@@ -94,6 +94,10 @@ DeepTest::Database::SetupListener and create a new subclass for your database
 type.  If you do this, please consider contributing your subclass back to the
 project so that it can be included in later releases of DeepTest.
 
+=== Distributing Tests Across Multiple Machines
+
+DeepTest can run your tests in parallel while distributing them across
+multiple machines.
 
 == Contributors
 
@@ -103,7 +107,14 @@ project so that it can be included in later releases of DeepTest.
 * David[http://davidvollbracht.com/] Vollbracht[http://davidvollbracht.com/]
 * Scott Taylor
 
+=== RExpect Developers
+
+* John Carter
+* Merc
+* Zach Dennis
+
 == License
+
 DeepTest Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
 RExpect Released under the LGPL[http://www.gnu.org/licenses/lgpl.html]
 For the latest version fo RExpect, visit http://rubyforge.org/projects/rexpect/[http://rubyforge.org/projects/rexpect/]
