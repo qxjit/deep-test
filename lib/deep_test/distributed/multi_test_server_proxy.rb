@@ -1,8 +1,8 @@
 module DeepTest
   module Distributed
-    class MultiMirrorServerProxy
+    class MultiTestServerProxy
       def initialize(options, slaves)
-        DeepTest.logger.debug "MultiMirrorServerProxy#initialize #{slaves.length} slaves"
+        DeepTest.logger.debug "MultiTestServerProxy#initialize #{slaves.length} slaves"
         @slave_controller = DispatchController.new(options, slaves)
       end
 

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>DeepTest Server Status</title>
+    <title>DeepTest Test Server Status</title>
     <style>
       .ok {
         background-color: #AAFFAA;
@@ -13,7 +13,7 @@
     </style>
   </head>
   <body>
-    <h1>DeepTest Server Status</h1>
+    <h1>DeepTest Test Server Status</h1>
     <table>
       <tr>
         <th>Mirror Server</th>
@@ -21,7 +21,7 @@
         <th>Workers / Client</th>
         <th>Clients</th>
       </tr>
-      <% mirror_server_statuses.each do |uri, status|
+      <% test_server_statuses.each do |uri, status|
            if Exception === status %>
              <tr class="error">
                <td><%=h uri %></td>

@@ -1,6 +1,6 @@
 module DeepTest
   module Distributed
-    class MirrorServer
+    class TestServer
       DEFAULT_CONFIG = {
         :mirror_base_path => "/tmp",
         :uri => "druby://#{Socket.gethostname}:4022",
@@ -15,11 +15,11 @@ module DeepTest
         DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
         RemoteWorkerServer.start(options.sync_options[:source],
                                  options.mirror_path(@config[:mirror_base_path]),
-                                 MirrorServerWorkers.new(options, @config))
+                                 TestServerWorkers.new(options, @config))
       end
 
       def status
-        MirrorServerStatus.new(
+        TestServerStatus.new(
           DRb.uri, 
           @config[:number_of_workers],
           RemoteWorkerServer.running_server_count
@@ -38,16 +38,16 @@ module DeepTest
       end
 
       def self.start(config)
-        server = DeepTest::Distributed::MirrorServer.new(config)
+        server = DeepTest::Distributed::TestServer.new(config)
         DRb.start_service(config[:uri], server)
-        DeepTest.logger.info "MirrorServer listening at #{DRb.uri}"
+        DeepTest.logger.info "TestServer listening at #{DRb.uri}"
         DRb.thread.join
       end
 
       def self.parse_args(args)
-        options = DeepTest::Distributed::MirrorServer::DEFAULT_CONFIG.dup
+        options = DeepTest::Distributed::TestServer::DEFAULT_CONFIG.dup
         OptionParser.new do |opts|
-          opts.banner = "Usage: deep_test mirror_server [options]"
+          opts.banner = "Usage: deep_test test_server [options]"
 
           opts.on("--mirror_base_path PATH", "Absolute path to keep mirror working copies at") do |v|
             options[:mirror_base_path] = v
@@ -71,7 +71,7 @@ module DeepTest
 
       def self.connect(options)
         servers = DRbObject.new_with_uri(options.distributed_server).servers
-        MultiMirrorServerProxy.new(options, servers)
+        MultiTestServerProxy.new(options, servers)
       end
     end
   end

@@ -4,10 +4,10 @@ unit_tests do
   test "start_all starts workers on a new worker server" do
     client = DeepTest::Distributed::ThroughputWorkerClient.new(
       options = DeepTest::Options.new({}),
-      mirror_server = stub_everything
+      test_server = stub_everything
     )
 
-    mirror_server.expects(:spawn_worker_server).with(options).
+    test_server.expects(:spawn_worker_server).with(options).
       returns(worker_server = stub_everything)
 
     worker_server.expects(:start_all)
@@ -18,7 +18,7 @@ unit_tests do
     worker_server = stub_everything
     client = DeepTest::Distributed::ThroughputWorkerClient.new(
       DeepTest::Options.new({}),
-      mirror_server = stub_everything(:spawn_worker_server => worker_server)
+      test_server = stub_everything(:spawn_worker_server => worker_server)
     )
 
     client.start_all

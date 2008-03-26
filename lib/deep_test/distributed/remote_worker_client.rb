@@ -1,14 +1,14 @@
 module DeepTest
   module Distributed
     class RemoteWorkerClient
-      def initialize(options, mirror_server)
+      def initialize(options, test_server)
         @options = options
-        @mirror_server = mirror_server
+        @test_server = test_server
       end
 
       def load_files(filelist)
-        @mirror_server.sync(@options)
-        @worker_server = @mirror_server.spawn_worker_server(@options)
+        @test_server.sync(@options)
+        @worker_server = @test_server.spawn_worker_server(@options)
         t = Thread.new {@worker_server.load_files filelist}
         filelist.each {|f| load f}
         t.join

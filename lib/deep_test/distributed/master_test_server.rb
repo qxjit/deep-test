@@ -1,6 +1,6 @@
 module DeepTest
   module Distributed
-    class MasterMirrorServer
+    class MasterTestServer
       include ERB::Util
 
       STATUS_PORT = 4020 unless defined?(STATUS_PORT)
@@ -16,7 +16,7 @@ module DeepTest
         res.body = ERB.new(template).result(binding)
       end
 
-      def mirror_server_statuses
+      def test_server_statuses
         @servers.map do |s|
           status = begin
                      s.status
@@ -31,13 +31,13 @@ module DeepTest
       def self.start(uri, server_uris)
         master = start_drb(uri, server_uris)
         start_http(master)
-        DeepTest.logger.info "MasterMirrorServer listening at #{DRb.uri}"
+        DeepTest.logger.info "MasterTestServer listening at #{DRb.uri}"
         DRb.thread.join
       end
 
       def self.start_drb(uri, server_uris)
         servers = server_uris.map {|server_uri| DRbObject.new_with_uri server_uri}
-        master = DeepTest::Distributed::MasterMirrorServer.new(servers)
+        master = DeepTest::Distributed::MasterTestServer.new(servers)
         DRb.start_service(uri, master)
         master
       end

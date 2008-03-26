@@ -126,7 +126,7 @@ module DeepTest
 
     it "should create remote worker client when distributed server is specified" do
       options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"})
-      Distributed::MirrorServer.should_receive(:connect).with(options).and_return(:server_instance)
+      Distributed::TestServer.should_receive(:connect).with(options).and_return(:server_instance)
       Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance)
       options.new_workers
     end

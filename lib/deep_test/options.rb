@@ -78,7 +78,7 @@ module DeepTest
       if distributed_server.nil?
         LocalWorkers.new self
       else
-        server = Distributed::MirrorServer.connect(self)
+        server = Distributed::TestServer.connect(self)
         Distributed::RemoteWorkerClient.new(self, server)
       end
     end

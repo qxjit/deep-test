@@ -2,14 +2,14 @@ require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "show_status renders status of all servers as html" do
-    status = DeepTest::Distributed::MirrorServerStatus.new(
+    status = DeepTest::Distributed::TestServerStatus.new(
       "binding_uri", 
       5,
       3
     )
 
-    mirror_server = mock(:__drburi => "drburi_1", :status => status) 
-    server = DeepTest::Distributed::MasterMirrorServer.new([mirror_server])
+    test_server = mock(:__drburi => "drburi_1", :status => status) 
+    server = DeepTest::Distributed::MasterTestServer.new([test_server])
     res = WEBrick::HTTPResponse.new(WEBrick::Config::HTTP)
     server.show_status(:req, res)
 
@@ -19,10 +19,10 @@ unit_tests do
   end
 
   test "show_status display error message if exception occurs" do
-    mirror_server = mock(:__drburi => "drburi_1")
-    mirror_server.expects(:status).raises("An Error")
+    test_server = mock(:__drburi => "drburi_1")
+    test_server.expects(:status).raises("An Error")
 
-    server = DeepTest::Distributed::MasterMirrorServer.new([mirror_server])
+    server = DeepTest::Distributed::MasterTestServer.new([test_server])
 
     res = WEBrick::HTTPResponse.new(WEBrick::Config::HTTP)
     server.show_status(:req, res)

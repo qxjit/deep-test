@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../lib/deep_test"
 require 'drb/drb'
 require 'optparse'
 
-config = DeepTest::Distributed::MirrorServer.parse_args(ARGV)
+config = DeepTest::Distributed::TestServer.parse_args(ARGV)
 
 #
 # Clear args so they won't be processed in any forked processes.
@@ -12,7 +12,7 @@ config = DeepTest::Distributed::MirrorServer.parse_args(ARGV)
 ARGV.clear
 
 begin
-  DeepTest::Distributed::MirrorServer.start(config)
+  DeepTest::Distributed::TestServer.start(config)
 rescue Interrupt
   DeepTest.logger.info "Exiting due to Interrupt"
 end

@@ -9,7 +9,7 @@ test_count = ARGV[1].to_i
 
 options = DeepTest::Options.new(:distributed_server => uri,
                                 :sync_options => {:source => ""})
-server  = DeepTest::Distributed::MirrorServer.connect options
+server  = DeepTest::Distributed::TestServer.connect options
 workers = DeepTest::Distributed::ThroughputWorkerClient.new(options, server)
 runner  = DeepTest::Distributed::ThroughputRunner.new(options, test_count) do |result|
   $stdout.print "."

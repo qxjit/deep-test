@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../../test_helper"
 unit_tests do
   test "generates a local working copy path based on host and source of request" do
     Socket.stubs(:gethostname).returns("myhost", "serverhost")
-    server = DeepTest::Distributed::MirrorServer.new(:mirror_base_path => "/tmp")
+    server = DeepTest::Distributed::TestServer.new(:mirror_base_path => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
     DeepTest::Distributed::RSync.expects(:sync).with(options,
                                                      "/tmp/myhost_my_local_dir")
@@ -11,19 +11,19 @@ unit_tests do
   end
 
   test "mirror_base_path can be set from command line" do
-    config = DeepTest::Distributed::MirrorServer.parse_args(
+    config = DeepTest::Distributed::TestServer.parse_args(
       ['--mirror_base_path','path']
     )
     assert_equal 'path', config[:mirror_base_path]
   end
 
   test "uri can be set from command line" do
-    config = DeepTest::Distributed::MirrorServer.parse_args(['--uri','uri'])
+    config = DeepTest::Distributed::TestServer.parse_args(['--uri','uri'])
     assert_equal 'uri', config[:uri]
   end
 
   test "number_of_workers can be set from command line" do
-    config = DeepTest::Distributed::MirrorServer.parse_args(
+    config = DeepTest::Distributed::TestServer.parse_args(
       ['--number_of_workers','4']
     )
     assert_equal 4, config[:number_of_workers]
@@ -32,20 +32,20 @@ unit_tests do
   test "default number_of_workers is 2" do
     assert_equal(
       2, 
-      DeepTest::Distributed::MirrorServer::DEFAULT_CONFIG[:number_of_workers]
+      DeepTest::Distributed::TestServer::DEFAULT_CONFIG[:number_of_workers]
     )
   end
 
   test "uses default options for those not specified" do
-    config = DeepTest::Distributed::MirrorServer.parse_args([])
-    assert_equal DeepTest::Distributed::MirrorServer::DEFAULT_CONFIG, config
+    config = DeepTest::Distributed::TestServer.parse_args([])
+    assert_equal DeepTest::Distributed::TestServer::DEFAULT_CONFIG, config
   end
 
-  test "spawn_worker_server starts RemoteWorkerServer with MirrorServerWorkers" do
-    server = DeepTest::Distributed::MirrorServer.new(:number_of_workers => 4)
+  test "spawn_worker_server starts RemoteWorkerServer with TestServerWorkers" do
+    server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
 
     options = DeepTest::Options.new(:sync_options => {:source => ""})
-    DeepTest::Distributed::MirrorServerWorkers.expects(:new).with(
+    DeepTest::Distributed::TestServerWorkers.expects(:new).with(
       options,
       {:number_of_workers => 4}
     ).returns(:workers)
@@ -63,23 +63,23 @@ unit_tests do
     server.expects(:servers).returns([s1 = mock, s2 = mock])
     s1.expects(:sync)
     s2.expects(:sync)
-    DeepTest::Distributed::MirrorServer.connect(options).sync(options)
+    DeepTest::Distributed::TestServer.connect(options).sync(options)
   end
 
   test "status.binding_uri is the uri that DRb is bound to" do
-    server = DeepTest::Distributed::MirrorServer.new(:number_of_workers => 4)
+    server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
     DRb.expects(:uri).returns("druby://test")
     assert_equal "druby://test", server.status.binding_uri
   end
 
   test "status.number_of_workers in the configured number of workers" do
-    server = DeepTest::Distributed::MirrorServer.new(:number_of_workers => 4)
+    server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
     DRb.expects(:uri)
     assert_equal 4, server.status.number_of_workers
   end
 
   test "status.remote_worker_server_count is number of servers currently running" do
-    server = DeepTest::Distributed::MirrorServer.new(:number_of_workers => 4)
+    server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
     DRb.expects(:uri)
     DeepTest::Distributed::RemoteWorkerServer.expects(:running_server_count).
       returns(3)

@@ -4,10 +4,10 @@ unit_tests do
   test "load_files syncs the mirror" do
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       options = DeepTest::Options.new(:sync_options => {:source => "/tmp"}),
-      mirror_server = stub_everything(:spawn_worker_server => stub_everything)
+      test_server = stub_everything(:spawn_worker_server => stub_everything)
     )
 
-    mirror_server.expects(:sync).with(options)
+    test_server.expects(:sync).with(options)
     client.expects(:load)
     client.load_files ["filelist"]
   end
@@ -16,7 +16,7 @@ unit_tests do
     worker_server = stub_everything
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       DeepTest::Options.new(:sync_options => {:source => "/tmp"}),
-      mirror_server = stub_everything(:spawn_worker_server => worker_server)
+      test_server = stub_everything(:spawn_worker_server => worker_server)
     )
 
     worker_server.expects(:load_files).with(["filelist"])
@@ -28,7 +28,7 @@ unit_tests do
     worker_server = stub_everything
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       DeepTest::Options.new(:sync_options => {:source => "/tmp"}),
-      mirror_server = stub_everything(:spawn_worker_server => worker_server)
+      test_server = stub_everything(:spawn_worker_server => worker_server)
     )
 
     client.expects(:load).with("filelist")
@@ -38,10 +38,10 @@ unit_tests do
   test "start_all starts workers on worker server" do
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       options = DeepTest::Options.new(:sync_options => {:source => "/tmp"}),
-      mirror_server = stub_everything
+      test_server = stub_everything
     )
 
-    mirror_server.expects(:spawn_worker_server).with(options).
+    test_server.expects(:spawn_worker_server).with(options).
       returns(worker_server = stub_everything)
 
     client.expects(:load)
@@ -55,7 +55,7 @@ unit_tests do
     worker_server = stub_everything
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       DeepTest::Options.new(:sync_options => {:source => "/tmp"}),
-      mirror_server = stub_everything(:spawn_worker_server => worker_server)
+      test_server = stub_everything(:spawn_worker_server => worker_server)
     )
 
     client.expects(:load)

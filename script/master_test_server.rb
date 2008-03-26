@@ -4,7 +4,7 @@ require 'optparse'
 
 uri = "druby://#{Socket.gethostname}:4021"
 slave_uris = OptionParser.new do |opts|
-  opts.banner = "Usage: deep_test master_mirror_server [options] <mirror_server_uris>"
+  opts.banner = "Usage: deep_test master_test_server [options] <test_server_uris>"
 
   opts.on("--uri URI", "DRb URI to bind server to") do |v|
     uri = v
@@ -17,7 +17,7 @@ slave_uris = OptionParser.new do |opts|
 end.parse(ARGV)
 
 begin
-  DeepTest::Distributed::MasterMirrorServer.start(uri, slave_uris)
+  DeepTest::Distributed::MasterTestServer.start(uri, slave_uris)
 rescue Interrupt
   DeepTest.logger.info "Exiting due to Interrupt"
 end

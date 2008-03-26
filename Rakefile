@@ -64,19 +64,19 @@ end
 
 task :run_distributed do |t|
   begin
-    FileUtils.mkdir('/tmp/mirror_1') unless File.exist?('/tmp/mirror_1')
-    FileUtils.mkdir('/tmp/mirror_2') unless File.exist?('/tmp/mirror_2')
+    FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
+    FileUtils.mkdir('/tmp/test_2') unless File.exist?('/tmp/test_2')
 
-    mirror_1_pid = fork do
-      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
+    test_1_pid = fork do
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --mirror_base_path /tmp/test_1"
     end
 
-    mirror_2_pid = fork do
-      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8002 --mirror_base_path /tmp/mirror_2"
+    test_2_pid = fork do
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8002 --mirror_base_path /tmp/test_2"
     end
 
     master_pid = fork do
-      exec "ruby bin/deep_test master_mirror_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_test_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1
@@ -87,8 +87,8 @@ task :run_distributed do |t|
     sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
   ensure
     Process.kill('TERM', master_pid) if master_pid rescue nil
-    Process.kill('TERM', mirror_1_pid) if mirror_1_pid rescue nil
-    Process.kill('TERM', mirror_2_pid) if mirror_2_pid rescue nil
+    Process.kill('TERM', test_1_pid) if test_1_pid rescue nil
+    Process.kill('TERM', test_2_pid) if test_2_pid rescue nil
     Process.waitall
   end
 
@@ -97,16 +97,16 @@ end
 
 task :run_distributed_with_worker_down do |t|
   begin
-    FileUtils.mkdir('/tmp/mirror_1') unless File.exist?('/tmp/mirror_1')
+    FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
 
-    mirror_1_pid = fork do
-      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
+    test_1_pid = fork do
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --mirror_base_path /tmp/test_1"
     end
 
     # don't start worker 2
 
     master_pid = fork do
-      exec "ruby bin/deep_test master_mirror_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_test_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1
@@ -115,7 +115,7 @@ task :run_distributed_with_worker_down do |t|
     sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
   ensure
     Process.kill('TERM', master_pid) if master_pid rescue nil
-    Process.kill('TERM', mirror_1_pid) if mirror_1_pid rescue nil
+    Process.kill('TERM', test_1_pid) if test_1_pid rescue nil
     Process.waitall
   end
 end

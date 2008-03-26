@@ -5,7 +5,7 @@ unit_tests do
     server_1, server_2 = mock, mock
     options = DeepTest::Options.new({:ui => "DeepTest::UI::Null"})
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy.new(options, [server_1, server_2])
+    master = DeepTest::Distributed::MultiTestServerProxy.new(options, [server_1, server_2])
 
     server_1.expects(:sync).with(options)
     server_2.expects(:sync).with(options)
@@ -17,7 +17,7 @@ unit_tests do
     server_1, server_2 = mock, mock
     options = DeepTest::Options.new({:ui => "DeepTest::UI::Null"})
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy.new(options, [server_1, server_2])
+    master = DeepTest::Distributed::MultiTestServerProxy.new(options, [server_1, server_2])
 
     server_1.expects(:spawn_worker_server).with(options)
     server_2.expects(:spawn_worker_server).with(options)
@@ -30,9 +30,9 @@ unit_tests do
     server_2 = mock(:spawn_worker_server => :worker_server_2)
     options = DeepTest::Options.new({:ui => "DeepTest::UI::Null"})
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy.new(options, [server_1, server_2])
+    master = DeepTest::Distributed::MultiTestServerProxy.new(options, [server_1, server_2])
 
-    DeepTest::Distributed::MultiMirrorServerProxy::WorkerServerProxy.
+    DeepTest::Distributed::MultiTestServerProxy::WorkerServerProxy.
       expects(:new).with(options, [:worker_server_1, :worker_server_2])
 
     master.spawn_worker_server(options)
@@ -41,7 +41,7 @@ unit_tests do
   test "WorkerServerProxy dispatches start_all" do
     server_1, server_2 = mock, mock
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy::WorkerServerProxy.new(
+    master = DeepTest::Distributed::MultiTestServerProxy::WorkerServerProxy.new(
       DeepTest::Options.new({:ui => "DeepTest::UI::Null"}),
       [server_1, server_2]
     )
@@ -55,7 +55,7 @@ unit_tests do
   test "WorkerServerProxy dispatches stop_all" do
     server_1, server_2 = mock, mock
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy::WorkerServerProxy.new(
+    master = DeepTest::Distributed::MultiTestServerProxy::WorkerServerProxy.new(
       DeepTest::Options.new({:ui => "DeepTest::UI::Null"}),
       [server_1, server_2]
     )
@@ -69,7 +69,7 @@ unit_tests do
   test "WorkerServerProxy dispatches load_files" do
     server_1, server_2 = mock, mock
 
-    master = DeepTest::Distributed::MultiMirrorServerProxy::WorkerServerProxy.new(
+    master = DeepTest::Distributed::MultiTestServerProxy::WorkerServerProxy.new(
       DeepTest::Options.new({:ui => "DeepTest::UI::Null"}),
       [server_1, server_2]
     )
