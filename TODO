@@ -1,7 +1,5 @@
 * Graceful handling if workers fail to start.
 * test loader
 * Handle old versions of RSpec more gracefully
-* Be more intelligent about finding example location based on backtrace
-   - custom methods that call it() fail on the second invocation
 * Log blackboard write error
 * Handle not getting all results make more gracefully
