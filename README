@@ -96,8 +96,83 @@ project so that it can be included in later releases of DeepTest.
 
 === Distributing Tests Across Multiple Machines
 
-DeepTest can run your tests in parallel while distributing them across
-multiple machines.
+In addition to running your tests in parallel, DeepTest can also distribute
+them across multiple machines.  It does this by first mirroring the local
+working copy that launched to tests on each machine that will be running tests.
+Then workers are launched on each of the machines and consume tests in the same
+fashion as when DeepTest is running locally.
+
+==== Requirements
+
+Before you can distribute tests, you must ensure that all the machines involved
+(including the machine with the local working copy) have rsync installed for
+mirroring working copies.  Currently only rsync over ssh is supported, so you
+must also have ssh running on the local machine.  For more information about
+rsync, visit the rsync webpage:http://www.samba.org/rsync/.  DeepTest must also be installed as a
+gem on each test machine and available either as a gem or in your project on
+the local machine.
+
+==== Starting a Test Server
+
+On each test machine, execute the following:
+  > deep_test test_server
+
+This will launch a server providing mirroring and worker services.  By default,
+2 workers will be launched for each set of tests run.  If you wish to change
+the number of workers, simply specify the --number_of_workers option.  For
+information about what options are available, use -h.  The test_server will
+print out the uri it is bound to, druby://<hostname>:4022 by default.
+
+==== Starting a Master Test Server
+
+On a single machine (probably one of the test machines), execute this:
+  > deep_test master_test_server <uris of test servers>
+
+The master_test_server will also print it's binding uri,
+druby://<hostname>:4021 by default.  It will also provide a webserver bound
+to port 4020 that provides a status page summarizing the state of all the
+test servers. 
+
+==== Configuring Your Project
+
+In your Rakefile, create a DeepTest test task to distribute the tests to the
+servers:
+
+  DeepTest::TestTask.new "deep_test_distributed" do |t|
+    t.pattern = "test/**/*_test.rb" # whatever is appropriate for your project
+    t.distributed_server = <drb uri of master_test_server>
+    t.sync_options = {
+      :source => <absolute path of project root on machine>,
+      :username => "username",
+      :password => "password",
+    }
+  end
+
+The :source entry in sync_options can be easily calculated based on the
+value of \_\_FILE__ when defining the task.  :username and :password will be
+used by rsync to ssh back to the local machine and mirror the working copy.
+
+There may be other options you'd like to pass to rsync in your particular
+scenario.  This can be done by adding an :rsync_options entry to sync_options.
+For example, if you're working on a rails project you'll probably want to at
+least have something like this:
+
+  DeepTest::TestTask.new "deep_test_distributed" do |t|
+    ...
+    excludes = %w[.svn tmp/** log/**]
+    t.sync_options = {
+      ...
+      :rsync_options => excludes.map {|s| "'--exclude=#{s}'"}.join(' ')
+    }
+  end
+
+That way you can avoid spending any time mirroring tmp and log files that don't
+have any effect on the tests.  If you are running distributed tests against a
+database, consult the section above about creating a new database for each
+worker to see how to configure DeepTest for your project.  
+
+Any number of projects can be run using the same test servers, as long as
+they're all using the same version of Ruby and DeepTest.  
 
 == Contributors
 
@@ -116,5 +191,6 @@ multiple machines.
 == License
 
 DeepTest Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
-RExpect Released under the LGPL[http://www.gnu.org/licenses/lgpl.html]
-For the latest version fo RExpect, visit http://rubyforge.org/projects/rexpect/[http://rubyforge.org/projects/rexpect/]
+
+RExpect Released under the LGPL[http://www.gnu.org/licenses/lgpl.html].
+For the latest version fo RExpect, visit the RExpect[http://rubyforge.org/projects/rexpect/] Project[http://rubyforge.org/projects/rexpect/] Page[http://rubyforge.org/projects/rexpect/]
