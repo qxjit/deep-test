@@ -1,0 +1,13 @@
+script_dir = File.dirname(__FILE__) + "/../script"
+
+if ARGV.length == 0
+  puts "Usage: deep_test <script> [arguments]"
+  puts "  Available Scripts: "
+  Dir.glob(script_dir + "/*.rb").each do |name|
+    puts "    #{File.basename(name, '.rb')}"
+  end
+  exit(1)
+end
+
+script = ARGV.shift
+load script_dir  + "/#{script}.rb"

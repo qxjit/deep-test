@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../lib/deep_test'
 
 unless ARGV.length == 2
-  puts "Usage: test_throughput.rb <server uri> <test_count>"
+  puts "Usage: deep_test test_throughput <server uri> <test_count>"
 end
 
 uri        = ARGV[0]

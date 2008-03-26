@@ -68,15 +68,15 @@ task :run_distributed do |t|
     FileUtils.mkdir('/tmp/mirror_2') unless File.exist?('/tmp/mirror_2')
 
     mirror_1_pid = fork do
-      exec "ruby script/mirror_server.rb --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
+      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
     end
 
     mirror_2_pid = fork do
-      exec "ruby script/mirror_server.rb --uri druby://localhost:8002 --mirror_base_path /tmp/mirror_2"
+      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8002 --mirror_base_path /tmp/mirror_2"
     end
 
     master_pid = fork do
-      exec "ruby script/master_mirror_server.rb --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_mirror_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1
@@ -84,7 +84,7 @@ task :run_distributed do |t|
     Rake::Task[:distributed_test].invoke
     Rake::Task[:distributed_spec].invoke
 
-    sh "ruby script/test_throughput.rb druby://localhost:8000 20"
+    sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
   ensure
     Process.kill('TERM', master_pid) if master_pid rescue nil
     Process.kill('TERM', mirror_1_pid) if mirror_1_pid rescue nil
@@ -100,19 +100,19 @@ task :run_distributed_with_worker_down do |t|
     FileUtils.mkdir('/tmp/mirror_1') unless File.exist?('/tmp/mirror_1')
 
     mirror_1_pid = fork do
-      exec "ruby script/mirror_server.rb --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
+      exec "ruby bin/deep_test mirror_server --uri druby://localhost:8001 --mirror_base_path /tmp/mirror_1"
     end
 
     # don't start worker 2
 
     master_pid = fork do
-      exec "ruby script/master_mirror_server.rb --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_mirror_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1
 
     # Use throughput to make sure we can run tests
-    sh "ruby script/test_throughput.rb druby://localhost:8000 20"
+    sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
   ensure
     Process.kill('TERM', master_pid) if master_pid rescue nil
     Process.kill('TERM', mirror_1_pid) if mirror_1_pid rescue nil
@@ -169,6 +169,7 @@ specification = Gem::Specification.new do |s|
 	s.email = "daniel.manges@gmail.com"
   s.homepage = "http://deep-test.rubyforge.org"
   s.rubyforge_project = "deep-test"
+  s.executables << "deep_test"
 
   s.has_rdoc = true
   s.extra_rdoc_files = ['README', 'CHANGELOG']

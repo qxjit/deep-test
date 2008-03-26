@@ -4,7 +4,7 @@ require 'optparse'
 
 uri = "druby://#{Socket.gethostname}:8000"
 slave_uris = OptionParser.new do |opts|
-  opts.banner = "Usage: master_mirror_server.rb [options] <mirror_server_uris>"
+  opts.banner = "Usage: deep_test master_mirror_server [options] <mirror_server_uris>"
 
   opts.on("--uri URI", "DRb URI to bind server to") do |v|
     uri = v

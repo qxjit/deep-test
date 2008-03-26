@@ -47,7 +47,7 @@ module DeepTest
       def self.parse_args(args)
         options = DeepTest::Distributed::MirrorServer::DEFAULT_CONFIG.dup
         OptionParser.new do |opts|
-          opts.banner = "Usage: mirror_server.rb [options]"
+          opts.banner = "Usage: deep_test mirror_server [options]"
 
           opts.on("--mirror_base_path PATH", "Absolute path to keep mirror working copies at") do |v|
             options[:mirror_base_path] = v
