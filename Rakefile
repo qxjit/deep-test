@@ -68,11 +68,11 @@ task :run_distributed do |t|
     FileUtils.mkdir('/tmp/test_2') unless File.exist?('/tmp/test_2')
 
     test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --mirror_base_path /tmp/test_1"
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --work_dir /tmp/test_1"
     end
 
     test_2_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8002 --mirror_base_path /tmp/test_2"
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8002 --work_dir /tmp/test_2"
     end
 
     master_pid = fork do
@@ -100,7 +100,7 @@ task :run_distributed_with_worker_down do |t|
     FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
 
     test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --mirror_base_path /tmp/test_1"
+      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --work_dir /tmp/test_1"
     end
 
     # don't start worker 2

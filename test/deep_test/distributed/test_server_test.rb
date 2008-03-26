@@ -3,18 +3,18 @@ require File.dirname(__FILE__) + "/../../test_helper"
 unit_tests do
   test "generates a local working copy path based on host and source of request" do
     Socket.stubs(:gethostname).returns("myhost", "serverhost")
-    server = DeepTest::Distributed::TestServer.new(:mirror_base_path => "/tmp")
+    server = DeepTest::Distributed::TestServer.new(:work_dir => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
     DeepTest::Distributed::RSync.expects(:sync).with(options,
                                                      "/tmp/myhost_my_local_dir")
     server.sync(options)
   end
 
-  test "mirror_base_path can be set from command line" do
+  test "work_dir can be set from command line" do
     config = DeepTest::Distributed::TestServer.parse_args(
-      ['--mirror_base_path','path']
+      ['--work_dir','path']
     )
-    assert_equal 'path', config[:mirror_base_path]
+    assert_equal 'path', config[:work_dir]
   end
 
   test "uri can be set from command line" do

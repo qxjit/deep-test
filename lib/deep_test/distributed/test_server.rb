@@ -2,7 +2,7 @@ module DeepTest
   module Distributed
     class TestServer
       DEFAULT_CONFIG = {
-        :mirror_base_path => "/tmp",
+        :work_dir => "/tmp",
         :uri => "druby://#{Socket.gethostname}:4022",
         :number_of_workers => 2
       } unless defined?(DEFAULT_CONFIG)
@@ -14,7 +14,7 @@ module DeepTest
       def spawn_worker_server(options)
         DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
         RemoteWorkerServer.start(options.sync_options[:source],
-                                 options.mirror_path(@config[:mirror_base_path]),
+                                 options.mirror_path(@config[:work_dir]),
                                  TestServerWorkers.new(options, @config))
       end
 
@@ -28,7 +28,7 @@ module DeepTest
 
       def sync(options)
         DeepTest.logger.debug "mirror sync for #{options.origin_hostname}"
-        path = options.mirror_path(@config[:mirror_base_path])
+        path = options.mirror_path(@config[:work_dir])
         DeepTest.logger.debug "Syncing #{options.sync_options[:source]} to #{path}"
         RSync.sync(options, path)
       end
@@ -49,8 +49,8 @@ module DeepTest
         OptionParser.new do |opts|
           opts.banner = "Usage: deep_test test_server [options]"
 
-          opts.on("--mirror_base_path PATH", "Absolute path to keep mirror working copies at") do |v|
-            options[:mirror_base_path] = v
+          opts.on("--work_dir PATH", "Absolute path to keep mirror working copies at") do |v|
+            options[:work_dir] = v
           end
 
           opts.on("--uri URI", "DRb URI to bind server to") do |v|
