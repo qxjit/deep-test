@@ -4,5 +4,4 @@
 * Be more intelligent about finding example location based on backtrace
    - custom methods that call it() fail on the second invocation
 * Log blackboard write error
-* change befare(:all)/after(:all) to warn
 * Handle not getting all results make more gracefully

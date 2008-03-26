@@ -12,8 +12,6 @@ module Spec
         
         private :assign_instance_method_to_constant
       end
-      
-      class BeforeAfterAllNotSupportedByDeepTestError < StandardError; end
 
       assign_instance_method_to_constant :PREPEND_BEFORE
       assign_instance_method_to_constant :APPEND_BEFORE
@@ -46,8 +44,16 @@ module Spec
 
     private
     
+      DeepTestAllBlockWarning = 
+        "Warning: DeepTest will run before(:all) and after(:all) blocks for *every* test that is run.  To remove this warning either convert all before/after blocks to each blocks or set $show_deep_test_all_block_warning to false"
+      
+      $show_deep_test_all_block_warning = true
+
       def check_filter_args(args)
-        raise BeforeAfterAllNotSupportedByDeepTestError if args.first == :all
+        if args.first == :all && $show_deep_test_all_block_warning
+          $show_deep_test_all_block_warning = false
+          $stderr.puts DeepTestAllBlockWarning 
+        end
       end
     
       def call_regular_instance_method(sym, *args, &block)

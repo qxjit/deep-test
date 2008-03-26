@@ -8,6 +8,14 @@ module DeepTest
     ensure
       $stdout = old_stdout if old_stdout
     end
+
+    def capture_stderr
+      old_stderr, $stderr = $stderr, StringIO.new
+      yield
+      $stderr.string
+    ensure
+      $stderr = old_stderr if old_stderr
+    end
     
     def retrying(description = nil, times = 5)
       i = 0
