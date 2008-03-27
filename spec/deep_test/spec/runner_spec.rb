@@ -9,7 +9,7 @@ module DeepTest
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)
 
-        Class.new(::Spec::Example::ExampleGroup) do
+        describe("test") do
           it("passes1") {}
           it("passes2") {}
         end
@@ -31,7 +31,7 @@ module DeepTest
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)
 
-        Class.new(::Spec::Example::ExampleGroup) do
+        describe("test") do
           it("passes") {}; 
           it("fails") {1.should == 2}; 
         end
@@ -47,7 +47,7 @@ module DeepTest
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)
 
-        Class.new(::Spec::Example::ExampleGroup) do
+        describe("test") do
           it("pending") {pending {1.should == 2}}; 
         end
 
@@ -62,7 +62,7 @@ module DeepTest
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)
 
-        Class.new(::Spec::Example::ExampleGroup) do
+        describe("test") do
           it("pending") {pending {1.should == 1}}; 
         end
 

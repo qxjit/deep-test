@@ -4,7 +4,7 @@ describe Spec::Runner::Options do
   it_should_behave_like "sandboxed rspec_options"
 
   it "should be able to run a single passing example" do
-    example_group = Class.new(Spec::Example::ExampleGroup) do
+    example_group = describe("test") do
       it("passes") {1.should == 1}
       it("fails") {1.should == 2} 
     end
@@ -13,7 +13,7 @@ describe Spec::Runner::Options do
   end 
 
   it "should be able to run a single failing example" do
-    example_group = Class.new(Spec::Example::ExampleGroup) do
+    example_group = describe("test") do
       it("passes") {1.should == 1}
       it("fails") {1.should == 2}
     end

@@ -6,7 +6,7 @@ module Spec
       it_should_behave_like "sandboxed rspec_options"
 
       it "should have identifier that can locate the example by line" do
-        group = Class.new(Spec::Example::ExampleGroup) do
+        group = describe("test") do
           it("example") {}
           it("example") {}
         end
@@ -19,7 +19,7 @@ module Spec
       end
 
       it "should have identifier that can locate the example by name" do
-        group = Class.new(Spec::Example::ExampleGroup) do
+        group = describe("test") do
           2.times do |i|
             it("example#{i}") {}
           end

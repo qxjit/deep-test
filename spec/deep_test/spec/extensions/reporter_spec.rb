@@ -4,7 +4,7 @@ describe Spec::Runner::Reporter do
   it_should_behave_like "sandboxed rspec_options"
 
   it "should be able to handle a failure without having any example groups" do
-    example_group = Class.new(Spec::Example::ExampleGroup) do
+    example_group = describe("test") do
       it("example") {}
     end
     example = example_group.examples.first
@@ -15,7 +15,7 @@ describe Spec::Runner::Reporter do
   end
 
   it "should be able to handle a pending example without having any example groups" do
-    example_group = Class.new(Spec::Example::ExampleGroup) do
+    example_group = describe("test") do
       it("example") {pending}
     end
     example = example_group.examples.first
