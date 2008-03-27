@@ -3,6 +3,7 @@ module DeepTest
     def initialize
       @demons_semaphore = Mutex.new
       @demons = []
+      @reapers = []
     end
 
     def start(name, &block)
@@ -19,8 +20,13 @@ module DeepTest
             #
             @demons_semaphore.unlock
 
-            Signal.trap("HUP") { exit 0 }
-            yield
+            begin
+              yield
+            rescue Exception => e
+              DeepTest.logger.debug "Exception in #{name} (#{Process.pid}): #{e.message}"
+              raise
+            end
+
             exit
           end
 
@@ -51,11 +57,13 @@ module DeepTest
       receivers.reverse.each do |demon|
         name, pid = demon
         if running?(pid)
-          DeepTest.logger.debug("Sending SIGHUP to #{name}, #{pid}")
-          Process.kill("HUP", pid)
-          Thread.pass
+          DeepTest.logger.debug("Sending SIGKILL to #{name}, #{pid}")
+          Process.kill("KILL", pid)
         end
       end
+
+      DeepTest.logger.debug("waiting for reapers")
+      @reapers.each {|r| r.join}
     end
 
     def exit_when_none_running
@@ -106,8 +114,9 @@ module DeepTest
 
 
     def launch_reaper_thread(name, pid)
-      Thread.new do
+      @reapers << Thread.new do
         Process.detach(pid).join
+        DeepTest.logger.debug("#{name} (#{pid}) reaped")
         @demons_semaphore.synchronize do
           remove_demon name, pid
         end
