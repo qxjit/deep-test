@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../lib/deep_test"
+require File.dirname(__FILE__) + "/../../lib/deep_test"
 options = DeepTest::Options.from_command_line(ARGV[0])
 runner = DeepTest::Test::Runner.new(options)
 workers = options.new_workers

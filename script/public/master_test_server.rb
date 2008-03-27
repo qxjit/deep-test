@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../lib/deep_test"
+require File.dirname(__FILE__) + "/../../lib/deep_test"
 require 'drb/drb'
 require 'optparse'
 

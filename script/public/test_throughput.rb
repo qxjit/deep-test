@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../lib/deep_test'
+require File.dirname(__FILE__) + '/../../lib/deep_test'
 
 unless ARGV.length == 2
   puts "Usage: deep_test test_throughput <server uri> <test_count>"

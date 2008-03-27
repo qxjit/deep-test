@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 
-script_dir = File.dirname(__FILE__) + '/../script'
+script_dir = File.dirname(__FILE__) + '/../script/public'
 script_file = script_dir + "/#{ARGV.shift}.rb"
 
 unless File.exist?(script_file)
