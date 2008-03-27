@@ -8,14 +8,13 @@ module DeepTest
       @options = options
       @runner = runner
       @workers = workers
-      @warlock = Warlock.new
     end
     
     def run(exit_when_done = true)
       passed = false
 
       begin
-        start_server
+        Server.start(@options)
         @options.new_listener_list.before_starting_workers
         @workers.start_all
         begin
@@ -34,26 +33,10 @@ module DeepTest
         end
       ensure
         DeepTest.logger.debug "ProcessOrchestrator: Stopping Server"
-        @warlock.stop_all
+        Server.stop
       end
 
       Kernel.exit(passed ? 0 : 1) if exit_when_done
-    end
-
-    def start_server
-      server_ready = false
-      previous_trap = Signal.trap('USR2') {server_ready = true}
-
-      pid = Process.pid
-      @warlock.start("server") do
-        DeepTest::Server.start(@options) do
-          Process.kill('USR2', pid)
-        end
-      end
-
-      Thread.pass until server_ready
-    ensure
-      Signal.trap('USR2', previous_trap)
     end
   end
 end

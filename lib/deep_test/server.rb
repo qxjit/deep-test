@@ -3,8 +3,10 @@ module DeepTest
     def self.start(options)
       DRb.start_service("druby://0.0.0.0:#{options.server_port}", new(options))
       DeepTest.logger.info "Started DeepTest service at #{DRb.uri}"
-      yield if block_given?
-      DRb.thread.join
+    end
+
+    def self.stop
+      DRb.stop_service
     end
 
     def self.connect(options)
