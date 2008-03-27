@@ -106,11 +106,12 @@ fashion as when DeepTest is running locally.
 
 Before you can distribute tests, you must ensure that all the machines involved
 (including the machine with the local working copy) have rsync installed for
-mirroring working copies.  Currently only rsync over ssh is supported, so you
-must also have ssh running on the local machine.  For more information about
-rsync, visit the rsync webpage:http://www.samba.org/rsync/.  DeepTest must also be installed as a
-gem on each test machine and available either as a gem or in your project on
-the local machine.
+mirroring working copies.  You must also have either SSH or an RSync daemon
+exposing your local working copy running on the local development machine.  For
+more information about rsync, visit the rsync
+webpage[http://www.samba.org/rsync/].  DeepTest must also be installed as a gem
+on each test machine and available either as a gem or in your project on the
+local machine.
 
 ==== Starting a Test Server
 
@@ -135,8 +136,8 @@ test servers.
 
 ==== Configuring Your Project
 
-In your Rakefile, create a DeepTest test task to distribute the tests to the
-servers:
+If you're using rsync over ssh, create a DeepTest test task similar to that
+below in your Rakefile.
 
   DeepTest::TestTask.new "deep_test_distributed" do |t|
     t.pattern = "test/**/*_test.rb" # whatever is appropriate for your project
@@ -151,6 +152,25 @@ servers:
 The :source entry in sync_options can be easily calculated based on the
 value of \_\_FILE__ when defining the task.  :username and :password will be
 used by rsync to ssh back to the local machine and mirror the working copy.
+
+If you have an rsync daemon running in your local machine, configure the
+rake task as follows.
+
+  DeepTest::TestTask.new "deep_test_distributed" do |t|
+    t.pattern = "test/**/*_test.rb" # whatever is appropriate for your project
+    t.distributed_server = <drb uri of master_test_server>
+    t.sync_options = {
+      :source => <name of rsync module from daemon configuration>,
+      :daemon => true,
+      :username => "username",
+      :password => "password",
+    }
+  end
+
+
+Username and password are optional in both cases.  If you've set up
+passwordless ssh or your rsync daemon doesn't require authentication, you can
+leave one or both out as appropriate.
 
 There may be other options you'd like to pass to rsync in your particular
 scenario.  This can be done by adding an :rsync_options entry to sync_options.
