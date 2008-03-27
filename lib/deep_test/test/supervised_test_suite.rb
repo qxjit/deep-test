@@ -32,14 +32,9 @@ module DeepTest
 
       def read_results(result, count)
         DeepTest.logger.debug("SupervisedTestSuite: going to read #{count} results")
-        while count > 0
-          Thread.pass
-          remote_result = @blackboard.take_result
-          next unless remote_result
-          count -= 1
+
+        ResultReader.new(@blackboard).read(count) do |remote_result|
           remote_result.add_to result
-          # TODO: is this the right place for this next line? -Dan
-          print remote_result.output if remote_result.output
           yield ::Test::Unit::TestCase::FINISHED, nil if block_given?
         end
       ensure

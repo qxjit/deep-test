@@ -72,32 +72,6 @@ module DeepTest
         end
         worker.wait_until_done
       end
-
-      it "should prints that was produced by specs" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
-
-        Class.new(::Spec::Example::ExampleGroup) do
-          it("prints") {puts "hello"}; 
-        end
-
-        worker = ThreadWorker.new(blackboard, 1)
-        class <<runner
-          def print(string)
-            output << string
-          end
-
-          def output
-            @output ||= ""
-          end
-        end
-        Timeout.timeout(5) do
-          runner.process_work_units
-        end
-        worker.wait_until_done
-        runner.output.should == "hello\n"
-      end
-
     end
   end
 end

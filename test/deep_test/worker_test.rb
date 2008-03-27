@@ -52,6 +52,18 @@ unit_tests do
     worker.run
   end
 
+  test "exception raised by work unit gives in Worker::Error" do
+    blackboard = DeepTest::SimpleTestBlackboard.new
+    work_unit = mock
+    work_unit.expects(:run).raises(exception = RuntimeError.new)
+    blackboard.write_work work_unit
+
+    DeepTest::Worker.new(0, blackboard, stub_everything).run
+    
+    assert_equal DeepTest::Worker::Error.new(work_unit, exception),
+                 blackboard.take_result
+  end
+
   test "number is available to indentify worker" do
     assert_equal 1, DeepTest::Worker.new(1, nil, nil).number
   end

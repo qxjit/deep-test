@@ -18,6 +18,10 @@ module DeepTest
         $rspec_options = original_options
       end
 
+      def to_s
+        "#{@identifier.group_description}: #{@identifier.description}"
+      end
+
       protected
 
       def run_without_deadlock_protection

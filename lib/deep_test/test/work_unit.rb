@@ -21,6 +21,10 @@ module DeepTest
         @test_case == other.instance_variable_get(:@test_case)
       end
 
+      def to_s
+        @test_case.to_s
+      end
+
       protected
 
       def run_without_deadlock_protection

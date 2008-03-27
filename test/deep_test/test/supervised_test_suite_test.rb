@@ -54,31 +54,6 @@ unit_tests do
     assert_equal true, yielded.include?([::Test::Unit::TestCase::FINISHED, nil])
   end
 
-  test "prints output if any" do
-    test_case_class = Class.new(Test::Unit::TestCase) do
-      test("1") {puts "hello"}
-    end
-
-    blackboard = DeepTest::SimpleTestBlackboard.new
-    supervised_suite = DeepTest::Test::SupervisedTestSuite.new(test_case_class.suite, blackboard)
-
-    worker = ThreadWorker.new(blackboard, 1)
-    class <<supervised_suite
-      def print(string)
-        output << string
-      end
-
-      def output
-        @output ||= ""
-      end
-    end
-    Timeout.timeout(5) do
-      supervised_suite.run(stub_everything) {}
-    end
-    worker.wait_until_done
-    assert_equal "hello\n", supervised_suite.output
-  end
-
   test "has same size as underlying suite" do
     suite = Test::Unit::TestSuite.new("name")
     suite << "test"

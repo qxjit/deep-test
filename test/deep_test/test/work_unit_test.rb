@@ -41,4 +41,9 @@ unit_tests do
     assert_not_equal DeepTest::Test::WorkUnit.new(test_case_1),
                      DeepTest::Test::WorkUnit.new(test_case_2)
   end
+
+  test "to_s is delegated to test case" do
+    test_case = TestFactory.passing_test
+    assert_equal test_case.to_s, DeepTest::Test::WorkUnit.new(test_case).to_s
+  end
 end

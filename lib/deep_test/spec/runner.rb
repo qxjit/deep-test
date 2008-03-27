@@ -34,12 +34,9 @@ module DeepTest
         end
 
         success = true
-        until examples_by_location.empty?
-          Thread.pass
-          result = blackboard.take_result
-          next unless result
-          print result.output if result.output
-          example = examples_by_location.delete(result.identifier)
+
+        ResultReader.new(blackboard).read(examples_by_location.size) do |result|
+          example = examples_by_location[result.identifier]
           @options.reporter.example_finished(example, result.error)
           success &= result.success?
         end
