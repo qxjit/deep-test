@@ -39,6 +39,16 @@ unit_tests do
     assert_equal "host:source", args.source_location
   end
 
+  test "separates host and source with double colon if using daemon" do
+    Socket.stubs(:gethostname).returns("host", "server_host")
+    options = DeepTest::Options.new(
+      :sync_options => {:source => "source", :daemon => true}
+    )
+    args = DeepTest::Distributed::RSync::Args.new(options)
+
+    assert_equal "host::source", args.source_location
+  end
+
   test "includes username in source_location if specified" do
     Socket.stubs(:gethostname).returns("host", "server_host")
     options = DeepTest::Options.new(:sync_options => {:source => "source", 

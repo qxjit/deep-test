@@ -5,9 +5,8 @@ module DeepTest
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 
-      def initialize(source_path, mirror_path, workers)
-        @source_path = source_path
-        @mirror_path = mirror_path
+      def initialize(base_path, workers)
+        @base_path = base_path
         @workers = workers
       end
 
@@ -19,9 +18,10 @@ module DeepTest
       end
 
       def load_files(files)
-        Dir.chdir @mirror_path
+        Dir.chdir @base_path
+        resolver = FilenameResolver.new(@base_path)
         files.each do |file|
-          load file.sub(/^#{@source_path}/, @mirror_path)
+          load resolver.resolve(file)
         end
       end
 
@@ -50,13 +50,13 @@ module DeepTest
         @warlock.stop_all if @warlock
       end
 
-      def self.start(source_path, mirror_path, workers, grace_period = MERCY_KILLING_GRACE_PERIOD)
+      def self.start(base_path, workers, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
         warlock.start("RemoteWorkerServer") do
           innie.close
 
-          server = new(source_path, mirror_path, workers)
+          server = new(base_path, workers)
 
           DRb.start_service(nil, server)
           DeepTest.logger.info "RemoteWorkerServer started at #{DRb.uri}"

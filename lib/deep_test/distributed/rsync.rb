@@ -28,7 +28,8 @@ module DeepTest
           source = ""
           unless @sync_options[:local]
             source << @sync_options[:username] << '@' if @sync_options[:username]
-            source << @options.origin_hostname << ':' 
+            source << @options.origin_hostname
+            source << (@sync_options[:daemon] ? '::' : ':')
           end
           source << @sync_options[:source]
         end

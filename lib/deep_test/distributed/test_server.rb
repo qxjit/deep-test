@@ -13,8 +13,7 @@ module DeepTest
 
       def spawn_worker_server(options)
         DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
-        RemoteWorkerServer.start(options.sync_options[:source],
-                                 options.mirror_path(@config[:work_dir]),
+        RemoteWorkerServer.start(options.mirror_path(@config[:work_dir]),
                                  TestServerWorkers.new(options, @config))
       end
 
