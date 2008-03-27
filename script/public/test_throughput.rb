@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../../lib/deep_test'
 
 unless ARGV.length == 2
   puts "Usage: deep_test test_throughput <server uri> <test_count>"
+  exit(1)
 end
 
 uri        = ARGV[0]
