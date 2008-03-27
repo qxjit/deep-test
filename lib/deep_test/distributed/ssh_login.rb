@@ -22,7 +22,7 @@ module DeepTest
         RExpect.spawn(command) do |rexpect|  
           login password, rexpect
         end
-      rescue Errno::ECHILD
+        $?.nil? ? false : $?.success?
       end
     end
   end

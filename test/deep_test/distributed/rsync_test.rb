@@ -6,7 +6,7 @@ unit_tests do
                                                       :local => true})
 
     DeepTest::Distributed::RSync.expects(:system).
-       with("rsync -az --delete source/ destination")
+       with("rsync -az --delete source/ destination").returns(true)
 
     DeepTest::Distributed::RSync.sync(options, "destination")
   end
@@ -17,9 +17,31 @@ unit_tests do
                                                       :password => "the_password"})
 
     DeepTest::Distributed::SSHLogin.expects(:system).
-       with("the_password", "rsync -az --delete host:source/ destination")
+       with("the_password", "rsync -az --delete host:source/ destination").returns(true)
 
     DeepTest::Distributed::RSync.sync(options, "destination")
+  end
+
+  test "raises error if sync fails" do
+    DeepTest::Distributed::RSync.expects(:system).returns(false)
+
+    assert_raises(RuntimeError) do
+      DeepTest::Distributed::RSync.sync(
+        DeepTest::Options.new(:sync_options => {:source => "a", :local => true}),
+        "destination"
+      )
+    end
+  end
+
+  test "raises error if ssh login fails" do
+    DeepTest::Distributed::SSHLogin.expects(:system).returns(false)
+
+    assert_raises(RuntimeError) do
+      DeepTest::Distributed::RSync.sync(
+        DeepTest::Options.new(:sync_options => {:source => "a", :local => false}),
+        "destination"
+      )
+    end
   end
 
   test "include rsync_options in command" do

@@ -59,8 +59,18 @@ unit_tests do
     DeepTest::Distributed::SSHLogin.system("password", "command")
   end
 
-  test "system Errno::ECHILD " do
-    RExpect.expects(:spawn).raises(Errno::ECHILD)
-    DeepTest::Distributed::SSHLogin.system("password", "command")
+  test "system returns true if command was successful" do
+    RExpect.expects(:spawn).with("command")
+    $?.expects(:nil?).returns(false)
+    $?.expects(:success?).returns(true)
+    assert_equal true,
+                 DeepTest::Distributed::SSHLogin.system("password", "command")
+  end
+
+  test "system returns false if no status is available" do
+    RExpect.expects(:spawn).with("command")
+    $?.expects(:nil?).returns(true)
+    assert_equal false,
+                 DeepTest::Distributed::SSHLogin.system("password", "command")
   end
 end
