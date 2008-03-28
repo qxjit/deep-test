@@ -29,6 +29,7 @@ module DeepTest
         examples = example_groups.map {|g| g.send(:examples_to_run)}.flatten
         examples_by_location = {}
         examples.each do |example|
+          raise "duplicate example: #{example.identifier}" if examples_by_location[example.identifier]
           examples_by_location[example.identifier] = example
           blackboard.write_work Spec::WorkUnit.new(example.identifier)
         end

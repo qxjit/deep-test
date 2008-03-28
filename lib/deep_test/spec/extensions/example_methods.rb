@@ -35,6 +35,10 @@ module Spec
             end
           end
         end
+
+        def to_s
+          "#{group_description} #{description}"
+        end
       end
     end
   end

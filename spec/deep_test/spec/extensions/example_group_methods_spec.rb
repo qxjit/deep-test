@@ -23,7 +23,7 @@ module Spec
           out.should == ExampleGroupMethods::DeepTestAllBlockWarning + "\n"
         end
 
-        it "should not print warning if global setting is turned off" do
+        it "#{rspec_method}(:all) should not print warning if global setting is turned off" do
           $show_deep_test_all_block_warning = false
           
           out = capture_stderr do

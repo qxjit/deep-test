@@ -72,6 +72,19 @@ module DeepTest
         end
         worker.wait_until_done
       end
+
+      it "should raise error if duplicate spec is found" do
+        blackboard = SimpleTestBlackboard.new
+        runner = Runner.new(options, Options.new({}), blackboard)
+
+        describe("test") do
+          2.times {it("example") {}}; 
+        end
+
+        lambda {
+          runner.process_work_units
+        }.should raise_error
+      end
     end
   end
 end

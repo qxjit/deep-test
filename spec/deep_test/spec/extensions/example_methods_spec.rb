@@ -31,6 +31,16 @@ module Spec
         example_1.identifier.locate([group]).should == example_1
         example_2.identifier.locate([group]).should == example_2
       end
+
+      describe ExampleMethods::Identifier do
+        it "should use descriptions in to_s" do
+          group = describe("test") do
+            it("example") {}
+          end
+
+          group.examples.first.identifier.to_s.should == "test example"
+        end
+      end
     end
   end
 end
