@@ -67,7 +67,7 @@ unit_tests do
 
   test "after timeout, no further calls are sent to that receiver" do
     receiver_1, receiver_2 = mock(:__drburi => ""), mock
-    receiver_1.expects(:method_call_1).raises(Timeout::Error)
+    receiver_1.expects(:method_call_1).raises(Timeout::Error.new("message"))
     receiver_1.expects(:method_call_2).never
 
     receiver_2.expects(:method_call_1)

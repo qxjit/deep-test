@@ -16,9 +16,13 @@ module DeepTest
         @demons_semaphore.synchronize do 
           pid = DeepTest.drb_safe_fork do
             # Fork leaves the semaphore locked and we'll never make it
-            # to end of synchronize block
+            # to end of synchronize block.
             #
-            @demons_semaphore.unlock
+            # The Ruby 1.8.6 C mutex implementation automatically treats
+            # a mutex locked by a dead thread as unlocked and will raise
+            # an error if we try to unlock it from this thread.
+            #
+            @demons_semaphore.unlock if @demons_semaphore.locked?
 
             begin
               yield
