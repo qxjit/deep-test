@@ -132,11 +132,8 @@ task :failing_test do
   end
 end
 
-task :test_rails_project do
-  Dir.chdir('sample_rails_project') do |path|
-    system "rake test:units"
-    system "rake deep_test"
-  end
+Rake::TestTask.new(:test_rails_project) do |t|
+  t.pattern = "sample_rails_project/deep_test.rb"
 end
 
 desc "Generate documentation"
