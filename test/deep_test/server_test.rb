@@ -30,4 +30,14 @@ unit_tests do
     Thread.new {sleep 0.1; server.write_result :too_late}
     assert_raises(Timeout::Error) {server.take_result}
   end
+
+  test "write_work returns nil" do
+    server = DeepTest::Server.new(DeepTest::Options.new({}))
+    assert_equal nil, server.write_work(:a)
+  end
+
+  test "write_result returns nil" do
+    server = DeepTest::Server.new(DeepTest::Options.new({}))
+    assert_equal nil, server.write_result(:a)
+  end
 end

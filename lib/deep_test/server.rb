@@ -36,10 +36,12 @@ module DeepTest
 
     def write_result(result)
       @result_queue.push result
+      nil
     end
 
     def write_work(work_unit)
       @work_queue.push work_unit
+      nil
     end
   end
 end
