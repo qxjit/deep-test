@@ -69,7 +69,7 @@ describe DeepTest::Spec::WorkUnit do
 
   it "should provide useful description as string" do
     group = describe("my example") do
-      it("passes") {example_run_count += 1; raise "Error"}
+      it("passes") {}
     end
     work_unit = DeepTest::Spec::WorkUnit.new(group.examples.first.identifier)
 
