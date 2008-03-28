@@ -1,4 +1,14 @@
-* 1.1.4 (March 11, 2008)
+1.2.0 (March 28, 2008)
+
+* Added capability to run distributed
+* Changed to use straight DRb instead of Rinda (performance)
+* Changed error raised on before/after(:all) to warning
+* Added worker listener to setup mysql database for each worker
+* Run test server in same process
+* Check rspec version when loading rspec support
+* Add support for multiple worker listeners
+
+1.1.4 (March 11, 2008)
 
 * Fixed 2 RSpec pending example bugs
 * Fixed setting spec_opts with DeepTest bug
@@ -6,21 +16,21 @@
 * Added server_port to configuration options
 * Wait for signal from server indicating it is ready on startup
 
-* 1.1.3 (March 10, 2008)
+1.1.3 (March 10, 2008)
 
 * Added Support for RSpec
 * Added DeepTest::TestTask#timeout_in_seconds to configure Rinda IO timeouts
 * Added worker_listener to configuration options
 
-* 1.1.2 (February 9, 2008)
+1.1.2 (February 9, 2008)
 
 * Fix bug with run_test_suite script not exiting with correct exit code.
 
-* 1.1.1 (February 9, 2008)
+1.1.1 (February 9, 2008)
 
 * No longer fork from Rake process.
 
-* 1.1.0 (December 23, 2007)
+1.1.0 (December 23, 2007)
 
 * DeepTest::TestTask#processes= is now DeepTest::TestTask#number_of_workers=
 * No longer depend on the Daemons gem, use DeepTest::Warlock instead.
