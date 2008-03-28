@@ -38,11 +38,11 @@ module DeepTest
       # this method and grant them.
       #
       def grant_privileges(connection)
-        sql = ActiveRecord::Base.send(:sanitize_sql, [
-          %{grant all on #{worker_database}.* 
-            to :username@'localhost' identified by :password;}, 
-          worker_database_config
-        ])
+        sql = %{grant all on #{worker_database}.* 
+            to %s@'localhost' identified by %s;} % [
+          connection.quote(worker_database_config[:username]),
+          connection.quote(worker_database_config[:password])
+        ]
         connection.execute sql
       end
 
