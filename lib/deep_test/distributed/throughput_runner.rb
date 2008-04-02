@@ -9,7 +9,7 @@ module DeepTest
       end
 
       def blackboard
-        @blackboard ||= Server.connect(@options)
+        @blackboard ||= @options.server
       end
 
       def statistics

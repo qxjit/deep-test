@@ -34,6 +34,7 @@ module Spec
               return example if example.identifier == self
             end
           end
+          raise "Unable to locate example #{self}"
         end
 
         def to_s

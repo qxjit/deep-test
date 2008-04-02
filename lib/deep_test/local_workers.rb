@@ -9,13 +9,17 @@ module DeepTest
       files.each {|f| load f}
     end
 
+    def server
+      @options.server
+    end
+
     def start_all
       each_worker do |worker_num|
         start_worker(worker_num) do
           reseed_random_numbers
           reconnect_to_database
           worker = DeepTest::Worker.new(worker_num,
-                                        Server.connect(@options), 
+                                        server, 
                                         @options.new_listener_list)
           worker.run
         end

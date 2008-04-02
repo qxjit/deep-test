@@ -12,7 +12,7 @@ module DeepTest
         # Can't create blackboard as default argument to initialize
         # because ProcessOrchestrator hasn't been invoked at 
         # instantiation time
-        @blackboard ||= Server.connect(@deep_test_options)
+        @blackboard ||= @deep_test_options.server
       end
 
       def load_files(files)

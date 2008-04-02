@@ -156,5 +156,11 @@ module DeepTest
         options.mirror_path("base")
       }.should raise_error("No source directory specified in sync_options")
     end
+
+    it "should create drb object to connect to server" do
+      options = DeepTest::Options.new({})
+      server = options.server
+      server.__drburi.should == "druby://#{options.origin_hostname}:#{options.server_port}"
+    end
   end
 end

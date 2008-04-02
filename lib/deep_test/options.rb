@@ -83,6 +83,10 @@ module DeepTest
       end
     end
 
+    def server
+      Server.remote_reference(origin_hostname, server_port)
+    end
+
     protected
 
     def check_option_keys(hash)

@@ -43,11 +43,14 @@ unit_tests do
 
   test "spawn_worker_server starts RemoteWorkerServer with TestServerWorkers" do
     server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
-
     options = DeepTest::Options.new(:sync_options => {:source => ""})
+    DeepTest::Distributed::DRbClientConnectionInfo.expects(:new).
+      returns(:connection_info)
+
     DeepTest::Distributed::TestServerWorkers.expects(:new).with(
       options,
-      {:number_of_workers => 4}
+      {:number_of_workers => 4},
+      :connection_info
     ).returns(:workers)
   
     DeepTest::Distributed::RemoteWorkerServer.expects(:start).with(

@@ -9,9 +9,9 @@ module DeepTest
       DRb.stop_service
     end
 
-    def self.connect(options)
+    def self.remote_reference(address, port)
       DRb.start_service
-      blackboard = DRbObject.new_with_uri("druby://#{options.origin_hostname}:#{options.server_port}")
+      blackboard = DRbObject.new_with_uri("druby://#{address}:#{port}")
       DeepTest.logger.debug "Connecting to DeepTest server at #{blackboard.__drburi}"
       blackboard
     end
