@@ -18,10 +18,10 @@ module Spec
         end
 
         def eql?(other)
-                       file == other.file && 
-                       line == other.line &&
-          group_description == other.group_description &&
-                description == other.description
+          File.basename(file) == File.basename(other.file) && 
+                         line == other.line &&
+            group_description == other.group_description &&
+                  description == other.description
         end
 
         def hash

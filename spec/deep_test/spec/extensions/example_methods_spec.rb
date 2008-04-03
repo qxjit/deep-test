@@ -41,16 +41,18 @@ module Spec
           group.examples.first.identifier.to_s.should == "test example"
         end
 
-        it "should be equal if one path looks like the end of another" do
-          id1 = ExampleMethods::Identifier.new("/a/b/spec/my/spec.rb",
+        it "should be equal if basenames of paths are equal" do
+          id1 = ExampleMethods::Identifier.new("/a/spec.rb",
                                                10,
                                                "group description",
                                                "description")
                                                
-          id2 = ExampleMethods::Identifier.new("/a/b/spec/my/spec.rb",
+          id2 = ExampleMethods::Identifier.new("/b/spec.rb",
                                                10,
                                                "group description",
                                                "description")
+
+          id1.should == id2
         end
       end
     end
