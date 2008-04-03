@@ -2,10 +2,14 @@ require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "generates a local working copy path based on host and source of request" do
+    DeepTest::Distributed::DRbClientConnectionInfo.expects(:new).
+      returns(:connection_info)
+
     Socket.stubs(:gethostname).returns("myhost", "serverhost")
     server = DeepTest::Distributed::TestServer.new(:work_dir => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
-    DeepTest::Distributed::RSync.expects(:sync).with(options,
+    DeepTest::Distributed::RSync.expects(:sync).with(:connection_info,
+                                                     options,
                                                      "/tmp/myhost_my_local_dir")
     server.sync(options)
   end
@@ -42,19 +46,18 @@ unit_tests do
   end
 
   test "spawn_worker_server starts RemoteWorkerServer with TestServerWorkers" do
-    server = DeepTest::Distributed::TestServer.new(:number_of_workers => 4)
+    config = {:number_of_workers => 4, :uri => "druby://localhost:4022"}
+    server = DeepTest::Distributed::TestServer.new(config)
     options = DeepTest::Options.new(:sync_options => {:source => ""})
     DeepTest::Distributed::DRbClientConnectionInfo.expects(:new).
       returns(:connection_info)
 
     DeepTest::Distributed::TestServerWorkers.expects(:new).with(
-      options,
-      {:number_of_workers => 4},
-      :connection_info
+      options, config, :connection_info
     ).returns(:workers)
   
     DeepTest::Distributed::RemoteWorkerServer.expects(:start).with(
-      anything, :workers
+      "localhost", anything, :workers
     )
 
     server.spawn_worker_server(options)

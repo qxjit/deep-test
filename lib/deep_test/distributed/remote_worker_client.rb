@@ -7,6 +7,7 @@ module DeepTest
       end
 
       def load_files(filelist)
+        @options.new_listener_list.before_sync
         @test_server.sync(@options)
         @worker_server = @test_server.spawn_worker_server(@options)
         t = Thread.new {@worker_server.load_files filelist}

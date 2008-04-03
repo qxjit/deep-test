@@ -13,7 +13,8 @@ module DeepTest
 
       def spawn_worker_server(options)
         DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
-        RemoteWorkerServer.start(options.mirror_path(@config[:work_dir]),
+        RemoteWorkerServer.start(URI.parse(@config[:uri]).host,
+                                 options.mirror_path(@config[:work_dir]),
                                  TestServerWorkers.new(options, @config, DRbClientConnectionInfo.new))
       end
 
@@ -29,7 +30,7 @@ module DeepTest
         DeepTest.logger.debug "mirror sync for #{options.origin_hostname}"
         path = options.mirror_path(@config[:work_dir])
         DeepTest.logger.debug "Syncing #{options.sync_options[:source]} to #{path}"
-        RSync.sync(options, path)
+        RSync.sync(DRbClientConnectionInfo.new, options, path)
       end
 
       def servers

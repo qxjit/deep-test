@@ -1,6 +1,9 @@
 module DeepTest
   class TestTask
+    attr_accessor :requires
+
     def initialize(name = :deep_test)
+      @requires = []
       @name = name
       @options = Options.new({})
       self.pattern = "test/**/*_test.rb"
@@ -11,7 +14,8 @@ module DeepTest
     def define
       desc "Run '#{@name}' suite using DeepTest"
       task @name do
-        ruby "#{runner} '#{@options.to_command_line}'"
+        require_options = requires.map {|f| "-r#{f}"}.join(" ")
+        ruby "#{require_options} #{runner} '#{@options.to_command_line}'"
       end
     end
 

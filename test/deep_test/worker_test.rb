@@ -64,6 +64,30 @@ unit_tests do
                  blackboard.take_result
   end
 
+  test "requests work until it finds some" do
+    blackboard = mock
+    blackboard.expects(:take_work).times(3).
+      raises(DeepTest::Server::NoWorkUnitsAvailableError).
+      returns(work_unit = mock(:run => nil)).
+      returns(nil)
+
+    blackboard.expects(:write_result)
+
+    DeepTest::Worker.new(0, blackboard, stub_everything).run
+  end
+
+  test "times out requesting work" do
+    blackboard = mock
+    blackboard.expects(:take_work).times(3).
+      raises(DeepTest::Server::NoWorkUnitsAvailableError).
+      returns(work_unit = mock(:run => nil)).
+      returns(nil)
+
+    blackboard.expects(:write_result)
+
+    DeepTest::Worker.new(0, blackboard, stub_everything).run
+  end
+
   test "number is available to indentify worker" do
     assert_equal 1, DeepTest::Worker.new(1, nil, nil).number
   end

@@ -3,6 +3,13 @@ module DeepTest
   # Listener that implements no-ops for all callbacks that DeepTest supports.
   #
   class NullWorkerListener
+    #
+    # Before DeepTest synchronizes any code during a distributed run,
+    # before_sync is called.  If DeepTest is not running distributed,
+    # before_sync is never called.
+    # 
+    def before_sync
+    end
 
     #
     # Before DeepTest starts any workers, it instantiates a listener and

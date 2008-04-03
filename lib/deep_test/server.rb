@@ -29,8 +29,12 @@ module DeepTest
     end
 
     def take_work
-      Timeout.timeout(@options.timeout_in_seconds) do
-        @work_queue.pop
+      @work_queue.pop(true)
+    rescue ThreadError => e
+      if e.message == "queue empty"
+        raise NoWorkUnitsAvailableError
+      else
+        raise
       end
     end
 
@@ -43,5 +47,7 @@ module DeepTest
       @work_queue.push work_unit
       nil
     end
+
+    class NoWorkUnitsAvailableError < StandardError; end
   end
 end

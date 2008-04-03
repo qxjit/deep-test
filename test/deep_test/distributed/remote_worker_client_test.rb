@@ -1,6 +1,19 @@
 require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
+  test "load_files broadcasts before_sync" do
+    class FakeListener; end
+    client = DeepTest::Distributed::RemoteWorkerClient.new(
+      options = DeepTest::Options.new(:worker_listener => FakeListener,
+                                      :sync_options => {:source => "/tmp"}),
+      test_server = stub_everything(:spawn_worker_server => stub_everything)
+    )
+    FakeListener.any_instance.expects(:before_sync)
+    client.expects(:load)
+    client.load_files ["filelist"]
+
+  end
+
   test "load_files syncs the mirror" do
     client = DeepTest::Distributed::RemoteWorkerClient.new(
       options = DeepTest::Options.new(:sync_options => {:source => "/tmp"}),

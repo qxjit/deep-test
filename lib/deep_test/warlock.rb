@@ -61,8 +61,8 @@ module DeepTest
       receivers.reverse.each do |demon|
         name, pid = demon
         if running?(pid)
-          DeepTest.logger.debug("Sending SIGKILL to #{name}, #{pid}")
-          Process.kill("KILL", pid)
+          DeepTest.logger.debug("Sending SIGTERM to #{name}, #{pid}")
+          Process.kill("TERM", pid)
         end
       end
 

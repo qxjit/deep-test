@@ -10,7 +10,7 @@ module DeepTest
 
     def run
       @listener.starting(self)
-      while work_unit = @blackboard.take_work
+      while work_unit = next_work_unit
         @listener.starting_work(self, work_unit)
 
         result = begin
@@ -26,6 +26,13 @@ module DeepTest
           $stdout.flush
         end
       end
+    end
+
+    def next_work_unit
+      @blackboard.take_work
+    rescue Server::NoWorkUnitsAvailableError
+      sleep 0.02
+      retry
     end
 
     class Error

@@ -7,14 +7,29 @@ module DeepTest
     # setup strategies for particular database flavors.
     #
     class SetupListener < NullWorkerListener
+      DUMPED_SCHEMAS = [] unless defined?(DUMPED_SCHEMAS)
+
+      def before_sync # :nodoc:
+        dump_schema_once
+      end
+
       def before_starting_workers # :nodoc:
-        dump_schema
+        dump_schema_once
+      end
+
+      def dump_schema_once # :nodoc:
+        schema_name = master_database_config[:database]
+        dump_schema unless DUMPED_SCHEMAS.include?(schema_name)
+        DUMPED_SCHEMAS << schema_name
       end
 
       def starting(worker) # :nodoc:
         @worker = worker
 
-        at_exit {drop_database}
+        at_exit do
+          DeepTest.logger.debug("dropping database #{worker_database}")
+          drop_database
+        end
         drop_database
         create_database
 

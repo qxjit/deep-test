@@ -32,6 +32,7 @@ unit_tests do
     begin
       DeepTest.logger.level = Logger::ERROR
       DeepTest::Distributed::RemoteWorkerServer.start(
+        "localhost",                                              
         "", 
         stub_everything,
         0.25
@@ -55,6 +56,7 @@ unit_tests do
       server = nil
       capture_stdout do
         server = DeepTest::Distributed::RemoteWorkerServer.start(
+          Socket.gethostname,
           "", 
           stub_everything,
           0.25
@@ -64,6 +66,28 @@ unit_tests do
       # Have to sleep long enough to warlock to reap dead process
       sleep 1.0
       assert_equal 1, DeepTest::Distributed::RemoteWorkerServer.running_server_count
+    ensure
+      begin
+        DeepTest::Distributed::RemoteWorkerServer.stop_all
+      ensure
+        DeepTest.logger.level = log_level
+      end
+    end
+  end
+
+  test "service binds to address passed in" do
+    log_level = DeepTest.logger.level
+    begin
+      DeepTest.logger.level = Logger::ERROR
+      server = nil
+      capture_stdout do
+        server = DeepTest::Distributed::RemoteWorkerServer.start(
+          "localhost",
+          "", 
+          stub_everything
+        )
+      end
+      assert_equal "localhost", URI.parse(server.__drburi).host
     ensure
       begin
         DeepTest::Distributed::RemoteWorkerServer.stop_all
