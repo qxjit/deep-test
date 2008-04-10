@@ -6,7 +6,9 @@ module DeepTest
       def initialize
         info = Thread.current['DRb']
         raise "No DRb client found" unless info && info['client']
-        @address = info['client'].peeraddr[2]
+        peeraddr = info['client'].peeraddr
+        DeepTest.logger.debug("DRbClientConnection info: #{peeraddr.inspect}")
+        @address = peeraddr[3]
       end
     end
   end

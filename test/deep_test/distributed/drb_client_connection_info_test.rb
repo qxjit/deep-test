@@ -5,7 +5,7 @@ unit_tests do
     info = Thread.current['DRb']
     begin
       Thread.current['DRb'] = {
-        'client' => mock(:peeraddr => [nil, nil, "ip", nil])
+        'client' => mock(:peeraddr => [nil, nil, nil, "ip"])
       }
 
       info = DeepTest::Distributed::DRbClientConnectionInfo.new
