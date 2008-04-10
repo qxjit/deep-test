@@ -52,7 +52,7 @@ module DeepTest
         @warlock.stop_all if @warlock
       end
 
-      def self.start(base_path, workers, grace_period = MERCY_KILLING_GRACE_PERIOD)
+      def self.start(address, base_path, workers, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
         warlock.start("RemoteWorkerServer") do
@@ -60,7 +60,7 @@ module DeepTest
 
           server = new(base_path, workers)
 
-          DRb.start_service(nil, server)
+          DRb.start_service("drubyall://#{address}:0", server)
           DeepTest.logger.info "RemoteWorkerServer started at #{DRb.uri}"
 
           outie.write DRb.uri

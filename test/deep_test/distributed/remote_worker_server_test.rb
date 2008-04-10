@@ -54,6 +54,7 @@ unit_tests do
     begin
       DeepTest.logger.level = Logger::ERROR
       DeepTest::Distributed::RemoteWorkerServer.start(
+        "localhost",                                              
         "base_path",
         stub_everything,
         0.25
@@ -77,6 +78,7 @@ unit_tests do
       server = nil
       capture_stdout do
         server = DeepTest::Distributed::RemoteWorkerServer.start(
+          Socket.gethostname,
           "", 
           stub_everything,
           0.25
