@@ -7,6 +7,10 @@ module DeepTest
       end
 
       def dispatch(method_name, *args)
+        dispatch_with_options(method_name, {}, *args)
+      end
+
+      def dispatch_with_options(method_name, options, *args)
         raise NoDispatchReceiversError if @receivers.empty?
 
         @options.ui_instance.dispatch_starting(method_name)
@@ -29,7 +33,9 @@ module DeepTest
             DeepTest.logger.error "Timeout dispatching #{method_name} to #{t[:receiver].__drburi}"
           rescue DRb::DRbConnError
             @receivers.delete t[:receiver]
-            DeepTest.logger.error "Connection Refused dispatching #{method_name} to #{t[:receiver].__drburi}"
+            unless options[:ignore_connection_error]
+              DeepTest.logger.error "Connection Refused dispatching #{method_name} to #{t[:receiver].__drburi}"
+            end
           end
         end
 

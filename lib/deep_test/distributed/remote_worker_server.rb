@@ -31,7 +31,9 @@ module DeepTest
       end
 
       def stop_all
-        @workers.stop_all
+        Thread.new do
+          @workers.stop_all
+        end
       end
 
       def workers_started?

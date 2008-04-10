@@ -66,6 +66,20 @@ unit_tests do
     master.stop_all
   end
 
+  test "WorkerServerProxy stop_all ignores connection errors" do
+    server_1 = mock
+
+    master = DeepTest::Distributed::MultiTestServerProxy::WorkerServerProxy.new(
+      DeepTest::Options.new({:ui => "DeepTest::UI::Null"}),
+      [server_1]
+    )
+
+    server_1.expects(:__drburi).never
+    server_1.expects(:stop_all).raises(DRb::DRbConnError)
+
+    master.stop_all
+  end
+
   test "WorkerServerProxy dispatches load_files" do
     server_1, server_2 = mock, mock
 

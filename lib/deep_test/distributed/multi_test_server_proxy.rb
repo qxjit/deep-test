@@ -36,7 +36,7 @@ module DeepTest
 
         def stop_all
           DeepTest.logger.debug "dispatch stop_all"
-          @slave_controller.dispatch(:stop_all)
+          @slave_controller.dispatch_with_options(:stop_all, :ignore_connection_error => true)
         end
       end
     end

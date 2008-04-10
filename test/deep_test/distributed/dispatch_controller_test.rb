@@ -104,6 +104,20 @@ unit_tests do
     controller.dispatch(:method_call_2)
   end
 
+  test "no error is printed if dispatching without error" do
+    receiver_1 =  mock
+    receiver_1.expects(:method_call_1).raises(DRb::DRbConnError)
+
+    controller = DeepTest::Distributed::DispatchController.new(
+      DeepTest::Options.new({:ui => "DeepTest::UI::Null", :timeout_in_seconds => 0.05}),
+      [receiver_1]
+    )
+
+    DeepTest.logger.expects(:error).never
+
+    controller.dispatch_with_options(:method_call_1, :ignore_connection_error => true)
+  end
+
   test "dispatch calls notifies ui of start and stop of dispatch" do
     options = DeepTest::Options.new({:ui => "DeepTest::UI::Null"})
     controller = DeepTest::Distributed::DispatchController.new(

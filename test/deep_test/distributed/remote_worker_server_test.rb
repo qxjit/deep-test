@@ -12,6 +12,28 @@ unit_tests do
     implementation.expects(:stop_all)
     server.stop_all
   end
+
+  test "stop_all returns without waiting for stops" do
+    implementation = Object.new.instance_eval do
+      def done?
+        @done == true
+      end
+
+      def stop_all
+        sleep 0.01
+        @done = true
+      end
+      self
+    end
+
+    server = DeepTest::Distributed::RemoteWorkerServer.new("", implementation)
+    server.stop_all
+    assert_equal false, implementation.done?
+
+    until implementation.done?
+      sleep 0.01
+    end
+  end
   
   test "load_files loads each file in list, resolving each filename with resolver" do
     DeepTest::Distributed::FilenameResolver.expects(:new).with("/mirror/dir").
