@@ -3,7 +3,7 @@ module DeepTest
     class TestServer
       DEFAULT_CONFIG = {
         :work_dir => "/tmp",
-        :uri => "druby://#{Socket.gethostname}:4022",
+        :uri => "druby://:4022",
         :number_of_workers => 2
       } unless defined?(DEFAULT_CONFIG)
 
@@ -13,8 +13,7 @@ module DeepTest
 
       def spawn_worker_server(options)
         DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
-        RemoteWorkerServer.start(URI.parse(@config[:uri]).host,
-                                 options.mirror_path(@config[:work_dir]),
+        RemoteWorkerServer.start(options.mirror_path(@config[:work_dir]),
                                  TestServerWorkers.new(options, @config, DRbClientConnectionInfo.new))
       end
 
