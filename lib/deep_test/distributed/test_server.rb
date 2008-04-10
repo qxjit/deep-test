@@ -3,7 +3,7 @@ module DeepTest
     class TestServer
       DEFAULT_CONFIG = {
         :work_dir => "/tmp",
-        :uri => "druby://:4022",
+        :uri => "drubyall://:4022",
         :number_of_workers => 2
       } unless defined?(DEFAULT_CONFIG)
 

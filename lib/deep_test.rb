@@ -32,6 +32,7 @@ RExpect.logger = Logger.new($stdout)
 RExpect.logger.level = Logger::ERROR
 
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
+require File.dirname(__FILE__) + "/deep_test/extensions/drb_extension"
 
 require File.dirname(__FILE__) + "/deep_test/deadlock_detector"
 require File.dirname(__FILE__) + "/deep_test/local_workers"

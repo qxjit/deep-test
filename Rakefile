@@ -68,15 +68,15 @@ task :run_distributed do |t|
     FileUtils.mkdir('/tmp/test_2') unless File.exist?('/tmp/test_2')
 
     test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --work_dir /tmp/test_1"
+      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8001 --work_dir /tmp/test_1"
     end
 
     test_2_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8002 --work_dir /tmp/test_2"
+      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8002 --work_dir /tmp/test_2"
     end
 
     master_pid = fork do
-      exec "ruby bin/deep_test master_test_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_test_server --uri drubyall://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1
@@ -100,13 +100,13 @@ task :run_distributed_with_worker_down do |t|
     FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
 
     test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri druby://localhost:8001 --work_dir /tmp/test_1"
+      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8001 --work_dir /tmp/test_1"
     end
 
     # don't start worker 2
 
     master_pid = fork do
-      exec "ruby bin/deep_test master_test_server --uri druby://localhost:8000 druby://localhost:8001 druby://localhost:8002"
+      exec "ruby bin/deep_test master_test_server --uri drubyall://localhost:8000 druby://localhost:8001 druby://localhost:8002"
     end
 
     sleep 1

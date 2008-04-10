@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../lib/deep_test"
 require 'drb/drb'
 require 'optparse'
 
-uri = "druby://:4021"
+uri = "drubyall://:4021"
 slave_uris = OptionParser.new do |opts|
   opts.banner = "Usage: deep_test master_test_server [options] <test_server_uris>"
 
