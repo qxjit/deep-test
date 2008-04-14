@@ -4,6 +4,7 @@ module DeepTest
       VALID_OPTIONS = [
         Option.new(:distributed_server, Option::String, nil),
         Option.new(:number_of_workers,  Option::Integer, 2),
+        Option.new(:metrics_file,       Option::String, nil),
         Option.new(:pattern,            Option::String, nil),
         Option.new(:server_port,        Option::Integer, 6969),
         Option.new(:sync_options,       Option::Hash, {}),
@@ -37,6 +38,10 @@ module DeepTest
       VALID_OPTIONS.each do |option|
         send("#{option.name}=", hash[option.name] || option.default)
       end
+    end
+
+    def gathering_metrics?
+      !@metrics_file.nil?
     end
 
     def new_listener_list

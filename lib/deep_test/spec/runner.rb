@@ -4,6 +4,7 @@ module DeepTest
       def initialize(options, deep_test_options, blackboard = nil)
         super(options)
         @deep_test_options = DeepTest::Options.from_command_line(deep_test_options)
+        DeepTest.init(@deep_test_options)
         @blackboard = blackboard
         @workers = @deep_test_options.new_workers
       end

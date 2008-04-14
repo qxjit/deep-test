@@ -16,6 +16,7 @@ end
 DeepTest::TestTask.new :deep_test do |t|
   t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
+  t.metrics_file = "deep_test.metrics"
 end
 
 DeepTest::TestTask.new(:distributed_test) do |t|

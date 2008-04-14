@@ -12,6 +12,7 @@ module DeepTest
       options.timeout_in_seconds.should == 30
       options.server_port.should == 6969
       options.pattern.should == nil
+      options.metrics_file.should == nil
     end
 
     it "should support timeout_in_seconds" do
@@ -161,6 +162,16 @@ module DeepTest
       options = DeepTest::Options.new({})
       server = options.server
       server.__drburi.should == "druby://#{options.origin_hostname}:#{options.server_port}"
+    end
+
+    it "should be gathering metrics if metrics file is set" do
+      options = DeepTest::Options.new(:metrics_file => "filename")
+      options.should be_gathering_metrics
+    end
+
+    it "should not be gathering metrics if metrics file is not set" do
+      options = DeepTest::Options.new({})
+      options.should_not be_gathering_metrics
     end
   end
 end

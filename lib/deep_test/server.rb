@@ -20,6 +20,18 @@ module DeepTest
       @options = options
       @work_queue = Queue.new
       @result_queue = Queue.new
+
+      if Metrics::Gatherer.enabled?
+        require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
+        @work_queue.extend Metrics::QueueLockWaitTimeMeasurement
+        @result_queue.extend Metrics::QueueLockWaitTimeMeasurement
+        Metrics::Gatherer.section("server queue lock wait times") do |s|
+          s.measurement("work queue total pop wait time", @work_queue.total_pop_time)
+          s.measurement("work queue total push wait time", @work_queue.total_push_time)
+          s.measurement("result queue total pop wait time", @result_queue.total_pop_time)
+          s.measurement("result queue total push wait time", @result_queue.total_push_time)
+        end
+      end
     end
 
     def take_result

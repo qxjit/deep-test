@@ -14,6 +14,12 @@ module DeepTest
   def self.drb_safe_fork(&block)
     Thread.new {Process.fork(&block)}.value
   end
+
+  def self.init(options)
+    return if @initialized
+    @initialized = true
+    Metrics::Gatherer.setup(options)
+  end
 end
 
 $LOAD_PATH << File.dirname(__FILE__) + "/inc"
@@ -69,6 +75,8 @@ require File.dirname(__FILE__) + "/deep_test/distributed/ssh_login"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_runner"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_statistics"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_worker_client"
+
+require File.dirname(__FILE__) + "/deep_test/metrics/gatherer"
 
 DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/deep_test/spec"
