@@ -6,7 +6,17 @@ require 'rake/contrib/sshpublisher'
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 require "deep_test/rake_tasks"
 
-task :default => %w[test spec failing_test deep_test deep_spec run_distributed run_distributed_with_worker_down test_rails_project]
+task :default => %w[
+  test 
+  spec 
+  failing_test
+  deep_test
+  deep_spec
+  run_distributed
+  run_distributed_with_worker_down
+  run_distributed_with_failover
+  test_rails_project
+]
 
 Rake::TestTask.new do |t|
   t.pattern = "test/**/*_test.rb"
@@ -119,6 +129,13 @@ task :run_distributed_with_worker_down do |t|
     Process.kill('TERM', test_1_pid) if test_1_pid rescue nil
     Process.waitall
   end
+end
+
+task :run_distributed_with_failover do |t|
+  puts
+  puts "*** Running distributed with no server - expect a failover message ***"
+  puts
+  Rake::Task[:distributed_spec].execute
 end
 
 task :failing_test do

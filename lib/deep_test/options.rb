@@ -83,8 +83,13 @@ module DeepTest
       if distributed_server.nil?
         LocalWorkers.new self
       else
-        server = Distributed::TestServer.connect(self)
-        Distributed::RemoteWorkerClient.new(self, server)
+        begin
+          server = Distributed::TestServer.connect(self)
+          Distributed::RemoteWorkerClient.new(self, server, LocalWorkers.new(self))
+        rescue => e
+          ui_instance.distributed_failover_to_local("connect", e)
+          LocalWorkers.new self
+        end
       end
     end
 

@@ -128,8 +128,14 @@ module DeepTest
     it "should create remote worker client when distributed server is specified" do
       options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"})
       Distributed::TestServer.should_receive(:connect).with(options).and_return(:server_instance)
-      Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance)
+      Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
       options.new_workers
+    end
+
+    it "should create local workers when connect fails" do
+      options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"}, :ui => "DeepTest::UI::Null")
+      Distributed::TestServer.should_receive(:connect).and_raise("An error")
+      options.new_workers.should be_instance_of(LocalWorkers) 
     end
 
     it "should return localhost as origin_hostname current hostname is same as when created" do

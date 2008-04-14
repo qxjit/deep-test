@@ -4,6 +4,9 @@ module DeepTest
       def initialize(options)
       end
 
+      def distributed_failover_to_local(method, exception)
+      end
+
       def dispatch_starting(method_name)
       end
 

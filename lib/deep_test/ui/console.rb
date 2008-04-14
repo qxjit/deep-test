@@ -12,6 +12,15 @@ module DeepTest
         :stop_all => "Stopping workers"
       } unless defined?(METHOD_DESCRIPTIONS)
 
+      def distributed_failover_to_local(method, exception)
+        width = 70
+        puts " Distributed DeepTest Failure ".center(width, '*')
+        puts "*   Failed during #{method}".ljust(width - 1) + "*"
+        puts "* #{exception.message}".ljust(width - 1) + "*"
+        puts "* Failing over to local run".ljust(width - 1) + "*"
+        puts "*" * width
+      end
+
       def dispatch_starting(method_name)
         @spinner.stop if @spinner
         @spinner = Spinner.new(label(method_name))
