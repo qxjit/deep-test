@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + "/../../../test_helper"
+require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "add_to adds correct run_count" do
-    result_1 = Test::Unit::TestResult.new
+    result_1 = DeepTest::Test::WorkResult.new
     result_1.add_run
     result_1.add_run
 
@@ -13,7 +13,7 @@ unit_tests do
   end
 
   test "add_to adds correct assertion_count" do
-    result_1 = Test::Unit::TestResult.new
+    result_1 = DeepTest::Test::WorkResult.new
     result_1.add_assertion
     result_1.add_assertion
 
@@ -24,18 +24,18 @@ unit_tests do
   end
 
   test "add_to adds correct errors" do
-    result_1 = Test::Unit::TestResult.new
-    result_1.add_error(:error)
+    result_1 = DeepTest::Test::WorkResult.new
+    result_1.add_error(e = Test::Unit::Error.new("test_name", Exception.new))
 
     result_2 = Test::Unit::TestResult.new
     result_1.add_to result_2
 
-    assert_equal [:error], result_2.instance_variable_get(:@errors)
+    assert_equal [e], result_2.instance_variable_get(:@errors)
   end
 
 
   test "add_to adds correct failures" do
-    result_1 = Test::Unit::TestResult.new
+    result_1 = DeepTest::Test::WorkResult.new
     result_1.add_failure(:failure)
 
     result_2 = Test::Unit::TestResult.new
@@ -45,22 +45,19 @@ unit_tests do
   end
   
   test "wraps exceptions" do
-    result = Test::Unit::TestResult.new
+    result = DeepTest::Test::WorkResult.new
     begin
       raise SomeCustomException.new("the exception message")
     rescue => ex
       result.add_error Test::Unit::Error.new("test_wraps_exceptions", ex)
     end
     error = result.instance_variable_get("@errors").last
-    # TODO: add this assertion
-    # assert_equal "SomeCustomException: the exception message", error.message
-    assert_equal "SomeCustomException: the exception message", error.exception.message
-    assert_equal Exception, error.exception.class
-    assert_equal ex.backtrace, error.exception.backtrace
+    assert_kind_of DeepTest::MarshallableException, 
+                   error.instance_variable_get(:@exception)
   end
   
   test "failed due to deadlock" do
-    result = Test::Unit::TestResult.new
+    result = DeepTest::Test::WorkResult.new
     begin
       raise FakeDeadlockError.new
     rescue => ex

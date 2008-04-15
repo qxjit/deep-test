@@ -1,13 +1,20 @@
 module DeepTest
   module Spec
     class WorkResult
-      attr_reader :identifier, :error, :output
+      attr_reader :identifier, :output
+
       def initialize(identifier, error, output)
-        @identifier, @error, @output = identifier, error, output
+        @identifier, @output = identifier, output
+        @error = MarshallableException.new error if error
+      end
+
+      def error
+        @error.resolve if @error
       end
 
       def ==(other)
-        identifier == other.identifier && error == other.error 
+        identifier == other.identifier && 
+            @error == other.instance_variable_get(:@error) 
       end
 
       def failed_due_to_deadlock?

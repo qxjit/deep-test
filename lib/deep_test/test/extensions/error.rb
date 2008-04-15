@@ -1,14 +1,15 @@
 module Test
   module Unit
     class Error
-      def initialize_with_exception_wrapping(test_name, exception)
-        wrap = Exception.new "#{exception.class}: #{exception.message}"
-        wrap.set_backtrace exception.backtrace
-        @test_name = test_name
-        @exception = wrap
+      def exception
+        return @exception.resolve if @exception.kind_of?(DeepTest::MarshallableException)
+        @exception
       end
-      alias_method :initialize_without_exception_wrapping, :initialize
-      alias_method :initialize, :initialize_with_exception_wrapping
+
+      def make_exception_marshallable
+        return if @exception.kind_of?(DeepTest::MarshallableException)
+        @exception = DeepTest::MarshallableException.new(@exception)
+      end
     end
   end
 end

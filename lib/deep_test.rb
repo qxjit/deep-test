@@ -44,6 +44,7 @@ require File.dirname(__FILE__) + "/deep_test/deadlock_detector"
 require File.dirname(__FILE__) + "/deep_test/local_workers"
 require File.dirname(__FILE__) + "/deep_test/logger"
 
+require File.dirname(__FILE__) + "/deep_test/marshallable_exception"
 require File.dirname(__FILE__) + "/deep_test/null_worker_listener"
 require File.dirname(__FILE__) + "/deep_test/listener_list"
 require File.dirname(__FILE__) + "/deep_test/option"
