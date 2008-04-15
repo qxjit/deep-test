@@ -7,8 +7,8 @@ module DeepTest
       	option = $4
       	[host, port, option]
       else
-      	raise(DRbBadScheme, uri) unless uri =~ /^drubyall:/
-      	raise(DRbBadURI, 'can\'t parse uri:' + uri)
+      	raise(DRb::DRbBadScheme, uri) unless uri =~ /^drubyall:/
+      	raise(DRb::DRbBadURI, 'can\'t parse uri:' + uri)
     	end
     end
 

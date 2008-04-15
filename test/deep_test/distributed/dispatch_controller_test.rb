@@ -103,6 +103,21 @@ unit_tests do
 
     controller.dispatch(:method_call_2)
   end
+  
+  test "receiver is dropped when any exception occurs" do
+    receiver = mock(:__drburi => "")
+    receiver.expects(:method_call).raises(Exception)
+
+    controller = DeepTest::Distributed::DispatchController.new(
+      DeepTest::Options.new({:ui => "DeepTest::UI::Null", :timeout_in_seconds => 0.05}),
+      [receiver]
+    )
+
+    DeepTest.logger.expects(:error)
+    
+    controller.dispatch(:method_call)
+    assert_raises(DeepTest::Distributed::NoDispatchReceiversError) {controller.dispatch(:another_call)}
+  end
 
   test "no error is printed if dispatching without error" do
     receiver_1 =  mock
@@ -133,10 +148,11 @@ unit_tests do
   test "dispatch calls notifies ui dispatch end in case of an error" do
     options = DeepTest::Options.new({:ui => "DeepTest::UI::Null"})
     controller = DeepTest::Distributed::DispatchController.new(
-      options, [receiver = mock]
+      options, [receiver = mock(:__drburi => '')]
     )
     receiver.expects(:method_name).raises("An Error")
-
+    DeepTest.logger.expects(:error)
+    
     options.ui_instance.expects(:dispatch_starting).with(:method_name)
     options.ui_instance.expects(:dispatch_finished).with(:method_name)
     

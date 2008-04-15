@@ -36,6 +36,9 @@ module DeepTest
             unless options[:ignore_connection_error]
               DeepTest.logger.error "Connection Refused dispatching #{method_name} to #{t[:receiver].__drburi}"
             end
+          rescue Exception => e
+            @receivers.delete t[:receiver]
+            DeepTest.logger.error "Exception while dispatching #{method_name} to #{t[:receiver].__drburi} #{e.message}"
           end
         end
 
