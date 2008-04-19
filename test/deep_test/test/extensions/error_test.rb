@@ -5,7 +5,7 @@ unit_tests do
     error = Test::Unit::Error.new "test_name", Exception.new("message")
     error.make_exception_marshallable
 
-    assert_kind_of DeepTest::MarshallableException, error.instance_variable_get(:@exception)
+    assert_kind_of DeepTest::MarshallableExceptionWrapper, error.instance_variable_get(:@exception)
     assert_kind_of Exception, error.exception
   end
 

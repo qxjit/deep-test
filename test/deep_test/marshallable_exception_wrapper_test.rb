@@ -5,8 +5,8 @@ unit_tests do
     original = RuntimeError.new "message"
     original.set_backtrace ['1', '2']
 
-    marshalled = DeepTest::MarshallableException.new(original)
-    DeepTest::MarshallableException.any_instance.expects(:eval).
+    marshalled = DeepTest::MarshallableExceptionWrapper.new(original)
+    DeepTest::MarshallableExceptionWrapper.any_instance.expects(:eval).
       with("::RuntimeError").returns(RuntimeError)
 
     loaded = Marshal.load(Marshal.dump(marshalled)).resolve
@@ -20,8 +20,8 @@ unit_tests do
     original = RuntimeError.new "message"
     original.set_backtrace ['1', '2']
 
-    marshalled = DeepTest::MarshallableException.new(original)
-    DeepTest::MarshallableException.any_instance.expects(:eval).
+    marshalled = DeepTest::MarshallableExceptionWrapper.new(original)
+    DeepTest::MarshallableExceptionWrapper.any_instance.expects(:eval).
       raises("Eval Error")
 
     loaded = Marshal.load(Marshal.dump(marshalled)).resolve

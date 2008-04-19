@@ -5,7 +5,7 @@ module DeepTest
 
       def initialize(identifier, error, output)
         @identifier, @output = identifier, output
-        @error = MarshallableException.new error if error
+        @error = MarshallableExceptionWrapper.new error if error
       end
 
       def error

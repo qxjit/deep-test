@@ -52,7 +52,7 @@ unit_tests do
       result.add_error Test::Unit::Error.new("test_wraps_exceptions", ex)
     end
     error = result.instance_variable_get("@errors").last
-    assert_kind_of DeepTest::MarshallableException, 
+    assert_kind_of DeepTest::MarshallableExceptionWrapper, 
                    error.instance_variable_get(:@exception)
   end
   

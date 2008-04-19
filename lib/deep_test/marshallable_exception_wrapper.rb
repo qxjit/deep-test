@@ -1,5 +1,5 @@
 module DeepTest
-  class MarshallableException
+  class MarshallableExceptionWrapper
     attr_reader :classname, :message, :backtrace
 
     def initialize(exception)
