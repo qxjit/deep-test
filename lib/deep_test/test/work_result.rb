@@ -5,7 +5,12 @@ module DeepTest
 
       def add_to(result)
         @failures.each {|e| result.add_failure(e)}
-        @errors.each {|e| result.add_error(e)}
+
+        @errors.each do |e| 
+          e.resolve_marshallable_exception
+          result.add_error(e)
+        end
+
         assertion_count.times {result.add_assertion}
         run_count.times {result.add_run}
       end

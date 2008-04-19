@@ -44,16 +44,29 @@ unit_tests do
     assert_equal [:failure], result_2.instance_variable_get(:@failures)
   end
   
-  test "wraps exceptions" do
+  test "add_error wraps exceptions" do
     result = DeepTest::Test::WorkResult.new
-    begin
-      raise SomeCustomException.new("the exception message")
-    rescue => ex
-      result.add_error Test::Unit::Error.new("test_wraps_exceptions", ex)
-    end
+    result.add_error Test::Unit::Error.new(
+      "test_wraps_exceptions", 
+      SomeCustomException.new("the exception message")
+    )
+
     error = result.instance_variable_get("@errors").last
-    assert_kind_of DeepTest::MarshallableExceptionWrapper, 
-                   error.instance_variable_get(:@exception)
+    assert_kind_of DeepTest::MarshallableExceptionWrapper, error.exception
+  end
+
+  test "add_to unwraps exception" do
+    work_result = DeepTest::Test::WorkResult.new
+    work_result.add_error Test::Unit::Error.new(
+      "test_wraps_exceptions", 
+      SomeCustomException.new("the exception message")
+    )
+
+    test_result = ::Test::Unit::TestResult.new
+    work_result.add_to(test_result)
+
+    error = test_result.instance_variable_get("@errors").last
+    assert_kind_of SomeCustomException, error.exception
   end
   
   test "failed due to deadlock" do
