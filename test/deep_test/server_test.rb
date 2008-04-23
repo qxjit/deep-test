@@ -7,9 +7,18 @@ unit_tests do
     assert_equal :work, server.take_work
   end
 
-  test "take_work raises error when no work is available" do
+  test "take_work raises error when no work is currently available" do
     assert_raises(DeepTest::Server::NoWorkUnitsAvailableError) do
       DeepTest::Server.new(DeepTest::Options.new({})).take_work
+    end
+  end
+
+  test "take_work raises error when there is no work left to" do
+    server = DeepTest::Server.new(DeepTest::Options.new({}))
+    server.done_with_work
+
+    assert_raises(DeepTest::Server::NoWorkUnitsRemainingError) do
+      server.take_work
     end
   end
 
@@ -36,5 +45,14 @@ unit_tests do
   test "write_result returns nil" do
     server = DeepTest::Server.new(DeepTest::Options.new({}))
     assert_equal nil, server.write_result(:a)
+  end
+
+  test "start returns instance of server" do
+    DRb.expects(:start_service)
+    DRb.expects(:uri)
+    DeepTest.logger.expects(:info)
+
+    server = DeepTest::Server.start(DeepTest::Options.new({}))
+    assert_kind_of DeepTest::Server, server
   end
 end

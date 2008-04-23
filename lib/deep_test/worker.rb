@@ -26,6 +26,7 @@ module DeepTest
           $stdout.flush
         end
       end
+    rescue Server::NoWorkUnitsRemainingError
     end
 
     def next_work_unit

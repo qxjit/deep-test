@@ -76,14 +76,10 @@ unit_tests do
     DeepTest::Worker.new(0, blackboard, stub_everything).run
   end
 
-  test "times out requesting work" do
+  test "finishes running when no more work units are remaining" do
     blackboard = mock
-    blackboard.expects(:take_work).times(3).
-      raises(DeepTest::Server::NoWorkUnitsAvailableError).
-      returns(work_unit = mock(:run => nil)).
-      returns(nil)
-
-    blackboard.expects(:write_result)
+    blackboard.expects(:take_work).
+      raises(DeepTest::Server::NoWorkUnitsRemainingError)
 
     DeepTest::Worker.new(0, blackboard, stub_everything).run
   end

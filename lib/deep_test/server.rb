@@ -1,8 +1,10 @@
 module DeepTest
   class Server
     def self.start(options)
-      DRb.start_service("druby://0.0.0.0:#{options.server_port}", new(options))
+      server = new(options)
+      DRb.start_service("druby://0.0.0.0:#{options.server_port}", server)
       DeepTest.logger.info "Started DeepTest service at #{DRb.uri}"
+      server
     end
 
     def self.stop
@@ -34,6 +36,10 @@ module DeepTest
       end
     end
 
+    def done_with_work
+      @done_with_work = true
+    end
+
     def take_result
       Timeout.timeout(@options.timeout_in_seconds) do
         @result_queue.pop
@@ -41,6 +47,8 @@ module DeepTest
     end
 
     def take_work
+      raise NoWorkUnitsRemainingError if @done_with_work
+
       @work_queue.pop(true)
     rescue ThreadError => e
       if e.message == "queue empty"
@@ -61,5 +69,6 @@ module DeepTest
     end
 
     class NoWorkUnitsAvailableError < StandardError; end
+    class NoWorkUnitsRemainingError < StandardError; end
   end
 end
