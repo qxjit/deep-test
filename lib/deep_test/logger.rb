@@ -2,7 +2,7 @@ module DeepTest
   class Logger < ::Logger
     def initialize(*args)
       super
-      self.formatter = proc { |severity, time, progname, msg| "#{msg}\n" }
+      self.formatter = proc { |severity, time, progname, msg| "[DeepTest] #{msg}\n" }
       self.level = configured_log_level
     end
 

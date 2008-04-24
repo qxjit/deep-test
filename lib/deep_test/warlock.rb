@@ -65,9 +65,12 @@ module DeepTest
           Process.kill("TERM", pid)
         end
       end
+      DeepTest.logger.debug("Warlock: Stopped all receivers")
 
       DeepTest.logger.debug("waiting for reapers")
       @reapers.each {|r| r.join}
+
+      DeepTest.logger.debug("Warlock: done reaping processes")
     end
 
     def exit_when_none_running
@@ -122,6 +125,7 @@ module DeepTest
         Process.detach(pid).join
         DeepTest.logger.debug("#{name} (#{pid}) reaped")
         @demons_semaphore.synchronize do
+          DeepTest.logger.debug("Warlock Reaper: removing #{name} (#{pid}) from demon list")
           remove_demon name, pid
         end
       end

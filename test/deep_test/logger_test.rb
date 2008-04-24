@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/test_helper"
+require File.dirname(__FILE__) + "/../test_helper"
 
 unit_tests do
   test "info log level by default" do
@@ -6,6 +6,6 @@ unit_tests do
   end
   
   test "formatter uses msg only" do
-    assert_equal "my_msg\n", DeepTest.logger.formatter.call(nil, nil, nil, "my_msg")
+    assert_equal "[DeepTest] my_msg\n", DeepTest.logger.formatter.call(nil, nil, nil, "my_msg")
   end
 end

@@ -32,6 +32,7 @@ module DeepTest
     end
 
     def shutdown(server)
+      DeepTest.logger.debug "ProcessOrchestrator: Shutting Down"
       server.done_with_work
 
       first_exception = $!
