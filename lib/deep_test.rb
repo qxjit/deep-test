@@ -22,8 +22,6 @@ module DeepTest
   end
 end
 
-$LOAD_PATH << File.dirname(__FILE__) + "/inc"
-
 require "logger"
 require "drb"
 require "timeout"
@@ -31,11 +29,6 @@ require "thread"
 require "socket"
 require "webrick"
 require "timeout"
-
-$expect_verbose = false
-require "RExpect"
-RExpect.logger = Logger.new($stdout)
-RExpect.logger.level = Logger::ERROR
 
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
 require File.dirname(__FILE__) + "/deep_test/extensions/drb_extension"
@@ -72,7 +65,6 @@ require File.dirname(__FILE__) + "/deep_test/distributed/null_work_unit"
 require File.dirname(__FILE__) + "/deep_test/distributed/remote_worker_client"
 require File.dirname(__FILE__) + "/deep_test/distributed/remote_worker_server"
 require File.dirname(__FILE__) + "/deep_test/distributed/rsync"
-require File.dirname(__FILE__) + "/deep_test/distributed/ssh_login"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_runner"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_statistics"
 require File.dirname(__FILE__) + "/deep_test/distributed/throughput_worker_client"

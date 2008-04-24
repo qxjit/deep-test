@@ -4,13 +4,7 @@ module DeepTest
       def self.sync(connection_info, options, destination)
         command = Args.new(connection_info, options).command(destination)
         DeepTest.logger.debug("rsycing: #{command}")
-
-        successful = if options.sync_options[:local] || options.sync_options[:password].nil?
-                       system command
-                     else
-                       SSHLogin.system options.sync_options[:password], command
-                     end
-        
+        successful = system command
         raise "RSync Failed!!" unless successful
       end
 

@@ -144,14 +144,13 @@ below in your Rakefile.
     t.distributed_server = <drb uri of master_test_server>
     t.sync_options = {
       :source => <absolute path of project root on machine>,
-      :username => "username",
-      :password => "password",
+      :username => "username"
     }
   end
 
-The :source entry in sync_options can be easily calculated based on the
-value of \_\_FILE__ when defining the task.  :username and :password will be
-used by rsync to ssh back to the local machine and mirror the working copy.
+The :source entry in sync_options can be easily calculated based on the value
+of \_\_FILE__ when defining the task.  :username will be used by rsync to ssh
+back to the local machine and mirror the working copy.
 
 If you have an rsync daemon running in your local machine, configure the
 rake task as follows.
@@ -162,15 +161,13 @@ rake task as follows.
     t.sync_options = {
       :source => <name of rsync module from daemon configuration>,
       :daemon => true,
-      :username => "username",
-      :password => "password",
+      :username => "username"
     }
   end
 
 
-Username and password are optional in both cases.  If you've set up
-passwordless ssh or your rsync daemon doesn't require authentication, you can
-leave one or both out as appropriate.
+Username is optional in both cases.  You'll need to either setup passwordless
+ssh access or run an rsync daemon that doesn't require passwords.
 
 There may be other options you'd like to pass to rsync in your particular
 scenario.  This can be done by adding an :rsync_options entry to sync_options.
@@ -202,15 +199,6 @@ they're all using the same version of Ruby and DeepTest.
 * David[http://davidvollbracht.com/] Vollbracht[http://davidvollbracht.com/]
 * Scott Taylor
 
-=== RExpect Developers
-
-* John Carter
-* Merc
-* Zach Dennis
-
 == License
 
 DeepTest Released under Ruby's[http://www.ruby-lang.org/en/LICENSE.txt] license[http://www.ruby-lang.org/en/LICENSE.txt]
-
-RExpect Released under the LGPL[http://www.gnu.org/licenses/lgpl.html].
-For the latest version fo RExpect, visit the RExpect[http://rubyforge.org/projects/rexpect/] Project[http://rubyforge.org/projects/rexpect/] Page[http://rubyforge.org/projects/rexpect/]

@@ -2,23 +2,12 @@ require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "executes rsync with source and destination" do
-    options = DeepTest::Options.new(:sync_options => {:source => "source", 
-                                                      :local => true})
+    options = DeepTest::Options.new(:sync_options => {:source => "source", :local => true})
 
     DeepTest::Distributed::RSync.expects(:system).
        with("rsync -az --delete source/ destination").returns(true)
 
     DeepTest::Distributed::RSync.sync(mock, options, "destination")
-  end
-
-  test "executes non-local rsync with ssh login" do
-    options = DeepTest::Options.new(:sync_options => {:source => "source",
-                                                      :password => "the_password"})
-
-    DeepTest::Distributed::SSHLogin.expects(:system).
-       with("the_password", "rsync -az --delete host:source/ destination").returns(true)
-
-    DeepTest::Distributed::RSync.sync(mock(:address => 'host'), options, "destination")
   end
 
   test "raises error if sync fails" do
@@ -70,8 +59,7 @@ unit_tests do
   end
 
   test "does not include host in source_location if local is specified" do
-    options = DeepTest::Options.new(:sync_options => {:source => "source", 
-                                                      :local => "true"})
+    options = DeepTest::Options.new(:sync_options => {:source => "source", :local => true})
     args = DeepTest::Distributed::RSync::Args.new(mock, options)
 
     assert_equal "source", args.source_location
