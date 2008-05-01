@@ -26,9 +26,17 @@ module DeepTest
         resolved_message = "#{classname}: #{message}"
       end
 
-      e = klass.new resolved_message
-      e.set_backtrace backtrace
-      e
+      begin
+        resolved_exception = klass.new resolved_message
+      rescue => e
+        DeepTest.logger.debug("Unable to instantiation exception class: #{classname}: #{e.message}")
+        DeepTest.logger.debug(e.backtrace.join("\n"))
+
+        resolved_exception = UnloadableException.new resolved_message
+      end
+
+      resolved_exception.set_backtrace backtrace
+      resolved_exception
     end
   end
 

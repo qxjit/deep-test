@@ -30,4 +30,15 @@ unit_tests do
     assert_equal "RuntimeError: " + original.message,   loaded.message
     assert_equal original.backtrace, loaded.backtrace
   end
+
+  test "loading a marshallable exception when class init throws an error returns an unloadable exception" do
+    original = RuntimeError.new "message"
+
+    marshalled = DeepTest::MarshallableExceptionWrapper.new(original)
+    RuntimeError.expects(:new).raises(StandardError.new)
+
+    loaded = Marshal.load(Marshal.dump(marshalled)).resolve
+
+    assert_equal DeepTest::UnloadableException, loaded.class
+  end
 end
