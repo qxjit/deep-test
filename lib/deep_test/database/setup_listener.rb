@@ -30,12 +30,19 @@ module DeepTest
           DeepTest.logger.debug("dropping database #{worker_database}")
           drop_database
         end
+
         drop_database
         create_database
-
-        ActiveRecord::Base.establish_connection(worker_database_config)
-
+        connect_to_database
         load_schema
+      end
+
+      #
+      # Called on each worker after creating database and before loading
+      # schema to initialize connections
+      # 
+      def connect_to_database
+        ActiveRecord::Base.establish_connection(worker_database_config)
       end
 
       #
