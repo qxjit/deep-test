@@ -37,9 +37,15 @@ module DeepTest
 
         success = true
 
-        ResultReader.new(blackboard).read(examples_by_location) do |example, result|
+        missing_exmaples = ResultReader.new(blackboard).read(examples_by_location) do |example, result|
           @options.reporter.example_finished(example, result.error)
           success &= result.success?
+        end
+
+        success &= missing_exmaples.empty?
+
+        missing_exmaples.each do |identifier, example|
+          @options.reporter.example_finished(example, WorkUnitNeverReceivedError.new)
         end
 
         success

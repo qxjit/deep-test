@@ -19,10 +19,11 @@ describe "sandboxed rspec_options", :shared => true do
   end
 
   class FakeReporter
-    attr_reader :number_of_examples, :examples_finished
+    attr_reader :number_of_examples, :examples_finished, :number_of_errors
 
     def initialize
       @examples_finished = []
+      @number_of_errors = 0
     end
 
     def example_started(example) end
@@ -44,6 +45,7 @@ describe "sandboxed rspec_options", :shared => true do
 
     def example_finished(example, error)
       @examples_finished << example.description
+      @number_of_errors += 1 if error
       @error = error
     end
 

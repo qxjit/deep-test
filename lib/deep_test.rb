@@ -20,6 +20,16 @@ module DeepTest
     @initialized = true
     Metrics::Gatherer.setup(options)
   end
+
+  class WorkUnitNeverReceivedError < StandardError
+    def initialize
+      super "DeepTest result never received.  Maybe an error was printed above?"
+    end
+
+    def backtrace
+      []
+    end
+  end
 end
 
 require "logger"

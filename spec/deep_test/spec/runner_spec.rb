@@ -73,6 +73,22 @@ module DeepTest
         worker.wait_until_done
       end
 
+      it "should return failure when a worker error occurs" do
+        blackboard = SimpleTestBlackboard.new
+        runner = Runner.new(options, Options.new({}), blackboard)
+
+        describe("test") do
+          it("pending") {pending {1.should == 1}}; 
+        end
+
+        blackboard.write_result Worker::Error.new("example", RuntimeError.new)
+        capture_stdout do
+          runner.process_work_units.should == false
+        end
+
+        options.reporter.number_of_errors.should == 1
+      end
+
       it "should raise error if duplicate spec is found" do
         blackboard = SimpleTestBlackboard.new
         runner = Runner.new(options, Options.new({}), blackboard)

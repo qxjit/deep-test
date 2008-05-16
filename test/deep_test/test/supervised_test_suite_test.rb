@@ -33,6 +33,21 @@ unit_tests do
     assert_equal 1, result.failure_count
   end
 
+  test "worker errors are counted as errors" do
+    test_case = Class.new(Test::Unit::TestCase) do
+      test("1") {}
+    end.new("test_1")
+
+    blackboard = DeepTest::SimpleTestBlackboard.new
+    supervised_suite = DeepTest::Test::SupervisedTestSuite.new(test_case, blackboard)
+    result = Test::Unit::TestResult.new
+
+    blackboard.write_result DeepTest::Worker::Error.new(test_case, RuntimeError.new)
+    capture_stdout {supervised_suite.run(result) {}}
+
+    assert_equal 1, result.error_count
+  end
+
   test "run yields test case finished events" do
     test_case = Class.new(Test::Unit::TestCase) do
       test("1") {}
