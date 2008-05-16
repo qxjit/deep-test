@@ -8,8 +8,9 @@ module DeepTest
 
       def run(result, &progress_block)
         yield ::Test::Unit::TestSuite::STARTED, @suite.name
-        count = add_tests @suite
-        read_results result, count, &progress_block
+        tests_by_name = {}
+        add_tests @suite, tests_by_name
+        read_results result, tests_by_name, &progress_block
         yield ::Test::Unit::TestSuite::FINISHED, @suite.name
       end
 
@@ -17,28 +18,27 @@ module DeepTest
         @suite.size
       end
 
-      def add_tests(test_suite)
-        count = 0
+      def add_tests(test_suite, tests_by_name)
         if test_suite.respond_to? :tests
           test_suite.tests.each do |test| 
-            count += add_tests(test)
+            add_tests(test, tests_by_name)
           end
         else
-          count += 1
+          tests_by_name[test_suite.name] = test_suite
           @blackboard.write_work Test::WorkUnit.new(test_suite)
         end
-        count
       end
 
-      def read_results(result, count)
-        DeepTest.logger.debug("SupervisedTestSuite: going to read #{count} results")
+      def read_results(result, tests_by_name)
+        DeepTest.logger.debug("SupervisedTestSuite: going to read #{tests_by_name.size} results")
 
-        ResultReader.new(@blackboard).read(count) do |remote_result|
-          remote_result.add_to result
-          yield ::Test::Unit::TestCase::FINISHED, nil if block_given?
-        end
+        missing_tests = 
+          ResultReader.new(@blackboard).read(tests_by_name) do |test, remote_result|
+            remote_result.add_to result
+            yield ::Test::Unit::TestCase::FINISHED, test.name if block_given?
+          end
       ensure
-        DeepTest.logger.debug("SupervisedTestSuite: exiting with #{count} results left")
+        DeepTest.logger.debug("SupervisedTestSuite: exiting with #{missing_tests.size} results left")
       end
     end
   end

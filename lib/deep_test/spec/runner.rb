@@ -37,8 +37,7 @@ module DeepTest
 
         success = true
 
-        ResultReader.new(blackboard).read(examples_by_location.size) do |result|
-          example = examples_by_location[result.identifier]
+        ResultReader.new(blackboard).read(examples_by_location) do |example, result|
           @options.reporter.example_finished(example, result.error)
           success &= result.success?
         end

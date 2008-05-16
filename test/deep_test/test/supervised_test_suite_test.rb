@@ -34,12 +34,12 @@ unit_tests do
   end
 
   test "run yields test case finished events" do
-    test_case_class = Class.new(Test::Unit::TestCase) do
+    test_case = Class.new(Test::Unit::TestCase) do
       test("1") {}
-    end
+    end.new("test_1")
 
     blackboard = DeepTest::SimpleTestBlackboard.new
-    supervised_suite = DeepTest::Test::SupervisedTestSuite.new(test_case_class.suite, blackboard)
+    supervised_suite = DeepTest::Test::SupervisedTestSuite.new(test_case, blackboard)
 
     yielded = []
 
@@ -51,7 +51,7 @@ unit_tests do
     end
     worker.wait_until_done
 
-    assert_equal true, yielded.include?([::Test::Unit::TestCase::FINISHED, nil])
+    assert_equal true, yielded.include?([::Test::Unit::TestCase::FINISHED, test_case.name])
   end
 
   test "has same size as underlying suite" do
