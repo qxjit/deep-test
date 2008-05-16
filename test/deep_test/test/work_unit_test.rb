@@ -11,6 +11,12 @@ unit_tests do
     assert_equal false, work_unit.run.passed?
   end
 
+  test "returns result with identifier of test name" do
+    test = TestFactory.passing_test
+    work_unit = DeepTest::Test::WorkUnit.new test
+    assert_equal test.name, work_unit.run.identifier
+  end
+
   test "capturing stdout" do
     work_unit = DeepTest::Test::WorkUnit.new TestFactory.passing_test_with_stdout
     assert_equal "message printed to stdout", work_unit.run.output
@@ -30,6 +36,12 @@ unit_tests do
     assert_equal 0, result.error_count
     assert_equal 0, result.failure_count
     assert_equal 0, result.assertion_count
+  end
+  
+  test "set test_name as identifier on deadlock" do
+    test = TestFactory.deadlock_always_test
+    work_unit = DeepTest::Test::WorkUnit.new test
+    assert_equal test.name, work_unit.run.identifier
   end
 
   test "equality is based on test_case" do

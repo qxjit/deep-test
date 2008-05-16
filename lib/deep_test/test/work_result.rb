@@ -1,7 +1,13 @@
 module DeepTest
   module Test
     class WorkResult < ::Test::Unit::TestResult
+      attr_reader :identifier
       attr_accessor :output
+
+      def initialize(identifier)
+        super()
+        @identifier = identifier
+      end
 
       def add_to(result)
         @failures.each {|e| result.add_failure(e)}

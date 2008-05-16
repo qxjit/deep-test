@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../test_helper"
 
 unit_tests do
   test "add_to adds correct run_count" do
-    result_1 = DeepTest::Test::WorkResult.new
+    result_1 = DeepTest::Test::WorkResult.new "test_name"
     result_1.add_run
     result_1.add_run
 
@@ -13,7 +13,7 @@ unit_tests do
   end
 
   test "add_to adds correct assertion_count" do
-    result_1 = DeepTest::Test::WorkResult.new
+    result_1 = DeepTest::Test::WorkResult.new "test_name"
     result_1.add_assertion
     result_1.add_assertion
 
@@ -24,7 +24,7 @@ unit_tests do
   end
 
   test "add_to adds correct errors" do
-    result_1 = DeepTest::Test::WorkResult.new
+    result_1 = DeepTest::Test::WorkResult.new "test_name"
     result_1.add_error(e = Test::Unit::Error.new("test_name", Exception.new))
 
     result_2 = Test::Unit::TestResult.new
@@ -35,7 +35,7 @@ unit_tests do
 
 
   test "add_to adds correct failures" do
-    result_1 = DeepTest::Test::WorkResult.new
+    result_1 = DeepTest::Test::WorkResult.new "test_name"
     result_1.add_failure(:failure)
 
     result_2 = Test::Unit::TestResult.new
@@ -45,7 +45,7 @@ unit_tests do
   end
   
   test "add_error wraps exceptions" do
-    result = DeepTest::Test::WorkResult.new
+    result = DeepTest::Test::WorkResult.new "test_name"
     result.add_error Test::Unit::Error.new(
       "test_wraps_exceptions", 
       SomeCustomException.new("the exception message")
@@ -56,7 +56,7 @@ unit_tests do
   end
 
   test "add_to unwraps exception" do
-    work_result = DeepTest::Test::WorkResult.new
+    work_result = DeepTest::Test::WorkResult.new "test_name"
     work_result.add_error Test::Unit::Error.new(
       "test_wraps_exceptions", 
       SomeCustomException.new("the exception message")
@@ -70,7 +70,7 @@ unit_tests do
   end
   
   test "failed due to deadlock" do
-    result = DeepTest::Test::WorkResult.new
+    result = DeepTest::Test::WorkResult.new "test_name"
     begin
       raise FakeDeadlockError.new
     rescue => ex
