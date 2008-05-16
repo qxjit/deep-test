@@ -16,6 +16,15 @@ unit_tests do
     assert_equal FakeResult.new(4), blackboard.take_result
   end
 
+  test "returns unread tests on ResultOverdueError" do
+    blackboard = DeepTest::SimpleTestBlackboard.new
+    blackboard.simulate_result_overdue_error = true
+    work_units = {1 => "One"}
+    DeepTest.logger.expects(:error)
+    DeepTest::ResultReader.new(blackboard).read(work_units) {}
+    assert_equal({1 => "One"}, work_units)
+  end
+
   test "yields each result" do
     blackboard = DeepTest::SimpleTestBlackboard.new
     1.upto(3) {|i| blackboard.write_result FakeResult.new(i)}

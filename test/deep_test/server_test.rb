@@ -34,7 +34,7 @@ unit_tests do
       DeepTest::Options.new(:timeout_in_seconds => 0.01)
     )
     Thread.new {sleep 0.1; server.write_result :too_late}
-    assert_raises(Timeout::Error) {server.take_result}
+    assert_raises(DeepTest::Server::ResultOverdueError) {server.take_result}
   end
 
   test "write_work returns nil" do

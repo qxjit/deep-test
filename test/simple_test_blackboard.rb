@@ -1,6 +1,6 @@
 module DeepTest
   class SimpleTestBlackboard
-    attr_accessor :debug
+    attr_accessor :debug, :simulate_result_overdue_error
 
     def initialize
       @work_units = []
@@ -9,6 +9,7 @@ module DeepTest
     end
 
     def take_result
+      raise DeepTest::Server::ResultOverdueError if @simulate_result_overdue_error
       @semaphore.synchronize do
         log_and_return "take_result", @test_results.shift
       end

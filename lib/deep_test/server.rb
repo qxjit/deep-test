@@ -41,7 +41,7 @@ module DeepTest
     end
 
     def take_result
-      Timeout.timeout(@options.timeout_in_seconds) do
+      Timeout.timeout(@options.timeout_in_seconds, ResultOverdueError) do
         @result_queue.pop
       end
     end
@@ -70,5 +70,6 @@ module DeepTest
 
     class NoWorkUnitsAvailableError < StandardError; end
     class NoWorkUnitsRemainingError < StandardError; end
+    class ResultOverdueError < StandardError; end
   end
 end
