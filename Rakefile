@@ -3,6 +3,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
+require 'yaml'
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 require "deep_test/rake_tasks"
 
@@ -168,8 +169,11 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 desc "Upload RDoc to RubyForge"
-task :publish_rdoc => [:rdoc] do
-  Rake::SshDirPublisher.new("dcmanges@rubyforge.org", "/var/www/gforge-projects/deep-test", "doc").upload
+task :publish_rdoc => [:rerdoc] do
+  rubyforge_config = "#{ENV['HOME']}/.rubyforge/user-config.yml"
+  username = YAML.load_file(rubyforge_config)["username"]
+  sh "chmod -R 775 doc"
+  Rake::SshDirPublisher.new("#{username}@rubyforge.org", "/var/www/gforge-projects/deep-test", "doc").upload
 end
 
 Gem::manage_gems
