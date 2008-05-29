@@ -35,6 +35,9 @@ In your Rakefile:
 
 In my_worker_listener.rb
   class MyWorkerListener
+    def before_sync
+    end
+
     def before_starting_workers
     end
 
@@ -98,7 +101,7 @@ project so that it can be included in later releases of DeepTest.
 
 In addition to running your tests in parallel, DeepTest can also distribute
 them across multiple machines.  It does this by first mirroring the local
-working copy that launched to tests on each machine that will be running tests.
+working copy that launched the tests on each machine that will be running tests.
 Then workers are launched on each of the machines and consume tests in the same
 fashion as when DeepTest is running locally.
 
@@ -109,9 +112,12 @@ Before you can distribute tests, you must ensure that all the machines involved
 mirroring working copies.  You must also have either SSH or an RSync daemon
 exposing your local working copy running on the local development machine.  For
 more information about rsync, visit the rsync
-webpage[http://www.samba.org/rsync/].  DeepTest must also be installed as a gem
-on each test machine and available either as a gem or in your project on the
-local machine.
+webpage[http://www.samba.org/rsync/].  Currently only passwordless access is
+supported, so you must either setup your RSync daemon to be accessible without
+a password or enable passwordless SSH access from the test machines to the
+local development machine. DeepTest must also be installed as a gem on each
+test machine and available either as a gem or in your project on the local
+machine.
 
 ==== Starting a Test Server
 
@@ -171,7 +177,7 @@ ssh access or run an rsync daemon that doesn't require passwords.
 
 There may be other options you'd like to pass to rsync in your particular
 scenario.  This can be done by adding an :rsync_options entry to sync_options.
-For example, if you're working on a rails project you'll probably want to at
+For example, if you're working on a Rails project you'll probably want to at
 least have something like this:
 
   DeepTest::TestTask.new "deep_test_distributed" do |t|
