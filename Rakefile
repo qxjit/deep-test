@@ -173,7 +173,7 @@ task :publish_rdoc => [:rerdoc] do
   rubyforge_config = "#{ENV['HOME']}/.rubyforge/user-config.yml"
   username = YAML.load_file(rubyforge_config)["username"]
   sh "chmod -R 775 doc"
-  Rake::SshDirPublisher.new("#{username}@rubyforge.org", "/var/www/gforge-projects/deep-test", "doc").upload
+  sh "scp -rqp doc/* #{username}@rubyforge.org:/var/www/gforge-projects/deep-test"
 end
 
 Gem::manage_gems
