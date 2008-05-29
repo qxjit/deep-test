@@ -140,6 +140,23 @@ druby://<hostname>:4021 by default.  It will also provide a webserver bound
 to port 4020 that provides a status page summarizing the state of all the
 test servers. 
 
+==== Overriding the DRb uri for the Test Server or Master Test Server
+
+The DRb url that the Test Server or Master Test Server should bind to can be
+specified when the process is started.  Use the --uri option followed by the
+DRb url that you would like DRb to bind to and return to clients.  By default,
+DRb does not provide any capability to bind to all addresses but return a
+specific IP or hostname as part of the DRb url for clients.  DeepTest provides
+a special DRb protocol to enable this, drubyall.  If you wish your test server
+to listen on all addresses (which you probably do), start the server
+with a command like this (where deeptest1.local is the hostname of the machine):
+  > deep_test test_server --uri drubyall://deeptest1.local/
+
+The server will report that it is listening on druby://deeptest1.local as the
+public DRb url, but it will actually accept connections on all addresses to
+server requests.
+ 
+
 ==== Configuring Your Project
 
 If you're using rsync over ssh, create a DeepTest test task similar to that
