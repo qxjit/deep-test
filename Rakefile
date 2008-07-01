@@ -161,7 +161,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.title    = "DeepTest"
   rdoc.options << '--line-numbers'
   rdoc.rdoc_files.include(
-    'README', 
+    'README.rdoc', 
     'CHANGELOG', 
     'lib/deep_test/null_worker_listener.rb',
     'lib/deep_test/database/*.rb'
@@ -191,10 +191,10 @@ specification = Gem::Specification.new do |s|
   s.executables << "deep_test"
 
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README', 'CHANGELOG']
-  s.rdoc_options << '--title' << "DeepTest" << '--main' << 'README' << '--line-numbers'
+  s.extra_rdoc_files = ['README.rdoc', 'CHANGELOG']
+  s.rdoc_options << '--title' << "DeepTest" << '--main' << 'README.rdoc' << '--line-numbers'
 
-  s.files = FileList['{lib,script,test,bin}/**/*.{rb,rake,rhtml}', 'README', 'CHANGELOG', 'Rakefile'].to_a
+  s.files = FileList['{lib,script,test,bin}/**/*.{rb,rake,rhtml}', 'README.rdoc', 'CHANGELOG', 'Rakefile'].to_a
 end
 
 Rake::GemPackageTask.new(specification) do |package|
