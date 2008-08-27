@@ -6,7 +6,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
       integrate_views
     end
     controller_name :redirect_spec
-  
+    
     it "redirected to another action" do
       get 'action_with_redirect_to_somewhere'
       response.should redirect_to(:action => 'somewhere')
@@ -19,6 +19,12 @@ require File.dirname(__FILE__) + '/../../spec_helper'
     
     it "redirected to another action (with 'and return')" do
       get 'action_with_redirect_to_somewhere_and_return'
+      response.should redirect_to(:action => 'somewhere')
+    end
+    
+    it "redirected from an SSL action to a non-SSL action" do
+      request.stub!(:ssl?).and_return true
+      get 'action_with_redirect_to_somewhere'
       response.should redirect_to(:action => 'somewhere')
     end
   

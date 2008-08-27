@@ -1,10 +1,12 @@
+raise "To avoid rake task loading problems: run 'rake clobber' in vendor/plugins/rspec" if File.directory?(File.join(File.dirname(__FILE__), *%w[.. .. vendor plugins rspec pkg]))
+raise "To avoid rake task loading problems: run 'rake clobber' in vendor/plugins/rspec-rails" if File.directory?(File.join(File.dirname(__FILE__), *%w[.. .. vendor plugins rspec-rails pkg]))
+
 # In rails 1.2, plugins aren't available in the path until they're loaded.
 # Check to see if the rspec plugin is installed first and require
 # it if it is.  If not, use the gem version.
-rspec_base = File.expand_path(File.dirname(__FILE__) + '/../../rspec/lib')
+rspec_base = File.expand_path(File.dirname(__FILE__) + '/../../vendor/plugins/rspec/lib')
 $LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
 require 'spec/rake/spectask'
-require 'spec/translator'
 
 spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:prepare" : :noop
 task :noop do
@@ -53,22 +55,15 @@ namespace :spec do
   desc "Run the specs under vendor/plugins (except RSpec's own)"
   Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-    t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec_on_rails/*")
+    t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
   end
   
   namespace :plugins do
     desc "Runs the examples for rspec_on_rails"
     Spec::Rake::SpecTask.new(:rspec_on_rails) do |t|
       t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-      t.spec_files = FileList['vendor/plugins/rspec_on_rails/spec/**/*_spec.rb']
+      t.spec_files = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
     end
-  end
-
-  desc "Translate/upgrade specs using the built-in translator"
-  task :translate do
-    translator = ::Spec::Translator.new
-    dir = RAILS_ROOT + '/spec'
-    translator.translate(dir, dir)
   end
 
   # Setup specs for stats

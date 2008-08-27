@@ -149,36 +149,18 @@ describe "A view that includes a partial using :collection and :spacer_template"
 
 end
 
-describe "A view that includes a partial using an array as partial_path", :type => :view do
-  before(:each) do
-    module ActionView::Partials
-      def render_template_with_partial_with_array_support(partial_path, local_assigns = nil, deprecated_local_assigns = nil)
-        if partial_path.is_a?(Array)
-          "Array Partial"
-        else
-          render_partial_without_array_support(partial_path, local_assigns, deprecated_local_assigns)
-        end
-      end
-
-      alias :render_partial_without_array_support :render_partial
-      alias :render_partial :render_template_with_partial_with_array_support
+if Rails::VERSION::MAJOR >= 2
+  describe "A view that includes a partial using an array as partial_path", :type => :view do
+    before(:each) do
+      renderable_object = Object.new
+      renderable_object.stub!(:name).and_return("Renderable Object")
+      assigns[:array] = [renderable_object]
     end
 
-    @array = ['Alice', 'Bob']
-    assigns[:array] = @array
-  end
-
-  after(:each) do
-    module ActionView::Partials
-      alias :render_template_with_partial_with_array_support :render_partial
-      alias :render_partial :render_partial_without_array_support
-      undef render_template_with_partial_with_array_support
+    it "should render the array passed through to render_partial without modification" do
+      render "view_spec/template_with_partial_with_array" 
+      response.body.should match(/^Renderable Object$/)
     end
-  end
-
-  it "should render have the array passed through to render_partial without modification" do
-    render "view_spec/template_with_partial_with_array" 
-    response.body.should match(/^Array Partial$/)
   end
 end
 
@@ -208,6 +190,14 @@ describe "A view", :type => :view do
   it "should have access to flash data" do
     response.should have_tag("div#flash", "flash")
   end
+
+  it "should have a controller param" do
+    response.should have_tag("div#controller", "view_spec")
+  end
+  
+  it "should have an action param" do
+    response.should have_tag("div#action", "accessor")
+  end
 end
 
 describe "A view with a form_tag", :type => :view do
@@ -231,6 +221,27 @@ describe "An instantiated ViewExampleGroupController", :type => :view do
   end
 end
 
+describe "a block helper", :type => :view do
+  it "should not yield when not told to in the example" do
+    template.should_receive(:if_allowed)
+    render "view_spec/block_helper"
+    response.should_not have_tag("div","block helper was rendered")
+  end
+
+  it "should yield when told to in the example" do
+    template.should_receive(:if_allowed).and_yield
+    render "view_spec/block_helper"
+    response.should have_tag("div","block helper was rendered")
+  end
+end
+
+describe "render :inline => ...", :type => :view do
+  it "should render ERB right in the spec" do
+    render :inline => %|<%= text_field_tag('field_name', 'Value') %>|
+    response.should have_tag("input[type=?][name=?][value=?]","text","field_name","Value")
+  end
+end
+
 module Spec
   module Rails
     module Example
@@ -245,17 +256,11 @@ module Spec
         end
 
         it "should clear ActionView::Base.base_view_path on teardown" do
-          ViewExampleGroup.class_eval do
-            alias_method(:ensure_that_base_view_path_is_not_set_across_example_groups_orig,
-              :ensure_that_base_view_path_is_not_set_across_example_groups)
-            define_method(:ensure_that_base_view_path_is_not_set_across_example_groups){
-              $base_view_path_cleared = true
-              ensure_that_base_view_path_is_not_set_across_example_groups_orig
-            }
-          end
-          describe("base_view_path_cleared flag", :type => :view) do
-            it { $base_view_path_cleared.should be_true }
-          end
+          group = describe("base_view_path_cleared flag", :type => :view) {}
+          example = group.it{}
+          
+          ActionView::Base.should_receive(:base_view_path=).with(nil)
+          group.run_after_each(example)
         end
       end
     end

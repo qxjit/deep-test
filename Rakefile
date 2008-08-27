@@ -136,7 +136,7 @@ task :run_distributed_with_failover do |t|
   puts
   puts "*** Running distributed with no server - expect a failover message ***"
   puts
-  Rake::Task[:distributed_spec].execute
+  Rake::Task[:distributed_spec].execute "dummy arg"
 end
 
 task :failing_test do

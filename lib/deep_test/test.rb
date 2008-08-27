@@ -1,6 +1,7 @@
 require "test/unit/testresult"
 require "test/unit/error"
 require 'test/unit/failure'
+require 'test/unit/autorunner'
 
 require File.dirname(__FILE__) + "/test/extensions/error"
 require File.dirname(__FILE__) + "/test/runner"

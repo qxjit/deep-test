@@ -26,7 +26,7 @@ require 'active_support'
 require 'autotest/rspec'
 
 Autotest.add_hook :initialize do |at|
-  %w{^config/ ^coverage/ ^db/ ^doc/ ^log/ ^public/ ^script ^vendor/rails ^vendor/plugins previous_failures.txt}.each do |exception|
+  %w{config/ coverage/ db/ doc/ log/ public/ script/ tmp/ vendor/rails vendor/plugins previous_failures.txt}.each do |exception|
     at.add_exception(exception)
   end
   
@@ -73,9 +73,4 @@ Autotest.add_hook :initialize do |at|
 end
 
 class Autotest::RailsRspec < Autotest::Rspec
-
-  def spec_command
-    "script/spec"
-  end
-    
 end

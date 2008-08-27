@@ -1,6 +1,5 @@
 dir = File.dirname(__FILE__)
 
-require 'spec/rails/example/ivar_proxy'
 require 'spec/rails/example/assigns_hash_proxy'
 
 require "spec/rails/example/render_observer"
@@ -10,6 +9,7 @@ require "spec/rails/example/functional_example_group"
 require "spec/rails/example/controller_example_group"
 require "spec/rails/example/helper_example_group"
 require "spec/rails/example/view_example_group"
+require "spec/rails/example/cookies_proxy"
 
 module Spec
   module Rails

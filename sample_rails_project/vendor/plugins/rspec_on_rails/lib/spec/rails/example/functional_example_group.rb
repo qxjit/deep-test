@@ -11,9 +11,9 @@ module Spec
           raise "Can't determine controller class for #{@controller_class_name}" if @controller_class.nil?
 
           @controller = @controller_class.new
-
           @request = ActionController::TestRequest.new
           @response = ActionController::TestResponse.new
+          @response.session = @request.session
         end
 
         def params
@@ -25,7 +25,32 @@ module Spec
         end
 
         def session
-          request.session
+          response.session
+        end
+        
+        # Overrides the <tt>cookies()</tt> method in
+        # ActionController::TestResponseBehaviour, returning a proxy that
+        # accesses the requests cookies when setting a cookie and the
+        # responses cookies when reading one. This allows you to set and read
+        # cookies in examples using the same API with which you set and read
+        # them in controllers.
+        #
+        # == Examples (Rails >= 1.2.6)
+        #
+        #   cookies[:user_id] = '1234'
+        #   get :index
+        #   assigns[:user].id.should == '1234'
+        #
+        #   post :login
+        #   cookies[:login].expires.should == 1.week.from_now
+        #
+        # == Examples (Rails >= 2.0.0 only)
+        #
+        #   cookies[:user_id] = {:value => '1234', :expires => 1.minute.ago}
+        #   get :index
+        #   response.should be_redirect
+        def cookies
+          @cookies ||= Spec::Rails::Example::CookiesProxy.new(self)
         end
 
         # :call-seq:
@@ -48,17 +73,10 @@ module Spec
         #++
         def assigns(key = nil)
           if key.nil?
-            @controller.assigns
-            _controller_ivar_proxy
+            _assigns_hash_proxy
           else
-            @controller.assigns[key]
-            _controller_ivar_proxy[key]
+            _assigns_hash_proxy[key]
           end
-        end
-
-        protected
-        def _controller_ivar_proxy
-          @controller_ivar_proxy ||= IvarProxy.new @controller
         end
       end
     end
