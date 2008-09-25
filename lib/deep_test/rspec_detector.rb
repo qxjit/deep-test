@@ -7,13 +7,13 @@ module DeepTest
       if defined?(::Spec)
         if ::Spec::VERSION::MAJOR >= 1 &&
            ::Spec::VERSION::MINOR >= 1 &&
-           ::Spec::VERSION::TINY  >= 3
+           ::Spec::VERSION::TINY  >= 4
           yield
         else
           require 'spec/rake/spectask'
           ::Spec::Rake::SpecTask.class_eval do
             def deep_test(options)
-              raise "* DeepTest RSpec support requires RSpec 1.1.3 or greater"
+              raise "* DeepTest RSpec support requires RSpec 1.1.4 or greater"
             end
           end
         end
