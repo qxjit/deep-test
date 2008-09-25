@@ -1,3 +1,8 @@
+1.2.1 (September 25, 2008)
+
+* rspec 1.1.4 compatibility
+* Requires rspec 1.1.4
+
 1.2.0 (March 28, 2008)
 
 * Added capability to run distributed

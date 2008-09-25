@@ -182,7 +182,7 @@ specification = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
 	s.name   = "deep_test"
   s.summary = "DeepTest runs tests in multiple processes."
-	s.version = "1.2.0"
+	s.version = "1.2.1"
 	s.author = "anonymous z, Dan Manges, David Vollbracht"
 	s.description = s.summary
 	s.email = "daniel.manges@gmail.com"
@@ -202,8 +202,7 @@ Rake::GemPackageTask.new(specification) do |package|
   package.need_tar = true
 end
 
-Rake::Task[:gem].prerequisites.unshift :deep_test
-Rake::Task[:gem].prerequisites.unshift :test
+Rake::Task[:gem].prerequisites.unshift :default
 
 task :tar do
   system "tar zcf pkg/deep_test.tar.gz --exclude=.svn --exclude='*.tar.gz' --exclude='*.gem' --directory=.. deep_test"
