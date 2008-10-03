@@ -22,15 +22,9 @@ unit_tests do
 
   def assert_successful(command)
     Dir.chdir(File.dirname(__FILE__)) do |path|
-      output = StringScanner.new `#{command} 2>&1`
-
-      failures = []
-
-      while output.scan_until(/Failure:\n.*|.* FAILED/)
-        failures << output.matched.gsub(/\n|\e.*m/, " ")
-      end
-      
-      assert $?.success?, "#{command}:\n  #{failures.join("\n  ")}"
+      output = `#{command} 2>&1`
+      output.gsub!(/^/,"  | ")
+      flunk "'#{command}' failed with following output:\n#{output}" unless $?.success?
     end
   end
 end
