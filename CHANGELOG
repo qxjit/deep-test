@@ -1,3 +1,5 @@
+* Added libs option to DeepTest::TestTask for Rails 2.1 compatibility
+
 1.2.1 (September 25, 2008)
 
 * rspec 1.1.4 compatibility

@@ -19,6 +19,8 @@ task :default => %w[
   test_rails_project
 ]
 
+task :pc => :default
+
 Rake::TestTask.new do |t|
   t.pattern = "test/**/*_test.rb"
   t.libs += ['test', 'lib']

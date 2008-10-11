@@ -24,6 +24,37 @@ unit_tests do
     assert_equal "test/**/*_test.rb", task.pattern[-"test/**/*_test.rb".size..-1]
   end
   
+  test "default libs is ['lib']" do
+    task = DeepTest::TestTask.new do |t|
+      t.stubs(:define)
+    end
+    assert_equal ["lib"], task.libs
+  end
+
+  test "can add to libs" do
+    task = DeepTest::TestTask.new do |t|
+      t.libs << "test"
+      t.stubs(:define)
+    end
+    assert_equal ["lib", "test"], task.libs
+  end
+  
+  test "define passes the -I option to the call to ruby" do
+    task = DeepTest::TestTask.new do |t|
+      t.libs << "test"
+    end
+    task.expects(:ruby).with(includes("-Ilib:test"))
+    Rake::Task["deep_test"].instance_variable_get("@actions").last.call
+  end
+
+  test "define does not pass the -I option to the call to ruby if there are no directories to add to the load path" do
+    task = DeepTest::TestTask.new do |t|
+      t.libs = []
+    end
+    task.expects(:ruby).with(Not(includes("-I")))
+    Rake::Task["deep_test"].instance_variable_get("@actions").last.call
+  end
+  
   test "number_of_workers defaults to 2" do
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)

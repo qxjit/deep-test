@@ -1,10 +1,11 @@
 module DeepTest
   class TestTask
-    attr_accessor :requires
+    attr_accessor :libs, :requires
 
     def initialize(name = :deep_test)
       @requires = []
       @name = name
+      @libs = ["lib"]
       @options = Options.new({})
       self.pattern = "test/**/*_test.rb"
       yield self if block_given?
@@ -14,8 +15,9 @@ module DeepTest
     def define
       desc "Run '#{@name}' suite using DeepTest"
       task @name do
+        lib_options = @libs.any? ? "-I" + @libs.join(File::PATH_SEPARATOR) : ""
         require_options = requires.map {|f| "-r#{f}"}.join(" ")
-        ruby "#{require_options} #{runner} '#{@options.to_command_line}'"
+        ruby "#{lib_options} #{require_options} #{runner} '#{@options.to_command_line}'"
       end
     end
 
