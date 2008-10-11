@@ -8,14 +8,14 @@ describe "sandboxed rspec_options", :shared => true do
   attr_reader :options
 
   before(:each) do
-    @original_rspec_options = $rspec_options
+    @original_rspec_options = ::Spec::Runner.options
     @options = ::Spec::Runner::Options.new(StringIO.new, StringIO.new)
     @options.reporter = FakeReporter.new
-    $rspec_options = @options
+    ::Spec::Runner.use @options
   end
 
   after(:each) do
-    $rspec_options = @original_rspec_options
+    ::Spec::Runner.use @original_rspec_options
   end
 
   class FakeReporter

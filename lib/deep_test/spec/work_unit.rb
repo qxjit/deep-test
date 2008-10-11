@@ -8,14 +8,15 @@ module DeepTest
       def run
         # Dup options here to avoid clobbering the reporter on someone
         # elses options reference (Such as ExampleGroupRunner)
-        original_options, $rspec_options = $rspec_options, $rspec_options.dup
-        rspec_options.reporter = ResultReporter.new(@identifier)
+        original_options = ::Spec::Runner.options
+        ::Spec::Runner.use ::Spec::Runner.options.dup
+        ::Spec::Runner.options.reporter = ResultReporter.new(@identifier)
         result = run_without_deadlock_protection
         result = run_without_deadlock_protection if result.failed_due_to_deadlock?
         result = result.deadlock_result if result.failed_due_to_deadlock?
         result
       ensure
-        $rspec_options = original_options
+        ::Spec::Runner.use original_options
       end
 
       def to_s
@@ -26,9 +27,9 @@ module DeepTest
 
       def run_without_deadlock_protection
         output = capture_stdout do
-          rspec_options.run_one_example(@identifier)
+          ::Spec::Runner.options.run_one_example(@identifier)
         end
-        rspec_options.reporter.result(output)
+        ::Spec::Runner.options.reporter.result(output)
       end
 
       class ResultReporter
