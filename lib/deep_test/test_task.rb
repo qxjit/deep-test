@@ -13,6 +13,7 @@ module DeepTest
     end
     
     def define
+      require 'rake'
       desc "Run '#{@name}' suite using DeepTest"
       task @name do
         lib_options = @libs.any? ? "-I" + @libs.join(File::PATH_SEPARATOR) : ""
