@@ -38,11 +38,14 @@ module DeepTest
       # this method and grant them.
       #
       def grant_privileges(connection)
-        sql = %{grant all on #{worker_database}.* 
-            to %s@'localhost' identified by %s;} % [
-          connection.quote(worker_database_config[:username]),
-          connection.quote(worker_database_config[:password])
-        ]
+        identified_by = if worker_database_config[:password]
+                          %{identified by %s} % connection.quote(worker_database_config[:password])
+                        else
+                          ""
+                        end
+        sql = %{grant all on #{worker_database}.* to %s@'localhost' #{identified_by} ; } % 
+          connection.quote(worker_database_config[:username])
+
         connection.execute sql
       end
 
