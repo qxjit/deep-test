@@ -1,16 +1,16 @@
 module DeepTest
   module Distributed
     class RSync
-      def self.sync(connection_info, options, destination)
-        command = Args.new(connection_info, options).command(destination)
+      def self.sync(address, options, destination)
+        command = Args.new(address, options).command(destination)
         DeepTest.logger.debug("rsycing: #{command}")
         successful = system command
         raise "RSync Failed!!" unless successful
       end
 
       class Args
-        def initialize(connection_info, options)
-          @connection_info = connection_info
+        def initialize(address, options)
+          @address = address
           @options = options
           @sync_options = options.sync_options
         end
@@ -26,7 +26,7 @@ module DeepTest
           source = ""
           unless @sync_options[:local]
             source << @sync_options[:username] << '@' if @sync_options[:username]
-            source << @connection_info.address
+            source << @address
             source << (@sync_options[:daemon] ? '::' : ':')
           end
           source << @sync_options[:source]

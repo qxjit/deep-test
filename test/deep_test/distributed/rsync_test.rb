@@ -33,8 +33,7 @@ unit_tests do
 
   test "includes host in source_location" do
     options = DeepTest::Options.new(:sync_options => {:source => "source"})
-    args = DeepTest::Distributed::RSync::Args.new(mock(:address => 'host'), 
-                                                  options)
+    args = DeepTest::Distributed::RSync::Args.new('host', options)
 
     assert_equal "host:source", args.source_location
   end
@@ -43,8 +42,7 @@ unit_tests do
     options = DeepTest::Options.new(
       :sync_options => {:source => "source", :daemon => true}
     )
-    args = DeepTest::Distributed::RSync::Args.new(mock(:address => 'host'), 
-                                                  options)
+    args = DeepTest::Distributed::RSync::Args.new('host', options)
 
     assert_equal "host::source", args.source_location
   end
@@ -52,8 +50,7 @@ unit_tests do
   test "includes username in source_location if specified" do
     options = DeepTest::Options.new(:sync_options => {:source => "source", 
                                                       :username => "user"})
-    args = DeepTest::Distributed::RSync::Args.new(mock(:address => 'host'),
-                                                  options)
+    args = DeepTest::Distributed::RSync::Args.new('host', options)
 
     assert_equal "user@host:source", args.source_location
   end

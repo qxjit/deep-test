@@ -3,12 +3,12 @@ require File.dirname(__FILE__) + "/../../test_helper"
 unit_tests do
   test "generates a local working copy path based on host and source of request" do
     DeepTest::Distributed::DRbClientConnectionInfo.expects(:new).
-      returns(:connection_info)
+      returns stub(:address => "host")
 
     Socket.stubs(:gethostname).returns("myhost", "serverhost")
     server = DeepTest::Distributed::TestServer.new(:work_dir => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
-    DeepTest::Distributed::RSync.expects(:sync).with(:connection_info,
+    DeepTest::Distributed::RSync.expects(:sync).with("host",
                                                      options,
                                                      "/tmp/myhost_my_local_dir")
     server.sync(options)
