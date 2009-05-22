@@ -30,7 +30,7 @@ module DeepTest
         DeepTest.logger.debug "mirror sync for #{options.origin_hostname}"
         path = options.mirror_path(@config[:work_dir])
         DeepTest.logger.debug "Syncing #{options.sync_options[:source]} to #{path}"
-        RSync.sync(DRbClientConnectionInfo.new.address, options, path)
+        RSync.pull(DRbClientConnectionInfo.new.address, options, path)
       end
 
       def servers

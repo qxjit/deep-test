@@ -8,7 +8,7 @@ unit_tests do
     Socket.stubs(:gethostname).returns("myhost", "serverhost")
     server = DeepTest::Distributed::TestServer.new(:work_dir => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
-    DeepTest::Distributed::RSync.expects(:sync).with("host",
+    DeepTest::Distributed::RSync.expects(:pull).with("host",
                                                      options,
                                                      "/tmp/myhost_my_local_dir")
     server.sync(options)
