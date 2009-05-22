@@ -63,6 +63,7 @@ require File.dirname(__FILE__) + "/deep_test/warlock"
 require File.dirname(__FILE__) + "/deep_test/database/setup_listener"
 require File.dirname(__FILE__) + "/deep_test/database/mysql_setup_listener"
 
+require File.dirname(__FILE__) + "/deep_test/distributed/ad_hoc_server"
 require File.dirname(__FILE__) + "/deep_test/distributed/dispatch_controller"
 require File.dirname(__FILE__) + "/deep_test/distributed/drb_client_connection_info"
 require File.dirname(__FILE__) + "/deep_test/distributed/filename_resolver"

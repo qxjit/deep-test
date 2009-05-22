@@ -37,7 +37,14 @@ DeepTest::TestTask.new(:distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
   t.distributed_server = "druby://localhost:8000"
   t.sync_options = {:source => File.dirname(__FILE__), 
-                    :local => true,
+                    :rsync_options => "--exclude=.svn"}
+end
+
+DeepTest::TestTask.new(:adhoc_distributed_test) do |t|
+  t.number_of_workers = 2
+  t.pattern = "test/**/*_test.rb"
+  t.adhoc_distributed_hosts = "localhost"
+  t.sync_options = {:source => File.dirname(__FILE__), 
                     :rsync_options => "--exclude=.svn"}
 end
 

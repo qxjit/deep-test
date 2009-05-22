@@ -132,6 +132,13 @@ module DeepTest
       options.new_workers
     end
 
+    it "should create remote worker client when adhoc distributed hosts are specified" do
+      options = Options.new(:adhoc_distributed_hosts => "hosts", :sync_options => {:source => "root"})
+      Distributed::AdHocServer.should_receive(:new_dispatch_controller).with(options).and_return(:server_instance)
+      Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
+      options.new_workers
+    end
+
     it "should create local workers when connect fails" do
       options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"}, :ui => "DeepTest::UI::Null")
       Distributed::TestServer.should_receive(:connect).and_raise("An error")
@@ -151,7 +158,7 @@ module DeepTest
     end
 
     it "should be able to calculate mirror_path based on base an sync_options" do
-      Socket.should_receive(:gethostname).and_return("hostname", "server_hostname")
+      Socket.should_receive(:gethostname).and_return("hostname")
       options = Options.new(:sync_options => {:source => "/my/source/path"})
       options.mirror_path("/mirror/base/path").should == 
         "/mirror/base/path/hostname_my_source_path"

@@ -2,15 +2,16 @@ module DeepTest
   class Options
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
-        Option.new(:distributed_server, Option::String, nil),
-        Option.new(:number_of_workers,  Option::Integer, 2),
-        Option.new(:metrics_file,       Option::String, nil),
-        Option.new(:pattern,            Option::String, nil),
-        Option.new(:server_port,        Option::Integer, 6969),
-        Option.new(:sync_options,       Option::Hash, {}),
-        Option.new(:timeout_in_seconds, Option::Integer, 30),
-        Option.new(:ui,                 Option::String, "DeepTest::UI::Console"),
-        Option.new(:worker_listener,    Option::String, "DeepTest::NullWorkerListener"),
+        Option.new(:distributed_server,      Option::String, nil),
+        Option.new(:adhoc_distributed_hosts, Option::String, nil),
+        Option.new(:number_of_workers,       Option::Integer, 2),
+        Option.new(:metrics_file,            Option::String, nil),
+        Option.new(:pattern,                 Option::String, nil),
+        Option.new(:server_port,             Option::Integer, 6969),
+        Option.new(:sync_options,            Option::Hash, {}),
+        Option.new(:timeout_in_seconds,      Option::Integer, 30),
+        Option.new(:ui,                      Option::String, "DeepTest::UI::Console"),
+        Option.new(:worker_listener,         Option::String, "DeepTest::NullWorkerListener"),
       ]
     end
 
@@ -75,22 +76,28 @@ module DeepTest
 
     def mirror_path(base)
       raise "No source directory specified in sync_options" unless sync_options[:source]
-      relative_mirror_path = origin_hostname + sync_options[:source].gsub('/','_')
+      relative_mirror_path = @origin_hostname + sync_options[:source].gsub('/','_')
       "#{base}/#{relative_mirror_path}"
     end
 
     def new_workers
-      if distributed_server.nil?
+      if distributed_server.nil? && adhoc_distributed_hosts.nil?
         LocalWorkers.new self
       else
         begin
-          server = Distributed::TestServer.connect(self)
-          Distributed::RemoteWorkerClient.new(self, server, LocalWorkers.new(self))
+          Distributed::RemoteWorkerClient.new(self, 
+                                              distributed_server_object, 
+                                              LocalWorkers.new(self))
         rescue => e
           ui_instance.distributed_failover_to_local("connect", e)
           LocalWorkers.new self
         end
       end
+    end
+
+    def distributed_server_object
+      return Distributed::TestServer.connect(self) unless distributed_server.nil?
+      return Distributed::AdHocServer.new_dispatch_controller(self) unless adhoc_distributed_hosts.nil?
     end
 
     def server
