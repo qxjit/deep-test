@@ -12,6 +12,15 @@ module DeepTest
         RSync.push(@config[:address], options, path)
       end
 
+      def spawn_worker_server(options)
+        output  = `ssh -4 #{@config[:address]} 'cd #{options.mirror_path(@config[:work_dir])} && rake start_ad_hoc_deep_test_server OPTIONS=#{options.to_command_line}'`
+        output.each do |line|
+          if line =~ /RemoteWorkerServer url: (.*)/
+            return DRb::DRbObject.new_with_uri($1)
+          end
+        end
+      end
+
       def self.new_dispatch_controller(options)
         servers = options.adhoc_distributed_hosts.split(' ').map do |host|
           AdHocServer.new :address => host, :work_dir => '/tmp'

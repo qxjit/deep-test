@@ -7,7 +7,7 @@ module DeepTest
 
       it "should run each test using blackboard" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           it("passes1") {}
@@ -29,7 +29,7 @@ module DeepTest
 
       it "should return failure when a spec fails" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           it("passes") {}; 
@@ -45,7 +45,7 @@ module DeepTest
 
       it "should return success when there are pending examples" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           it("pending") {pending {1.should == 2}}; 
@@ -60,7 +60,7 @@ module DeepTest
 
       it "should return failure when a pending example passes" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
@@ -75,7 +75,7 @@ module DeepTest
 
       it "should return failure when a worker error occurs" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
@@ -91,7 +91,7 @@ module DeepTest
 
       it "should raise error if duplicate spec is found" do
         blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}), blackboard)
+        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
 
         describe("test") do
           2.times {it("example") {}}; 

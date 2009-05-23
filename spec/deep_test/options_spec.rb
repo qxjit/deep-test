@@ -104,20 +104,24 @@ module DeepTest
     it "should convert to command line option string" do
       options = Options.new(:number_of_workers => 1, :timeout_in_seconds => 3)
       options.to_command_line.should == 
-        "--number_of_workers 1 --timeout_in_seconds 3"
+        Base64.encode64(Marshal.dump(options)).gsub("\n","")
     end
 
     it "should parse from command line option string" do
-      options = Options.from_command_line( 
-        "--number_of_workers 2 --timeout_in_seconds 3 --pattern *")
-      options.number_of_workers.should == 2
-      options.timeout_in_seconds.should == 3
-      options.pattern.should == '*'
+      options = Options.new(:number_of_workers => 2, 
+                            :timeout_in_seconds => 3,
+                            :pattern => '*')
+      parsed_options = Options.from_command_line(options.to_command_line)
+      parsed_options.number_of_workers.should == 2
+      parsed_options.timeout_in_seconds.should == 3
+      parsed_options.pattern.should == '*'
     end
 
     it "should use default option value when no command line option is present" do
-      options = Options.from_command_line("")
-      options.number_of_workers.should == 2
+      ["", nil].each do |blank_value|
+        options = Options.from_command_line(blank_value)
+        options.number_of_workers.should == 2
+      end
     end
 
     it "should create local workers by default" do

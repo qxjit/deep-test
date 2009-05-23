@@ -26,11 +26,8 @@ module DeepTest
     end
 
     def self.from_command_line(command_line)
-      hash = {}
-      VALID_OPTIONS.each do |option|
-        hash[option.name] = option.from_command_line(command_line)
-      end
-      new(hash)
+      return new({}) if command_line.nil? || command_line.empty?
+      Marshal.load Base64.decode64(command_line)
     end
 
     def initialize(hash)
@@ -66,12 +63,7 @@ module DeepTest
     end
 
     def to_command_line
-      command_line = []
-      VALID_OPTIONS.each do |option|
-        value = send(option.name)
-        command_line << option.to_command_line(value)
-      end
-      command_line.compact.join(' ')
+      Base64.encode64(Marshal.dump(self)).gsub("\n","")
     end
 
     def mirror_path(base)

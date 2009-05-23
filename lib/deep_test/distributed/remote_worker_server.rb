@@ -68,6 +68,8 @@ module DeepTest
 
           server.launch_mercy_killer(grace_period)
 
+          yield if block_given?
+
           DRb.thread.join
         end
 
