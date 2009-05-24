@@ -1,17 +1,19 @@
 module DeepTest
+  Option = Struct.new :name, :default unless defined?(Option)
+
   class Options
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
-        Option.new(:distributed_server,      Option::String, nil),
-        Option.new(:adhoc_distributed_hosts, Option::String, nil),
-        Option.new(:number_of_workers,       Option::Integer, 2),
-        Option.new(:metrics_file,            Option::String, nil),
-        Option.new(:pattern,                 Option::String, nil),
-        Option.new(:server_port,             Option::Integer, 6969),
-        Option.new(:sync_options,            Option::Hash, {}),
-        Option.new(:timeout_in_seconds,      Option::Integer, 30),
-        Option.new(:ui,                      Option::String, "DeepTest::UI::Console"),
-        Option.new(:worker_listener,         Option::String, "DeepTest::NullWorkerListener"),
+        Option.new(:distributed_server,      nil),
+        Option.new(:adhoc_distributed_hosts, nil),
+        Option.new(:number_of_workers,       2),
+        Option.new(:metrics_file,            nil),
+        Option.new(:pattern,                 nil),
+        Option.new(:server_port,             6969),
+        Option.new(:sync_options,            {}),
+        Option.new(:timeout_in_seconds,      30),
+        Option.new(:ui,                      "DeepTest::UI::Console"),
+        Option.new(:worker_listener,         "DeepTest::NullWorkerListener"),
       ]
     end
 
