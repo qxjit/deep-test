@@ -13,12 +13,18 @@ module DeepTest
       end
 
       def spawn_worker_server(options)
-        output  = `ssh -4 #{@config[:address]} 'cd #{options.mirror_path(@config[:work_dir])} && rake start_ad_hoc_deep_test_server OPTIONS=#{options.to_command_line}'`
+        output  = `ssh -4 #{@config[:address]} '#{spawn_command(options)}'`
         output.each do |line|
           if line =~ /RemoteWorkerServer url: (.*)/
             return DRb::DRbObject.new_with_uri($1)
           end
         end
+      end
+
+      def spawn_command(options)
+        "cd #{options.mirror_path(@config[:work_dir])} && " + 
+        "rake start_ad_hoc_deep_test_server " + 
+        "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
       end
 
       def self.new_dispatch_controller(options)

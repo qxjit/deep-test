@@ -18,7 +18,7 @@ require File.dirname(__FILE__) + "/../deep_test"
   STDIN.close
 
   server = DeepTest::Distributed::RemoteWorkerServer.start(
-    'localhost',
+    ENV['HOST'],
     options.mirror_path('/tmp'),
     DeepTest::Distributed::TestServerWorkers.new(
       options, 

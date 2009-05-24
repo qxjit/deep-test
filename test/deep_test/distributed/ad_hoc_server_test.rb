@@ -31,16 +31,17 @@ unit_tests do
 
   test "spawn_worker_server launches worker server on remote machine" do
     Socket.stubs(:gethostname).returns("myhost")
-    server = DeepTest::Distributed::AdHocServer.new(:address => "host",
+    server = DeepTest::Distributed::AdHocServer.new(:address => "remote_host",
                                                     :work_dir => "/tmp")
     options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
 
     server.expects(:`).with(
-      "ssh -4 host 'cd /tmp/myhost_my_local_dir && " + 
-      "rake start_ad_hoc_deep_test_server OPTIONS=#{options.to_command_line}'"
-    ).returns("blah blah\nRemoteWorkerServer url: druby://host:9999\nblah")
+      "ssh -4 remote_host 'cd /tmp/myhost_my_local_dir && " + 
+      "rake start_ad_hoc_deep_test_server " + 
+      "OPTIONS=#{options.to_command_line} HOST=remote_host'"
+    ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
 
     worker_server = server.spawn_worker_server(options)
-    assert_equal "druby://host:9999", worker_server.__drburi
+    assert_equal "druby://remote_host:9999", worker_server.__drburi
   end
 end
