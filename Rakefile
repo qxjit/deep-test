@@ -43,8 +43,9 @@ end
 DeepTest::TestTask.new(:adhoc_distributed_test) do |t|
   t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
-  t.adhoc_distributed_hosts = "localhost"
+  t.adhoc_distributed_hosts = ENV['HOSTS']
   t.sync_options = {:source => File.dirname(__FILE__), 
+                    :username => ENV['USERNAME'],
                     :rsync_options => "--exclude=.svn"}
 end
 

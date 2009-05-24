@@ -13,12 +13,22 @@ module DeepTest
       end
 
       def spawn_worker_server(options)
-        output  = `ssh -4 #{@config[:address]} '#{spawn_command(options)}'`
+        output  = `#{ssh_command(options)} '#{spawn_command(options)}'`
         output.each do |line|
           if line =~ /RemoteWorkerServer url: (.*)/
             return DRb::DRbObject.new_with_uri($1)
           end
         end
+      end
+
+      def ssh_command(options)
+        username_option = if options.sync_options[:username]
+                            " -l #{options.sync_options[:username]}"
+                          else
+                            ""
+                          end
+
+        "ssh -4 #{@config[:address]}#{username_option}"
       end
 
       def spawn_command(options)

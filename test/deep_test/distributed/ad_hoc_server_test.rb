@@ -44,4 +44,20 @@ unit_tests do
     worker_server = server.spawn_worker_server(options)
     assert_equal "druby://remote_host:9999", worker_server.__drburi
   end
+
+  test "spawn_worker_server launches worker server on remote machine with usernames specified in sync_options" do
+    Socket.stubs(:gethostname).returns("myhost")
+    server = DeepTest::Distributed::AdHocServer.new(:address => "remote_host",
+                                                    :work_dir => "/tmp")
+    options = DeepTest::Options.new(:sync_options => {:username => "me", 
+                                                      :source => "/my/local/dir"})
+
+    server.expects(:`).with(
+      "ssh -4 remote_host -l me 'cd /tmp/myhost_my_local_dir && " + 
+      "rake start_ad_hoc_deep_test_server " + 
+      "OPTIONS=#{options.to_command_line} HOST=remote_host'"
+    ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
+
+    server.spawn_worker_server(options)
+  end
 end
