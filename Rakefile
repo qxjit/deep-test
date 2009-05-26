@@ -16,6 +16,9 @@ task :default => %w[
   run_distributed
   run_distributed_with_worker_down
   run_distributed_with_failover
+  ad_hoc_distributed_test
+  ad_hoc_distributed_spec
+  ad_hoc_distributed_with_failover
   test_rails_project
 ]
 
@@ -40,12 +43,20 @@ DeepTest::TestTask.new(:distributed_test) do |t|
                     :rsync_options => "--exclude=.svn"}
 end
 
-DeepTest::TestTask.new(:adhoc_distributed_test) do |t|
+DeepTest::TestTask.new(:manual_ad_hoc_distributed_test) do |t|
   t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
   t.adhoc_distributed_hosts = ENV['HOSTS']
   t.sync_options = {:source => File.dirname(__FILE__), 
                     :username => ENV['USERNAME'],
+                    :rsync_options => "--exclude=.svn"}
+end
+
+DeepTest::TestTask.new(:ad_hoc_distributed_test) do |t|
+  t.number_of_workers = 2
+  t.pattern = "test/**/*_test.rb"
+  t.adhoc_distributed_hosts = 'localhost'
+  t.sync_options = {:source => File.dirname(__FILE__), 
                     :rsync_options => "--exclude=.svn"}
 end
 
@@ -71,17 +82,14 @@ if rspec_present?
                                   :local => true,
                                   :rsync_options => "--exclude=.svn"}
   end
-end
 
-
-DeepTest::TestTask.new(:distribute_tests_to_minis) do |t|
-  t.number_of_workers = 2
-  t.pattern = "test/**/*_test.rb"
-  t.distributed_server = "druby://alpha.local:8000"
-  t.sync_options = {:source => File.dirname(__FILE__), 
-                    :username => "tworker",
-                    :password => "thought",
-                    :rsync_options => "--exclude=.svn"}
+  Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec) do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.deep_test :number_of_workers => 2, 
+                :adhoc_distributed_hosts => "localhost",
+                :sync_options => {:source => File.dirname(__FILE__), 
+                                  :rsync_options => "--exclude=.svn"}
+  end
 end
 
 task :run_distributed do |t|
@@ -147,6 +155,29 @@ task :run_distributed_with_failover do |t|
   puts "*** Running distributed with no server - expect a failover message ***"
   puts
   Rake::Task[:distributed_spec].execute "dummy arg"
+end
+
+task :ad_hoc_distributed_with_failover do |t|
+  puts
+  puts "*** Running distributed with no server - expect a failover message ***"
+  puts
+
+  Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec_with_failover_spec) do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.deep_test :number_of_workers => 2, 
+                :adhoc_distributed_hosts => "foobar_host",
+                :sync_options => {:source => File.dirname(__FILE__), 
+                                  :rsync_options => "--exclude=.svn"}
+  end
+  Rake::Task[:ad_hoc_distributed_spec_with_failover_spec].execute "dummy arg"
+end
+
+Spec::Rake::SpecTask.new(:ad_hoc_distributed_with_host_down) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test :number_of_workers => 2, 
+              :adhoc_distributed_hosts => "localhost foobar_host",
+              :sync_options => {:source => File.dirname(__FILE__), 
+                                :rsync_options => "--exclude=.svn"}
 end
 
 task :failing_test do
