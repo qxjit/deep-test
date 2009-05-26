@@ -71,13 +71,11 @@ if rspec_present?
   
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2
   end
 
   Spec::Rake::SpecTask.new(:distributed_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2, 
-                :distributed_server => "druby://localhost:8000",
+    t.deep_test :distributed_server => "druby://localhost:8000",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :local => true,
                                   :rsync_options => "--exclude=.svn"}
@@ -85,8 +83,7 @@ if rspec_present?
 
   Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2, 
-                :adhoc_distributed_hosts => "localhost",
+    t.deep_test :adhoc_distributed_hosts => "localhost",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
@@ -164,8 +161,7 @@ task :ad_hoc_distributed_with_failover do |t|
 
   Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec_with_failover_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2, 
-                :adhoc_distributed_hosts => "foobar_host",
+    t.deep_test :adhoc_distributed_hosts => "foobar_host",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
@@ -174,8 +170,7 @@ end
 
 Spec::Rake::SpecTask.new(:ad_hoc_distributed_with_host_down) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
-  t.deep_test :number_of_workers => 2, 
-              :adhoc_distributed_hosts => "localhost foobar_host",
+  t.deep_test :adhoc_distributed_hosts => "localhost foobar_host",
               :sync_options => {:source => File.dirname(__FILE__), 
                                 :rsync_options => "--exclude=.svn"}
 end

@@ -6,6 +6,12 @@ module DeepTest
       Options.new(:number_of_workers => 3).number_of_workers.should == 3
     end
 
+    it "should default to number_of_workers based on cpu info at time of call" do
+      options = Options.new({})
+      CpuInfo.should_receive(:new).and_return stub("cpu_info", :count => 4)
+      options.number_of_workers.should == 4
+    end
+
     it "should have reasonable defaults" do
       options = Options.new({})
       options.number_of_workers.should == 2

@@ -6,7 +6,7 @@ module DeepTest
       VALID_OPTIONS = [
         Option.new(:distributed_server,      nil),
         Option.new(:adhoc_distributed_hosts, nil),
-        Option.new(:number_of_workers,       2),
+        Option.new(:number_of_workers,       nil),
         Option.new(:metrics_file,            nil),
         Option.new(:pattern,                 nil),
         Option.new(:server_port,             6969),
@@ -18,6 +18,11 @@ module DeepTest
     end
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
+
+    def number_of_workers
+      return CpuInfo.new.count unless @number_of_workers
+      @number_of_workers
+    end
 
     def ui=(value)
       @ui = value.to_s
