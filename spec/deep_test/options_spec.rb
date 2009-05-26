@@ -126,7 +126,7 @@ module DeepTest
     it "should use default option value when no command line option is present" do
       ["", nil].each do |blank_value|
         options = Options.from_command_line(blank_value)
-        options.number_of_workers.should == 2
+        options.server_port.should == 6969
       end
     end
 

@@ -2,6 +2,7 @@ require "socket"
 require "base64"
 
 require File.dirname(__FILE__) + "/options"
+require File.dirname(__FILE__) + "/cpu_info"
 require File.dirname(__FILE__) + "/test_task"
 require File.dirname(__FILE__) + "/rspec_detector"
 
@@ -22,7 +23,7 @@ task :start_ad_hoc_deep_test_server do
     options.mirror_path('/tmp'),
     DeepTest::Distributed::TestServerWorkers.new(
       options, 
-      {:number_of_workers => 2}, 
+      {:number_of_workers => options.number_of_workers}, 
       DeepTest::Distributed::SshClientConnectionInfo.new
     )
   ) do

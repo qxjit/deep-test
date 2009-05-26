@@ -55,10 +55,11 @@ unit_tests do
     Rake::Task["deep_test"].instance_variable_get("@actions").last.call
   end
   
-  test "number_of_workers defaults to 2" do
+  test "number_of_workers defaults to count from CpuInfo" do
     task = DeepTest::TestTask.new do |t|
       t.stubs(:define)
     end
+    DeepTest::CpuInfo.expects(:new).returns stub(:count => 2)
     assert_equal 2, task.number_of_workers
   end
   

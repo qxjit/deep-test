@@ -30,13 +30,11 @@ Rake::TestTask.new do |t|
 end
 
 DeepTest::TestTask.new :deep_test do |t|
-  t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
   t.metrics_file = "deep_test.metrics"
 end
 
 DeepTest::TestTask.new(:distributed_test) do |t|
-  t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
   t.distributed_server = "druby://localhost:8000"
   t.sync_options = {:source => File.dirname(__FILE__), 
@@ -44,7 +42,6 @@ DeepTest::TestTask.new(:distributed_test) do |t|
 end
 
 DeepTest::TestTask.new(:manual_ad_hoc_distributed_test) do |t|
-  t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
   t.adhoc_distributed_hosts = ENV['HOSTS']
   t.sync_options = {:source => File.dirname(__FILE__), 
@@ -53,7 +50,6 @@ DeepTest::TestTask.new(:manual_ad_hoc_distributed_test) do |t|
 end
 
 DeepTest::TestTask.new(:ad_hoc_distributed_test) do |t|
-  t.number_of_workers = 2
   t.pattern = "test/**/*_test.rb"
   t.adhoc_distributed_hosts = 'localhost'
   t.sync_options = {:source => File.dirname(__FILE__), 
@@ -168,11 +164,13 @@ task :ad_hoc_distributed_with_failover do |t|
   Rake::Task[:ad_hoc_distributed_spec_with_failover_spec].execute "dummy arg"
 end
 
-Spec::Rake::SpecTask.new(:ad_hoc_distributed_with_host_down) do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.deep_test :adhoc_distributed_hosts => "localhost foobar_host",
-              :sync_options => {:source => File.dirname(__FILE__), 
-                                :rsync_options => "--exclude=.svn"}
+if rspec_present?
+  Spec::Rake::SpecTask.new(:ad_hoc_distributed_with_host_down) do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.deep_test :adhoc_distributed_hosts => "localhost foobar_host",
+                :sync_options => {:source => File.dirname(__FILE__), 
+                                  :rsync_options => "--exclude=.svn"}
+  end
 end
 
 task :failing_test do
