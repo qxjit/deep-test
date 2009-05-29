@@ -1,63 +1,59 @@
 require File.dirname(__FILE__) + "/../../test_helper"
 
-unit_tests do
-  test "generates a local working copy path based on host and source of request" do
-    Socket.stubs(:gethostname).returns("myhost")
-    server = DeepTest::Distributed::AdHocServer.new(:address => "host",
-                                                    :work_dir => "/tmp")
-    options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
-    DeepTest::Distributed::RSync.expects(:push).with("host",
-                                                     options,
-                                                     "/tmp/myhost_my_local_dir")
-    server.sync(options)
-  end
-  
-  test "new_dispatch_controller creates dispatch controller for all servers" do
-    Socket.stubs(:gethostname).returns("myhost")
-    options = DeepTest::Options.new(:ui => "DeepTest::UI::Null",
-                                    :sync_options => {:source => "/my/local/dir"},
-                                    :adhoc_distributed_hosts => "server1 server2")
+module DeepTest
+  module Distributed
+    unit_tests do
+      test "generates a local working copy path based on host and source of request" do
+        Socket.stubs(:gethostname).returns("myhost")
+        server = AdHocServer.new(:address => "host", :work_dir => "/tmp")
+        options = Options.new(:sync_options => {:source => "/my/local/dir"})
+        RSync.expects(:push).with("host", options, "/tmp/myhost_my_local_dir")
+        server.sync(options)
+      end
+      
+      test "new_dispatch_controller creates dispatch controller for all servers" do
+        Socket.stubs(:gethostname).returns("myhost")
+        options = Options.new(:ui => "DeepTest::UI::Null",
+                              :sync_options => {:source => "/my/local/dir"},
+                              :adhoc_distributed_hosts => "server1 server2")
 
-    DeepTest::Distributed::RSync.expects(:push).with("server1",
-                                                     options,
-                                                     "/tmp/myhost_my_local_dir")
-    DeepTest::Distributed::RSync.expects(:push).with("server2",
-                                                     options,
-                                                     "/tmp/myhost_my_local_dir")
+        RSync.expects(:push).with("server1", options, "/tmp/myhost_my_local_dir")
+        RSync.expects(:push).with("server2", options, "/tmp/myhost_my_local_dir")
 
-    DeepTest::Distributed::AdHocServer.new_dispatch_controller(options).
-      sync(options)
-  end
+        AdHocServer.new_dispatch_controller(options).sync(options)
+      end
 
-  test "spawn_worker_server launches worker server on remote machine" do
-    Socket.stubs(:gethostname).returns("myhost")
-    server = DeepTest::Distributed::AdHocServer.new(:address => "remote_host",
-                                                    :work_dir => "/tmp")
-    options = DeepTest::Options.new(:sync_options => {:source => "/my/local/dir"})
+      test "spawn_worker_server launches worker server on remote machine" do
+        Socket.stubs(:gethostname).returns("myhost")
+        server = AdHocServer.new(:address => "remote_host", :work_dir => "/tmp")
+        options = Options.new(:sync_options => {:source => "/my/local/dir"})
 
-    server.expects(:`).with(
-      "ssh -4 remote_host 'cd /tmp/myhost_my_local_dir && " + 
-      "rake start_ad_hoc_deep_test_server " + 
-      "OPTIONS=#{options.to_command_line} HOST=remote_host'"
-    ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
+        server.expects(:`).with(
+          "ssh -4 remote_host " + 
+          "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
+          "rake start_ad_hoc_deep_test_server " + 
+          "OPTIONS=#{options.to_command_line} HOST=remote_host'"
+        ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
 
-    worker_server = server.spawn_worker_server(options)
-    assert_equal "druby://remote_host:9999", worker_server.__drburi
-  end
+        worker_server = server.spawn_worker_server(options)
+        assert_equal "druby://remote_host:9999", worker_server.__drburi
+      end
 
-  test "spawn_worker_server launches worker server on remote machine with usernames specified in sync_options" do
-    Socket.stubs(:gethostname).returns("myhost")
-    server = DeepTest::Distributed::AdHocServer.new(:address => "remote_host",
-                                                    :work_dir => "/tmp")
-    options = DeepTest::Options.new(:sync_options => {:username => "me", 
-                                                      :source => "/my/local/dir"})
+      test "spawn_worker_server launches worker server on remote machine with usernames specified in sync_options" do
+        Socket.stubs(:gethostname).returns("myhost")
+        server = AdHocServer.new(:address => "remote_host", :work_dir => "/tmp")
+        options = Options.new(:sync_options => {:username => "me", 
+                                                :source => "/my/local/dir"})
 
-    server.expects(:`).with(
-      "ssh -4 remote_host -l me 'cd /tmp/myhost_my_local_dir && " + 
-      "rake start_ad_hoc_deep_test_server " + 
-      "OPTIONS=#{options.to_command_line} HOST=remote_host'"
-    ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
+        server.expects(:`).with(
+          "ssh -4 remote_host -l me " + 
+          "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
+          "rake start_ad_hoc_deep_test_server " + 
+          "OPTIONS=#{options.to_command_line} HOST=remote_host'"
+        ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
 
-    server.spawn_worker_server(options)
+        server.spawn_worker_server(options)
+      end
+    end
   end
 end

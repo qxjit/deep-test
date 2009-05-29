@@ -32,6 +32,7 @@ module DeepTest
       end
 
       def spawn_command(options)
+        "#{ShellEnvironment.like_login} && " + 
         "cd #{options.mirror_path(@config[:work_dir])} && " + 
         "rake start_ad_hoc_deep_test_server " + 
         "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
