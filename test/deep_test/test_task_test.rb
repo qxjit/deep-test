@@ -12,16 +12,6 @@ module DeepTest
       assert_equal 20, t.timeout_in_seconds
     end
 
-    test "should support setting distributed_server" do
-      t = TestTask.new :deep_test do |t|
-        t.stubs(:desc)
-        t.stubs(:task)
-        t.distributed_server = "uri"
-      end
-      assert_equal "uri", t.instance_variable_get(:@options).distributed_server
-      assert_equal "uri", t.distributed_server
-    end
-
     test "should support worker_listener" do
       t = TestTask.new :deep_test do |t|
         t.stubs(:desc)

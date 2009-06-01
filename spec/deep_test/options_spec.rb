@@ -29,8 +29,9 @@ module DeepTest
       Options.new(:pattern => '*').pattern.should == '*'
     end
 
-    it "should support distributed_server" do
-      Options.new(:distributed_server => "uri").distributed_server.should == "uri"
+    it "should support adhoc_distributed_hosts" do
+      Options.new(:adhoc_distributed_hosts => "host1 host2").
+        adhoc_distributed_hosts.should == "host1 host2"
     end
 
     it "should support server_port" do
@@ -135,24 +136,11 @@ module DeepTest
       options.new_workers.should be_instance_of(LocalWorkers) 
     end
 
-    it "should create remote worker client when distributed server is specified" do
-      options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"})
-      Distributed::TestServer.should_receive(:connect).with(options).and_return(:server_instance)
-      Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
-      options.new_workers
-    end
-
     it "should create remote worker client when adhoc distributed hosts are specified" do
       options = Options.new(:adhoc_distributed_hosts => "hosts", :sync_options => {:source => "root"})
       Distributed::AdHocServer.should_receive(:new_dispatch_controller).with(options).and_return(:server_instance)
       Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
       options.new_workers
-    end
-
-    it "should create local workers when connect fails" do
-      options = Options.new(:distributed_server => "uri", :sync_options => {:source => "root"}, :ui => "DeepTest::UI::Null")
-      Distributed::TestServer.should_receive(:connect).and_raise("An error")
-      options.new_workers.should be_instance_of(LocalWorkers) 
     end
 
     it "should return localhost as origin_hostname current hostname is same as when created" do

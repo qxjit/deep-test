@@ -13,9 +13,6 @@ task :default => %w[
   failing_test
   deep_test
   deep_spec
-  run_distributed
-  run_distributed_with_worker_down
-  run_distributed_with_failover
   ad_hoc_distributed_test
   ad_hoc_distributed_spec
   ad_hoc_distributed_with_failover
@@ -32,13 +29,6 @@ end
 DeepTest::TestTask.new :deep_test do |t|
   t.pattern = "test/**/*_test.rb"
   t.metrics_file = "deep_test.metrics"
-end
-
-DeepTest::TestTask.new(:distributed_test) do |t|
-  t.pattern = "test/**/*_test.rb"
-  t.distributed_server = "druby://localhost:8000"
-  t.sync_options = {:source => File.dirname(__FILE__), 
-                    :rsync_options => "--exclude=.svn"}
 end
 
 DeepTest::TestTask.new(:manual_ad_hoc_distributed_test) do |t|
@@ -69,85 +59,12 @@ if rspec_present?
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
-  Spec::Rake::SpecTask.new(:distributed_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_server => "druby://localhost:8000",
-                :sync_options => {:source => File.dirname(__FILE__), 
-                                  :local => true,
-                                  :rsync_options => "--exclude=.svn"}
-  end
-
   Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
     t.deep_test :adhoc_distributed_hosts => "localhost",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
-end
-
-task :run_distributed do |t|
-  begin
-    FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
-    FileUtils.mkdir('/tmp/test_2') unless File.exist?('/tmp/test_2')
-
-    test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8001 --work_dir /tmp/test_1"
-    end
-
-    test_2_pid = fork do
-      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8002 --work_dir /tmp/test_2"
-    end
-
-    master_pid = fork do
-      exec "ruby bin/deep_test master_test_server --uri drubyall://localhost:8000 druby://localhost:8001 druby://localhost:8002"
-    end
-
-    sleep 1
-
-    Rake::Task[:distributed_test].invoke
-    Rake::Task[:distributed_spec].invoke
-
-    sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
-  ensure
-    Process.kill('TERM', master_pid) if master_pid rescue nil
-    Process.kill('TERM', test_1_pid) if test_1_pid rescue nil
-    Process.kill('TERM', test_2_pid) if test_2_pid rescue nil
-    Process.waitall
-  end
-
-  sleep 1
-end
-
-task :run_distributed_with_worker_down do |t|
-  begin
-    FileUtils.mkdir('/tmp/test_1') unless File.exist?('/tmp/test_1')
-
-    test_1_pid = fork do
-      exec "ruby bin/deep_test test_server --uri drubyall://localhost:8001 --work_dir /tmp/test_1"
-    end
-
-    # don't start worker 2
-
-    master_pid = fork do
-      exec "ruby bin/deep_test master_test_server --uri drubyall://localhost:8000 druby://localhost:8001 druby://localhost:8002"
-    end
-
-    sleep 1
-
-    # Use throughput to make sure we can run tests
-    sh "ruby bin/deep_test test_throughput druby://localhost:8000 20"
-  ensure
-    Process.kill('TERM', master_pid) if master_pid rescue nil
-    Process.kill('TERM', test_1_pid) if test_1_pid rescue nil
-    Process.waitall
-  end
-end
-
-task :run_distributed_with_failover do |t|
-  puts
-  puts "*** Running distributed with no server - expect a failover message ***"
-  puts
-  Rake::Task[:distributed_spec].execute "dummy arg"
 end
 
 task :ad_hoc_distributed_with_failover do |t|

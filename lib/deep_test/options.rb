@@ -4,7 +4,6 @@ module DeepTest
   class Options
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
-        Option.new(:distributed_server,      nil),
         Option.new(:adhoc_distributed_hosts, nil),
         Option.new(:number_of_workers,       nil),
         Option.new(:metrics_file,            nil),
@@ -80,23 +79,14 @@ module DeepTest
     end
 
     def new_workers
-      if distributed_server.nil? && adhoc_distributed_hosts.nil?
+      if adhoc_distributed_hosts.nil?
         LocalWorkers.new self
       else
-        begin
-          Distributed::RemoteWorkerClient.new(self, 
-                                              distributed_server_object, 
-                                              LocalWorkers.new(self))
-        rescue => e
-          ui_instance.distributed_failover_to_local("connect", e)
-          LocalWorkers.new self
-        end
+        Distributed::RemoteWorkerClient.new(
+          self, 
+          Distributed::AdHocServer.new_dispatch_controller(self), 
+          LocalWorkers.new(self))
       end
-    end
-
-    def distributed_server_object
-      return Distributed::TestServer.connect(self) unless distributed_server.nil?
-      return Distributed::AdHocServer.new_dispatch_controller(self) unless adhoc_distributed_hosts.nil?
     end
 
     def server
