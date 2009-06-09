@@ -33,7 +33,7 @@ end
 
 DeepTest::TestTask.new(:manual_distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
-  t.distributed_hosts = ENV['HOSTS']
+  t.distributed_hosts = (ENV['HOSTS'] || '').split(' ')
   t.sync_options = {:source => File.dirname(__FILE__), 
                     :username => ENV['USERNAME'],
                     :rsync_options => "--exclude=.svn"}
@@ -41,7 +41,7 @@ end
 
 DeepTest::TestTask.new(:distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
-  t.distributed_hosts = 'localhost'
+  t.distributed_hosts = %w[localhost]
   t.sync_options = {:source => File.dirname(__FILE__), 
                     :rsync_options => "--exclude=.svn"}
 end
@@ -61,7 +61,7 @@ if rspec_present?
 
   Spec::Rake::SpecTask.new(:distributed_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => "localhost",
+    t.deep_test :distributed_hosts => %w[localhost],
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
@@ -74,7 +74,7 @@ task :distributed_with_failover do |t|
 
   Spec::Rake::SpecTask.new(:distributed_spec_with_failover_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => "foobar_host",
+    t.deep_test :distributed_hosts => %w[foobar_host],
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
@@ -84,7 +84,7 @@ end
 if rspec_present?
   Spec::Rake::SpecTask.new(:distributed_with_host_down) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => "localhost foobar_host",
+    t.deep_test :distributed_hosts => %w[localhost foobar_host],
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end

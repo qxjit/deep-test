@@ -39,7 +39,7 @@ module DeepTest
       end
 
       def self.new_dispatch_controller(options)
-        servers = options.distributed_hosts.split(' ').map do |host|
+        servers = options.distributed_hosts.map do |host|
           new :address => host, :work_dir => '/tmp'
         end
         MultiTestServerProxy.new(options, servers)

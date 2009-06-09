@@ -30,8 +30,8 @@ module DeepTest
     end
 
     it "should support distributed_hosts" do
-      Options.new(:distributed_hosts => "host1 host2").
-        distributed_hosts.should == "host1 host2"
+      Options.new(:distributed_hosts => %w[host1 host2]).
+        distributed_hosts.should == %w[host1 host2]
     end
 
     it "should support server_port" do
@@ -137,7 +137,7 @@ module DeepTest
     end
 
     it "should create remote worker client when distributed hosts are specified" do
-      options = Options.new(:distributed_hosts => "hosts", :sync_options => {:source => "root"})
+      options = Options.new(:distributed_hosts => %w[hosts], :sync_options => {:source => "root"})
       Distributed::Server.should_receive(:new_dispatch_controller).with(options).and_return(:server_instance)
       Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
       options.new_workers

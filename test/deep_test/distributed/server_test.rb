@@ -15,7 +15,7 @@ module DeepTest
         Socket.stubs(:gethostname).returns("myhost")
         options = Options.new(:ui => "DeepTest::UI::Null",
                               :sync_options => {:source => "/my/local/dir"},
-                              :distributed_hosts => "server1 server2")
+                              :distributed_hosts => %w[server1 server2])
 
         RSync.expects(:push).with("server1", options, "/tmp/myhost_my_local_dir")
         RSync.expects(:push).with("server2", options, "/tmp/myhost_my_local_dir")
