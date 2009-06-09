@@ -1,6 +1,6 @@
 module DeepTest
   module Distributed
-    class AdHocServer
+    class Server
       def initialize(config)
         @config = config
       end
@@ -34,13 +34,13 @@ module DeepTest
       def spawn_command(options)
         "#{ShellEnvironment.like_login} && " + 
         "cd #{options.mirror_path(@config[:work_dir])} && " + 
-        "rake start_ad_hoc_deep_test_server " + 
+        "rake deep_test:start_distributed_server " + 
         "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
       end
 
       def self.new_dispatch_controller(options)
-        servers = options.adhoc_distributed_hosts.split(' ').map do |host|
-          AdHocServer.new :address => host, :work_dir => '/tmp'
+        servers = options.distributed_hosts.split(' ').map do |host|
+          new :address => host, :work_dir => '/tmp'
         end
         MultiTestServerProxy.new(options, servers)
       end

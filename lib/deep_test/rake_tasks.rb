@@ -11,7 +11,7 @@ DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/spec/extensions/spec_task"
 end
 
-task :start_ad_hoc_deep_test_server do
+task :'deep_test:start_distributed_server' do
   require File.dirname(__FILE__) + "/../deep_test"
   options = DeepTest::Options.from_command_line(ENV['OPTIONS'])
   DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
@@ -27,7 +27,7 @@ task :start_ad_hoc_deep_test_server do
       DeepTest::Distributed::SshClientConnectionInfo.new
     )
   ) do
-    STDOUT.reopen("/tmp/ad_hoc_deep_test_server.log", "a")
+    STDOUT.reopen("/tmp/deep_test_server.log", "a")
     STDERR.reopen(STDOUT)
   end
 

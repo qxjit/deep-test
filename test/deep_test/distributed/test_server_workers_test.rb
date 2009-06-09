@@ -17,8 +17,8 @@ module DeepTest
           {:number_of_workers => 4},
           mock(:address => "address")
         )
-        Server.expects(:remote_reference).with("address", options.server_port).
-          returns(:server_reference)
+        DeepTest::Server.expects(:remote_reference).
+          with("address", options.server_port).returns(:server_reference)
 
         assert_equal :server_reference, workers.server
       end

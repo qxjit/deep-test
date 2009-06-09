@@ -12,7 +12,7 @@ module DeepTest
       end
 
       def server
-        Server.remote_reference(@connection_info.address, @options.server_port)
+        DeepTest::Server.remote_reference(@connection_info.address, @options.server_port)
       end
 
       def start_all

@@ -13,9 +13,9 @@ task :default => %w[
   failing_test
   deep_test
   deep_spec
-  ad_hoc_distributed_test
-  ad_hoc_distributed_spec
-  ad_hoc_distributed_with_failover
+  distributed_test
+  distributed_spec
+  distributed_with_failover
   test_rails_project
 ]
 
@@ -31,17 +31,17 @@ DeepTest::TestTask.new :deep_test do |t|
   t.metrics_file = "deep_test.metrics"
 end
 
-DeepTest::TestTask.new(:manual_ad_hoc_distributed_test) do |t|
+DeepTest::TestTask.new(:manual_distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
-  t.adhoc_distributed_hosts = ENV['HOSTS']
+  t.distributed_hosts = ENV['HOSTS']
   t.sync_options = {:source => File.dirname(__FILE__), 
                     :username => ENV['USERNAME'],
                     :rsync_options => "--exclude=.svn"}
 end
 
-DeepTest::TestTask.new(:ad_hoc_distributed_test) do |t|
+DeepTest::TestTask.new(:distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
-  t.adhoc_distributed_hosts = 'localhost'
+  t.distributed_hosts = 'localhost'
   t.sync_options = {:source => File.dirname(__FILE__), 
                     :rsync_options => "--exclude=.svn"}
 end
@@ -59,32 +59,32 @@ if rspec_present?
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
-  Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec) do |t|
+  Spec::Rake::SpecTask.new(:distributed_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :adhoc_distributed_hosts => "localhost",
+    t.deep_test :distributed_hosts => "localhost",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
 end
 
-task :ad_hoc_distributed_with_failover do |t|
+task :distributed_with_failover do |t|
   puts
   puts "*** Running distributed with no server - expect a failover message ***"
   puts
 
-  Spec::Rake::SpecTask.new(:ad_hoc_distributed_spec_with_failover_spec) do |t|
+  Spec::Rake::SpecTask.new(:distributed_spec_with_failover_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :adhoc_distributed_hosts => "foobar_host",
+    t.deep_test :distributed_hosts => "foobar_host",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end
-  Rake::Task[:ad_hoc_distributed_spec_with_failover_spec].execute "dummy arg"
+  Rake::Task[:distributed_spec_with_failover_spec].execute "dummy arg"
 end
 
 if rspec_present?
-  Spec::Rake::SpecTask.new(:ad_hoc_distributed_with_host_down) do |t|
+  Spec::Rake::SpecTask.new(:distributed_with_host_down) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :adhoc_distributed_hosts => "localhost foobar_host",
+    t.deep_test :distributed_hosts => "localhost foobar_host",
                 :sync_options => {:source => File.dirname(__FILE__), 
                                   :rsync_options => "--exclude=.svn"}
   end

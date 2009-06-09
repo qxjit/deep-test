@@ -4,15 +4,15 @@ module DeepTest
   class Options
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
-        Option.new(:adhoc_distributed_hosts, nil),
-        Option.new(:number_of_workers,       nil),
-        Option.new(:metrics_file,            nil),
-        Option.new(:pattern,                 nil),
-        Option.new(:server_port,             6969),
-        Option.new(:sync_options,            {}),
-        Option.new(:timeout_in_seconds,      30),
-        Option.new(:ui,                      "DeepTest::UI::Console"),
-        Option.new(:worker_listener,         "DeepTest::NullWorkerListener"),
+        Option.new(:distributed_hosts, nil),
+        Option.new(:number_of_workers, nil),
+        Option.new(:metrics_file,      nil),
+        Option.new(:pattern,           nil),
+        Option.new(:server_port,       6969),
+        Option.new(:sync_options,      {}),
+        Option.new(:timeout_in_seconds,30),
+        Option.new(:ui,                "DeepTest::UI::Console"),
+        Option.new(:worker_listener,   "DeepTest::NullWorkerListener"),
       ]
     end
 
@@ -79,12 +79,12 @@ module DeepTest
     end
 
     def new_workers
-      if adhoc_distributed_hosts.nil?
+      if distributed_hosts.nil?
         LocalWorkers.new self
       else
         Distributed::RemoteWorkerClient.new(
           self, 
-          Distributed::AdHocServer.new_dispatch_controller(self), 
+          Distributed::Server.new_dispatch_controller(self), 
           LocalWorkers.new(self))
       end
     end
