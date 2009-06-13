@@ -12,6 +12,10 @@ unit_tests do
     assert_successful "rake deep_test"
   end
 
+  test "distributed_test" do
+    assert_successful "rake distributed_test" 
+  end
+
   test "spec" do
     assert_successful "rake spec"
   end

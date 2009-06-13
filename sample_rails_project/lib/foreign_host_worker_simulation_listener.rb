@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/../vendor/gems/deep_test/lib/deep_test'
+
 class ForeignHostWorkerSimulationListener < DeepTest::NullWorkerListener
   def starting(worker)
     # On a foreign host, there won't necessarily be a database for tests

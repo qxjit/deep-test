@@ -8,6 +8,10 @@ module DeepTest
       end
 
       def load_files(filelist)
+        # load one file before calling listeners to make sure environment has
+        # been initialized as expected
+        #
+        load filelist.first
         @options.new_listener_list.before_sync
 
         t = Thread.new do
@@ -16,7 +20,7 @@ module DeepTest
           @worker_server.load_files filelist
         end
 
-        filelist.each {|f| load f}
+        filelist[1..-1].each {|f| load f}
 
         begin
           t.join

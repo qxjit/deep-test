@@ -127,8 +127,6 @@ task :publish_rdoc => [:rerdoc] do
   sh "scp -rqp doc/* #{username}@rubyforge.org:/var/www/gforge-projects/deep-test"
 end
 
-Gem::manage_gems
-
 specification = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
 	s.name   = "deep_test"
