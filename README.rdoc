@@ -221,6 +221,7 @@ they're all using the same version of Ruby and DeepTest.
 * Alex Chaffee
 * Dan[http://www.dcmanges.com/blog] Manges[http://www.dcmanges.com/blog]
 * David[http://davidvollbracht.com/] Vollbracht[http://davidvollbracht.com/]
+* Brian[http://blog.brianguthrie.com/] Guthrie[http://blog.brianguthrie.com/]
 * Scott Taylor
 
 == License
