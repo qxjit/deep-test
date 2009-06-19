@@ -61,7 +61,7 @@ module DeepTest
           server = new(base_path, workers)
 
           DRb.start_service("drubyall://#{address}:0", server)
-          DeepTest.logger.info "RemoteWorkerServer started at #{DRb.uri}"
+          DeepTest.logger.info { "RemoteWorkerServer started at #{DRb.uri}" }
 
           outie.write DRb.uri
           outie.close

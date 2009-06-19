@@ -27,7 +27,7 @@ module DeepTest
           end
         end
       rescue Server::ResultOverdueError
-        DeepTest.logger.error("Results are overdue from server, ending run")
+        DeepTest.logger.error { "Results are overdue from server, ending run" }
       end
 
       work_units_by_id

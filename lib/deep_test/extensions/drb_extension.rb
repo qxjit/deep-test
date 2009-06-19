@@ -22,7 +22,7 @@ module DeepTest
         host = getservername
       end
 
-      DeepTest.logger.debug("Listening on port #{port}, all addresses.")
+      DeepTest.logger.debug { "Listening on port #{port}, all addresses." }
 	    soc = TCPServer.open('0.0.0.0', port)  	    
       port = soc.addr[1] if port == 0
       uri = "druby://#{host}:#{port}"

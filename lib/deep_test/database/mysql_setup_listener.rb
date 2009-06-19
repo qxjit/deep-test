@@ -86,7 +86,7 @@ module DeepTest
       end
 
       def system(command) # :nodoc:
-        DeepTest.logger.info command
+        DeepTest.logger.info { command }
         super command
       end
 

@@ -51,7 +51,6 @@ module DeepTest
     test "start returns instance of server" do
       DRb.expects(:start_service)
       DRb.expects(:uri)
-      DeepTest.logger.expects(:info)
 
       server = Server.start(Options.new({}))
       assert_kind_of Server, server

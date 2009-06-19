@@ -27,7 +27,7 @@ module DeepTest
         @worker = worker
 
         at_exit do
-          DeepTest.logger.debug("dropping database #{worker_database}")
+          DeepTest.logger.debug { "dropping database #{worker_database}" }
           drop_database
         end
 

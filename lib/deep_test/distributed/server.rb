@@ -6,9 +6,9 @@ module DeepTest
       end
 
       def sync(options)
-        DeepTest.logger.debug "mirror sync for #{options.origin_hostname}"
+        DeepTest.logger.debug { "mirror sync for #{options.origin_hostname}" }
         path = options.mirror_path(@config[:work_dir])
-        DeepTest.logger.debug "Syncing #{options.sync_options[:source]} to #{path}"
+        DeepTest.logger.debug { "Syncing #{options.sync_options[:source]} to #{path}" }
         RSync.push(@config[:address], options, path)
       end
 

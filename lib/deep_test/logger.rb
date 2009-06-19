@@ -13,5 +13,15 @@ module DeepTest
         Logger::INFO
       end
     end
+
+    Severity.constants.each do |severity|
+      eval <<-end_src
+        def #{severity.downcase}
+          super
+        rescue Exception => e
+          super "\#{e.class}: \#{e} occurred logging on \#{caller[0]}", &nil
+        end
+      end_src
+    end
   end
 end

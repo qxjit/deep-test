@@ -14,7 +14,7 @@ end
 task :'deep_test:start_distributed_server' do
   require File.dirname(__FILE__) + "/../deep_test"
   options = DeepTest::Options.from_command_line(ENV['OPTIONS'])
-  DeepTest.logger.debug("mirror spawn_worker_server for #{options.origin_hostname}")
+  DeepTest.logger.debug { "mirror spawn_worker_server for #{options.origin_hostname}" }
 
   STDIN.close
 

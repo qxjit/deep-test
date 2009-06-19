@@ -27,7 +27,7 @@ module DeepTest
             begin
               yield
             rescue Exception => e
-              DeepTest.logger.debug "Exception in #{name} (#{Process.pid}): #{e.message}"
+              DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
               raise
             end
 
@@ -53,7 +53,7 @@ module DeepTest
     end
 
     def stop_all
-      DeepTest.logger.debug("stopping all demons")
+      DeepTest.logger.debug { "stopping all demons" }
       receivers = @demons_semaphore.synchronize do
         @demons.reverse
       end
@@ -61,16 +61,16 @@ module DeepTest
       receivers.reverse.each do |demon|
         name, pid = demon
         if running?(pid)
-          DeepTest.logger.debug("Sending SIGTERM to #{name}, #{pid}")
+          DeepTest.logger.debug { "Sending SIGTERM to #{name}, #{pid}" }
           Process.kill("TERM", pid)
         end
       end
-      DeepTest.logger.debug("Warlock: Stopped all receivers")
+      DeepTest.logger.debug { "Warlock: Stopped all receivers" }
 
-      DeepTest.logger.debug("waiting for reapers")
+      DeepTest.logger.debug { "waiting for reapers" }
       @reapers.each {|r| r.join}
 
-      DeepTest.logger.debug("Warlock: done reaping processes")
+      DeepTest.logger.debug { "Warlock: done reaping processes" }
     end
 
     def exit_when_none_running
@@ -110,22 +110,22 @@ module DeepTest
     protected
 
     def add_demon(name, pid)
-      DeepTest.logger.debug "Started: #{name} (#{pid})"
+      DeepTest.logger.debug { "Started: #{name} (#{pid})" }
       @demons << [name, pid]
     end
 
     def remove_demon(name, pid)
       @demons.delete [name, pid]
-      DeepTest.logger.debug "Stopped: #{name} (#{pid})"
+      DeepTest.logger.debug { "Stopped: #{name} (#{pid})" }
     end
 
 
     def launch_reaper_thread(name, pid)
       @reapers << Thread.new do
         Process.detach(pid).join
-        DeepTest.logger.debug("#{name} (#{pid}) reaped")
+        DeepTest.logger.debug { "#{name} (#{pid}) reaped" }
         @demons_semaphore.synchronize do
-          DeepTest.logger.debug("Warlock Reaper: removing #{name} (#{pid}) from demon list")
+          DeepTest.logger.debug { "Warlock Reaper: removing #{name} (#{pid}) from demon list" }
           remove_demon name, pid
         end
       end

@@ -30,7 +30,7 @@ module DeepTest
       end
 
       def read_results(result, tests_by_name)
-        DeepTest.logger.debug("SupervisedTestSuite: going to read #{tests_by_name.size} results")
+        DeepTest.logger.debug { "SupervisedTestSuite: going to read #{tests_by_name.size} results" }
 
         missing_tests = 
           ResultReader.new(@blackboard).read(tests_by_name) do |test, remote_result|
@@ -42,7 +42,7 @@ module DeepTest
           result.add_error ::Test::Unit::Error.new(name, WorkUnitNeverReceivedError.new)
         end
       ensure
-        DeepTest.logger.debug("SupervisedTestSuite: exiting with #{missing_tests.size} results left")
+        DeepTest.logger.debug { "SupervisedTestSuite: exiting with #{missing_tests.size} results left" }
       end
     end
   end

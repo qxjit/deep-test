@@ -19,8 +19,8 @@ module DeepTest
         klass = eval("::" + classname) 
         resolved_message = message
       rescue => e
-        DeepTest.logger.debug("Unable to load exception class: #{classname}: #{e.message}")
-        DeepTest.logger.debug(e.backtrace.join("\n"))
+        DeepTest.logger.debug { "Unable to load exception class: #{classname}: #{e.message}" }
+        DeepTest.logger.debug { e.backtrace.join("\n") }
 
         klass = UnloadableException
         resolved_message = "#{classname}: #{message}"
@@ -29,8 +29,8 @@ module DeepTest
       begin
         resolved_exception = klass.new resolved_message
       rescue => e
-        DeepTest.logger.debug("Unable to instantiation exception class: #{classname}: #{e.message}")
-        DeepTest.logger.debug(e.backtrace.join("\n"))
+        DeepTest.logger.debug { "Unable to instantiation exception class: #{classname}: #{e.message}" }
+        DeepTest.logger.debug { e.backtrace.join("\n") }
 
         resolved_exception = UnloadableException.new resolved_message
       end

@@ -20,7 +20,6 @@ module DeepTest
       blackboard = SimpleTestBlackboard.new
       blackboard.simulate_result_overdue_error = true
       work_units = {1 => "One"}
-      DeepTest.logger.expects(:error)
       ResultReader.new(blackboard).read(work_units) {}
       assert_equal({1 => "One"}, work_units)
     end

@@ -13,3 +13,14 @@ require File.dirname(__FILE__) + "/../spec/thread_worker"
 
 class SomeCustomException < RuntimeError
 end
+
+class Test::Unit::TestCase
+  def setup
+    @old_logger = DeepTest.logger
+    DeepTest.logger = DeepTest::Logger.new(StringIO.new)
+  end
+
+  def teardown
+    DeepTest.logger = @old_logger if @old_logger
+  end
+end

@@ -13,7 +13,7 @@ module DeepTest
         command = Args.new(address, options).send("#{operation}_command", 
                                                   destination)
 
-        DeepTest.logger.debug("rsycing: #{command}")
+        DeepTest.logger.debug { "rsycing: #{command}" }
         successful = system command
         raise "RSync Failed!!" unless successful
       end

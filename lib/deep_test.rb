@@ -3,6 +3,10 @@ module DeepTest
     def logger
       @logger ||= DeepTest::Logger.new($stdout)
     end
+
+    def logger=(logger)
+      @logger = logger
+    end
   end  
 
   # Fork in a separate thread.  If we fork from a DRb thread

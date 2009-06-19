@@ -30,15 +30,15 @@ module DeepTest
             results << t.value
           rescue Timeout::Error
             @receivers.delete t[:receiver]
-            DeepTest.logger.error "Timeout dispatching #{method_name} to #{description t[:receiver]}"
+            DeepTest.logger.error { "Timeout dispatching #{method_name} to #{description t[:receiver]}" }
           rescue DRb::DRbConnError
             @receivers.delete t[:receiver]
             unless options[:ignore_connection_error]
-              DeepTest.logger.error "Connection Refused dispatching #{method_name} to #{description t[:receiver]}"
+              DeepTest.logger.error { "Connection Refused dispatching #{method_name} to #{description t[:receiver]}" }
             end
           rescue Exception => e
             @receivers.delete t[:receiver]
-            DeepTest.logger.error "Exception while dispatching #{method_name} to #{description t[:receiver]} #{e.message}"
+            DeepTest.logger.error { "Exception while dispatching #{method_name} to #{description t[:receiver]} #{e.message}" }
           end
         end
 

@@ -18,13 +18,13 @@ module DeepTest
         @options.new_listener_list.before_starting_workers
         @workers.start_all
         begin
-          DeepTest.logger.debug "Loader Starting (#{$$})"
+          DeepTest.logger.debug { "Loader Starting (#{$$})" }
           passed = @runner.process_work_units
         ensure
           shutdown(server)
         end
       ensure
-        DeepTest.logger.debug "ProcessOrchestrator: Stopping Server"
+        DeepTest.logger.debug { "ProcessOrchestrator: Stopping Server" }
         Server.stop
       end
 
@@ -32,12 +32,12 @@ module DeepTest
     end
 
     def shutdown(server)
-      DeepTest.logger.debug "ProcessOrchestrator: Shutting Down"
+      DeepTest.logger.debug { "ProcessOrchestrator: Shutting Down" }
       server.done_with_work
 
       first_exception = $!
       begin
-        DeepTest.logger.debug "ProcessOrchestrator: Stopping Workers"
+        DeepTest.logger.debug { "ProcessOrchestrator: Stopping Workers" }
         @workers.stop_all
       rescue DRb::DRbConnError
         # Workers must have already stopped

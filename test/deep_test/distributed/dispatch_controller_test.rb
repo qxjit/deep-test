@@ -62,8 +62,6 @@ module DeepTest
           [receiver]
         )
 
-        DeepTest.logger.expects(:error)
-
         assert_equal [], controller.dispatch(:sleep_100_millis)
       end
 
@@ -80,8 +78,6 @@ module DeepTest
           [receiver_1, receiver_2]
         )
 
-        DeepTest.logger.expects(:error)
-        
         controller.dispatch(:method_call_1)
         controller.dispatch(:method_call_2)
       end
@@ -99,8 +95,6 @@ module DeepTest
           [receiver_1, receiver_2]
         )
 
-        DeepTest.logger.expects(:error)
-        
         assert_equal [:value], controller.dispatch(:method_call_1)
 
         controller.dispatch(:method_call_2)
@@ -115,8 +109,6 @@ module DeepTest
           [receiver]
         )
 
-        DeepTest.logger.expects(:error)
-        
         controller.dispatch(:method_call)
         assert_raises(NoDispatchReceiversError) {controller.dispatch(:another_call)}
       end
@@ -153,7 +145,6 @@ module DeepTest
           options, [receiver = mock(:__drburi => '')]
         )
         receiver.expects(:method_name).raises("An Error")
-        DeepTest.logger.expects(:error)
         
         options.ui_instance.expects(:dispatch_starting).with(:method_name)
         options.ui_instance.expects(:dispatch_finished).with(:method_name)
