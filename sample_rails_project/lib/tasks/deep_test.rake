@@ -1,4 +1,5 @@
 $LOAD_PATH << File.dirname(__FILE__) + "/../../vendor/gems/deep_test/lib"
+gem 'rspec', '1.1.8'
 require 'deep_test/rake_tasks'
 
 DeepTest::TestTask.new(:deep_test) do |t|

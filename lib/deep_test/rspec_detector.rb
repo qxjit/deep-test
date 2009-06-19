@@ -3,11 +3,11 @@ module DeepTest
     def self.if_rspec_available
       require "rubygems"
       # requiring 'spec' directly blows up unit-record
-      require "spec/version" 
+      require "spec/version"
       if defined?(::Spec)
         if ::Spec::VERSION::MAJOR == 1 &&
            ::Spec::VERSION::MINOR == 1 &&
-           ::Spec::VERSION::TINY  == 8
+           ::Spec::VERSION::TINY  >= 8
           yield
         else
           require 'spec/rake/spectask'

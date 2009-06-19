@@ -5,6 +5,8 @@ require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
 require 'yaml'
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
+gem('rspec', ENV['RSPEC_VERSION']) if ENV['RSPEC_VERSION']
+
 require "deep_test/rake_tasks"
 
 task :default => %w[
@@ -12,7 +14,8 @@ task :default => %w[
   spec 
   failing_test
   deep_test
-  deep_spec
+  deep_spec_1.1.8
+  deep_spec_1.1.12
   distributed_test
   distributed_spec
   distributed_with_failover
@@ -57,6 +60,14 @@ if rspec_present?
   
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
+  end
+
+  task :'deep_spec_1.1.8' do 
+    sh 'rake deep_spec RSPEC_VERSION=1.1.8'
+  end
+
+  task :'deep_spec_1.1.12' do
+    sh 'rake deep_spec RSPEC_VERSION=1.1.12'
   end
 
   Spec::Rake::SpecTask.new(:distributed_spec) do |t|

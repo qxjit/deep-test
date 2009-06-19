@@ -2,7 +2,13 @@ module Spec
   module Example
     module ExampleMethods
       def identifier
-        file, line = implementation_backtrace.first.split(/:/)
+        if ::Spec::VERSION::MAJOR == 1 &&
+           ::Spec::VERSION::MINOR == 1 &&
+           ::Spec::VERSION::TINY  >= 12
+          file, line = eval("caller", @_implementation).first.split(/:/)
+        else
+          file, line = implementation_backtrace.first.split(/:/)
+        end
         Identifier.new(file, line.to_i, self.class.description, description)
       end
 

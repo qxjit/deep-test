@@ -31,8 +31,7 @@ module DeepTest
 
       def read_results(result, tests_by_name)
         DeepTest.logger.debug { "SupervisedTestSuite: going to read #{tests_by_name.size} results" }
-
-        missing_tests = 
+        missing_tests =
           ResultReader.new(@blackboard).read(tests_by_name) do |test, remote_result|
             remote_result.add_to result
             yield ::Test::Unit::TestCase::FINISHED, test.name if block_given?
