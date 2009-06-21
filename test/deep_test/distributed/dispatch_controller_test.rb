@@ -52,7 +52,6 @@ module DeepTest
 
       test "dispatch omits results that are taking too long" do
         receiver = Object.new
-        def receiver.__drburi; ""; end
         def receiver.sleep_100_millis
           sleep 0.1
         end
@@ -66,7 +65,7 @@ module DeepTest
       end
 
       test "after timeout, no further calls are sent to that receiver" do
-        receiver_1, receiver_2 = mock(:__drburi => ""), mock
+        receiver_1, receiver_2 = mock, mock
         receiver_1.expects(:method_call_1).raises(Timeout::Error.new("message"))
         receiver_1.expects(:method_call_2).never
 
@@ -83,7 +82,7 @@ module DeepTest
       end
 
       test "receiver is dropped when connection is refused" do
-        receiver_1, receiver_2 = mock(:__drburi => ""), mock
+        receiver_1, receiver_2 = mock, mock
         receiver_1.expects(:method_call_1).raises(DRb::DRbConnError)
         receiver_1.expects(:method_call_2).never
 
@@ -101,7 +100,7 @@ module DeepTest
       end
       
       test "receiver is dropped when any exception occurs" do
-        receiver = mock(:__drburi => "")
+        receiver = mock
         receiver.expects(:method_call).raises(Exception)
 
         controller = DispatchController.new(
@@ -111,6 +110,26 @@ module DeepTest
 
         controller.dispatch(:method_call)
         assert_raises(NoDispatchReceiversError) {controller.dispatch(:another_call)}
+      end
+
+      test "error is printed with backtrace when it occurr" do
+        e = Exception.new("message")
+        e.set_backtrace %w[file1:1 file2:2]
+        receiver = mock
+        receiver.expects(:method_call).raises(e)
+
+        controller = DispatchController.new(
+          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
+          [receiver]
+        )
+
+        controller.dispatch(:method_call)
+        assert_equal <<-end_log, DeepTest.logger.logged_output
+[DeepTest] Exception while dispatching method_call to #{receiver.inspect}:
+[DeepTest] Exception: message
+[DeepTest] file1:1
+[DeepTest] file2:2
+        end_log
       end
 
       test "no error is printed if dispatching without error" do
@@ -142,7 +161,7 @@ module DeepTest
       test "dispatch calls notifies ui dispatch end in case of an error" do
         options = Options.new({:ui => "UI::Null"})
         controller = DispatchController.new(
-          options, [receiver = mock(:__drburi => '')]
+          options, [receiver = mock]
         )
         receiver.expects(:method_name).raises("An Error")
         

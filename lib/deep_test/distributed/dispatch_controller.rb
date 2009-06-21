@@ -17,9 +17,14 @@ module DeepTest
 
         threads = @receivers.map do |r|
           Thread.new do
-            Thread.current[:receiver] = r
-            Timeout.timeout(@options.timeout_in_seconds) do
-              r.send method_name, *args
+            begin
+              Thread.current[:receiver] = r
+              Timeout.timeout(@options.timeout_in_seconds) do
+                r.send method_name, *args
+              end
+            rescue Exception => e
+              Thread.current[:original_exception] = e
+              raise
             end
           end
         end
@@ -36,9 +41,13 @@ module DeepTest
             unless options[:ignore_connection_error]
               DeepTest.logger.error { "Connection Refused dispatching #{method_name} to #{description t[:receiver]}" }
             end
-          rescue Exception => e
+          rescue Exception => this_exception
             @receivers.delete t[:receiver]
-            DeepTest.logger.error { "Exception while dispatching #{method_name} to #{description t[:receiver]} #{e.message}" }
+            DeepTest.logger.error { "Exception while dispatching #{method_name} to #{description t[:receiver]}:" }
+
+            e = t[:original_exception] || this_exception 
+            DeepTest.logger.error { "#{e.class}: #{e.message}" }
+            e.backtrace.each {|l| DeepTest.logger.error { l } }
           end
         end
 
