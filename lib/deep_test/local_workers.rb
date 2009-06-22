@@ -1,8 +1,9 @@
 module DeepTest
   class LocalWorkers
-    def initialize(options)
+    def initialize(options, worker_class = DeepTest::Worker)
       @options = options
       @warlock = Warlock.new
+      @worker_class = worker_class
     end
 
     def load_files(files)
@@ -16,18 +17,24 @@ module DeepTest
     def start_all
       each_worker do |worker_num|
         start_worker(worker_num) do
-          reseed_random_numbers
-          reconnect_to_database
-          worker = DeepTest::Worker.new(worker_num,
-                                        server, 
-                                        @options.new_listener_list)
-          worker.run
+          ProxyIO.replace_stdout!(server.stdout) do
+            reseed_random_numbers
+            reconnect_to_database
+            worker = @worker_class.new(worker_num,
+                                      server, 
+                                      @options.new_listener_list)
+            worker.run
+          end
         end
       end        
     end
 
     def stop_all
       @warlock.stop_all
+    end
+
+    def wait_for_completion
+      @warlock.wait_for_all_to_finish
     end
 
     def number_of_workers

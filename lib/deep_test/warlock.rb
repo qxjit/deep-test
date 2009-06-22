@@ -75,11 +75,16 @@ module DeepTest
 
     def exit_when_none_running
       Thread.new do
-        loop do
-          Thread.pass
-          exit(0) unless any_running?
-          sleep(0.01)
-        end
+        wait_for_all_to_finish
+        exit(0)
+      end
+    end
+
+    def wait_for_all_to_finish
+      loop do
+        Thread.pass
+        return unless any_running?
+        sleep(0.01)
       end
     end
 

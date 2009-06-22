@@ -68,6 +68,10 @@ module DeepTest
       nil
     end
 
+    def stdout
+      $stdout
+    end
+
     class NoWorkUnitsAvailableError < StandardError; end
     class NoWorkUnitsRemainingError < StandardError; end
     class ResultOverdueError < StandardError; end

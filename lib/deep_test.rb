@@ -15,8 +15,19 @@ module DeepTest
   #  and reports its uri as the same as in the parent process, even
   #  if you restart DRb service.
   #
-  def self.drb_safe_fork(&block)
-    Thread.new {Process.fork(&block)}.value
+  # Stop all drb servers in child process to ensure that objects passed
+  #  over drb to children are treated as remote objects.
+  #
+  def self.drb_safe_fork
+    Thread.new do
+      Process.fork do
+        DRb.stop_service # stop the primary server
+        DRb.instance_variable_get(:@server).each do |uri, server|
+          server.stop_service
+        end
+        yield
+      end
+    end.value
   end
 
   def self.init(options)
