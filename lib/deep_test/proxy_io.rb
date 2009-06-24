@@ -21,7 +21,13 @@ module DeepTest
       supress_warnings { Object.const_set :STDOUT, ProxyIO.new(target) }
       $stdout = STDOUT
 
-      yield
+      begin
+        yield
+      rescue Exception => e
+        puts "#{e.class}: #{e}"
+        e.backtrace.each {|l| puts l }
+        raise
+      end
     ensure
       $stdout = old_stdout_global
       supress_warnings { Object.const_set :STDOUT, old_stdout_const }
