@@ -17,7 +17,7 @@ module DeepTest
     def start_all
       each_worker do |worker_num|
         start_worker(worker_num) do
-          ProxyIO.replace_stdout!(server.stdout) do
+          ProxyIO.replace_stdout_stderr!(server.stdout, server.stderr) do
             reseed_random_numbers
             reconnect_to_database
             worker = @worker_class.new(worker_num,

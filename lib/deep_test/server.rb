@@ -72,6 +72,10 @@ module DeepTest
       $stdout
     end
 
+    def stderr
+      $stderr
+    end
+
     class NoWorkUnitsAvailableError < StandardError; end
     class NoWorkUnitsRemainingError < StandardError; end
     class ResultOverdueError < StandardError; end

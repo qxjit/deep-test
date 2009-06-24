@@ -28,16 +28,16 @@ module DeepTest
       io.flush
     end
 
-    test "replace_stdout! yields" do
+    test "replace_stdout_stderr! yields" do
       yielded = false
-      ProxyIO.replace_stdout!(target = mock) { yielded = true }
+      ProxyIO.replace_stdout_stderr!(mock, mock) { yielded = true }
       assert yielded, "didn't yield"
     end
 
     test "will replace stdout with proxy to target" do
-      ProxyIO.replace_stdout!(target = mock) do
-        target.expects(:write).with "global string"
-        target.expects(:write).with "const string"
+      ProxyIO.replace_stdout_stderr!(new_stdout = mock, mock) do
+        new_stdout.expects(:write).with "global string"
+        new_stdout.expects(:write).with "const string"
         $stdout.write "global string"
         STDOUT.write "const string"
       end
@@ -45,21 +45,37 @@ module DeepTest
 
     test "will restore stdout after yielding" do
       old_stdout_global, old_stdout_const = $stdout, STDOUT
-      ProxyIO.replace_stdout!(mock) { raise "error" } rescue nil
+      ProxyIO.replace_stdout_stderr!(mock, mock) { raise "error" } rescue nil
       assert_equal old_stdout_global, $stdout
       assert_equal old_stdout_const, STDOUT
     end
 
-    test "replace_stdout! prints exceptions to new stdout" do
-      target = StringIO.new
+    test "will replace stderr with proxy to target" do
+      ProxyIO.replace_stdout_stderr!(mock, new_stderr = mock) do
+        new_stderr.expects(:write).with "global string"
+        new_stderr.expects(:write).with "const string"
+        $stderr.write "global string"
+        STDERR.write "const string"
+      end
+    end
+
+    test "will restore stderr after yielding" do
+      old_stderr_global, old_stderr_const = $stderr, STDERR
+      ProxyIO.replace_stdout_stderr!(mock, mock) { raise "error" } rescue nil
+      assert_equal old_stderr_global, $stderr
+      assert_equal old_stderr_const, STDERR
+    end
+
+    test "replace_stdout_stderr! prints exceptions to new stdout" do
+      new_stdout = StringIO.new
       assert_raises(Exception) do
-        ProxyIO.replace_stdout!(target) do
+        ProxyIO.replace_stdout_stderr!(new_stdout, mock) do
           e = Exception.new "my error"
           e.set_backtrace %w[file1:1 file2:2]
           raise e
         end
       end
-      assert_equal <<-end_expected, target.string
+      assert_equal <<-end_expected, new_stdout.string
 Exception: my error
 file1:1
 file2:2
