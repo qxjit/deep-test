@@ -138,8 +138,8 @@ module DeepTest
 
     it "should create remote deployment when distributed hosts are specified" do
       options = Options.new(:distributed_hosts => %w[hosts], :sync_options => {:source => "root"})
-      Distributed::Server.should_receive(:new_dispatch_controller).with(options).and_return(:server_instance)
-      Distributed::RemoteDeployment.should_receive(:new).with(options, :server_instance, be_instance_of(LocalDeployment))
+      Distributed::LandingShip.should_receive(:new_dispatch_controller).with(options).and_return(:landing_ship)
+      Distributed::RemoteDeployment.should_receive(:new).with(options, :landing_ship, be_instance_of(LocalDeployment))
       options.new_deployment
     end
 

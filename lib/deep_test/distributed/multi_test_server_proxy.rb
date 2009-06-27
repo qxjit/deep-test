@@ -13,9 +13,9 @@ module DeepTest
                                                          options)
       end
 
-      def sync(options)
-        DeepTest.logger.debug { "dispatch sync for #{options.origin_hostname}" }
-        @slave_controller.dispatch(:sync, options)
+      def push_code(options)
+        DeepTest.logger.debug { "dispatch push_code for #{options.origin_hostname}" }
+        @slave_controller.dispatch(:push_code, options)
       end
 
       class WorkerServerProxy

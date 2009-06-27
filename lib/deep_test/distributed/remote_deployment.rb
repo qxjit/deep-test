@@ -1,10 +1,10 @@
 module DeepTest
   module Distributed
     class RemoteDeployment
-      def initialize(options, test_server, failover_deployment)
+      def initialize(options, landing_ship, failover_deployment)
         @failover_deployment = failover_deployment
         @options = options
-        @test_server = test_server
+        @landing_ship = landing_ship
       end
 
       def load_files(filelist)
@@ -15,8 +15,8 @@ module DeepTest
         @options.new_listener_list.before_sync
 
         t = Thread.new do
-          @test_server.sync(@options)
-          @worker_server = @test_server.spawn_worker_server(@options)
+          @landing_ship.push_code(@options)
+          @worker_server = @landing_ship.spawn_worker_server(@options)
           @worker_server.load_files filelist
         end
 

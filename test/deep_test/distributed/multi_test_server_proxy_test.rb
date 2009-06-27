@@ -3,16 +3,16 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "sync is invoked on all servers" do
+      test "push_code is invoked on all servers" do
         server_1, server_2 = mock, mock
         options = Options.new({:ui => "UI::Null"})
 
         master = MultiTestServerProxy.new(options, [server_1, server_2])
 
-        server_1.expects(:sync).with(options)
-        server_2.expects(:sync).with(options)
+        server_1.expects(:push_code).with(options)
+        server_2.expects(:push_code).with(options)
 
-        master.sync(options)
+        master.push_code(options)
       end
 
       test "spawn_worker_server is invoked on all server" do

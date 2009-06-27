@@ -81,7 +81,7 @@ require File.dirname(__FILE__) + "/deep_test/database/setup_listener"
 require File.dirname(__FILE__) + "/deep_test/database/mysql_setup_listener"
 
 require File.dirname(__FILE__) + "/deep_test/distributed/shell_environment"
-require File.dirname(__FILE__) + "/deep_test/distributed/server"
+require File.dirname(__FILE__) + "/deep_test/distributed/landing_ship"
 require File.dirname(__FILE__) + "/deep_test/distributed/dispatch_controller"
 require File.dirname(__FILE__) + "/deep_test/distributed/ssh_client_connection_info"
 require File.dirname(__FILE__) + "/deep_test/distributed/filename_resolver"

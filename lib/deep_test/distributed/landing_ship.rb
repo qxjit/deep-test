@@ -1,11 +1,11 @@
 module DeepTest
   module Distributed
-    class Server
+    class LandingShip
       def initialize(config)
         @config = config
       end
 
-      def sync(options)
+      def push_code(options)
         DeepTest.logger.debug { "mirror sync for #{options.origin_hostname}" }
         path = options.mirror_path(@config[:work_dir])
         DeepTest.logger.debug { "Syncing #{options.sync_options[:source]} to #{path}" }
@@ -39,10 +39,10 @@ module DeepTest
       end
 
       def self.new_dispatch_controller(options)
-        servers = options.distributed_hosts.map do |host|
+        landing_ships = options.distributed_hosts.map do |host|
           new :address => host, :work_dir => '/tmp'
         end
-        MultiTestServerProxy.new(options, servers)
+        MultiTestServerProxy.new(options, landing_ships)
       end
     end
   end

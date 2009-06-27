@@ -84,7 +84,7 @@ module DeepTest
       else
         Distributed::RemoteDeployment.new(
           self, 
-          Distributed::Server.new_dispatch_controller(self), 
+          Distributed::LandingShip.new_dispatch_controller(self), 
           LocalDeployment.new(self))
       end
     end

@@ -8,7 +8,7 @@ module DeepTest
         deployment = RemoteDeployment.new(
           options = Options.new(:worker_listener => FakeListener,
                                 :sync_options => {:source => "/tmp"}),
-          test_server = stub_everything(:spawn_worker_server => stub_everything),
+          landing_ship = stub_everything(:spawn_worker_server => stub_everything),
           failover_deployment = mock
         )
         FakeListener.any_instance.expects(:before_sync)
@@ -17,14 +17,14 @@ module DeepTest
 
       end
 
-      test "load_files syncs the mirror" do
+      test "load_files pushes code to remote machines" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}),
-          test_server = stub_everything(:spawn_worker_server => stub_everything),
+          landing_ship = stub_everything(:spawn_worker_server => stub_everything),
           failover_deployment = mock
         )
 
-        test_server.expects(:sync).with(options)
+        landing_ship.expects(:push_code).with(options)
         deployment.expects(:load)
         deployment.load_files ["filelist"]
       end
@@ -33,7 +33,7 @@ module DeepTest
         worker_server = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          test_server = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:spawn_worker_server => worker_server),
           failover_deployment = mock
         )
 
@@ -46,7 +46,7 @@ module DeepTest
         worker_server = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          test_server = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:spawn_worker_server => worker_server),
           failover_deployment = mock
         )
 
@@ -57,11 +57,11 @@ module DeepTest
       test "start_all starts workers on worker server" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}),
-          test_server = stub_everything,
+          landing_ship = stub_everything,
           failover_deployment = mock
         )
 
-        test_server.expects(:spawn_worker_server).with(options).
+        landing_ship.expects(:spawn_worker_server).with(options).
           returns(worker_server = stub_everything)
 
         deployment.expects(:load)
@@ -75,7 +75,7 @@ module DeepTest
         worker_server = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          test_server = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:spawn_worker_server => worker_server),
           failover_deployment = mock
         )
 
@@ -89,11 +89,11 @@ module DeepTest
       test "exception in start_all causes failover to failover_deployment" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
-          test_server = stub_everything,
+          landing_ship = stub_everything,
           failover_deployment = mock
         )
 
-        test_server.expects(:spawn_worker_server).with(options).
+        landing_ship.expects(:spawn_worker_server).with(options).
           returns(worker_server = mock)
 
         worker_server.expects(:load_files)
@@ -109,14 +109,14 @@ module DeepTest
         deployment.stop_all
       end
 
-      test "exception in sync causes failover to failover_deployment" do
+      test "exception in push_code causes failover to failover_deployment" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
-          test_server = mock,
+          landing_ship = mock,
           failover_deployment = mock
         )
 
-        test_server.expects(:sync).raises("An Error")
+        landing_ship.expects(:push_code).raises("An Error")
 
         deployment.expects(:load)
         deployment.load_files ["filelist"]
@@ -131,11 +131,11 @@ module DeepTest
       test "exception in load_files causes failover to failover_deployment" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
-          test_server = stub_everything,
+          landing_ship = stub_everything,
           failover_deployment = mock
         )
 
-        test_server.expects(:spawn_worker_server).with(options).
+        landing_ship.expects(:spawn_worker_server).with(options).
           returns(worker_server = Object.new)
 
         worker_server.instance_eval do
@@ -159,11 +159,11 @@ module DeepTest
       test "exception from start_all of failover_deployment is raised" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
-          test_server = stub_everything,
+          landing_ship = stub_everything,
           failover_deployment = mock
         )
 
-        test_server.expects(:spawn_worker_server).with(options).
+        landing_ship.expects(:spawn_worker_server).with(options).
           returns(worker_server = mock)
 
         worker_server.expects(:load_files).raises("An Error")

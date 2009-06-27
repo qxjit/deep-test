@@ -1,13 +1,13 @@
 module DeepTest
   module Distributed
     class ThroughputWorkerClient
-      def initialize(options, test_server)
+      def initialize(options, landing_ship)
         @options = options
-        @test_server = test_server
+        @landing_ship = landing_ship
       end
 
       def start_all
-        @worker_server = @test_server.spawn_worker_server(@options)
+        @worker_server = @landing_ship.spawn_worker_server(@options)
         @worker_server.start_all
       end
 
