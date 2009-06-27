@@ -18,7 +18,7 @@ runner  = DeepTest::Distributed::ThroughputRunner.new(options, test_count) do |r
 end
 
 start_time = Time.now
-DeepTest::ProcessOrchestrator.new(options, workers, runner).run(false)
+DeepTest::Main.new(options, workers, runner).run(false)
 end_time = Time.now
 
 puts

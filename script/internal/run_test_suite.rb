@@ -4,4 +4,4 @@ DeepTest.init(options)
 runner = DeepTest::Test::Runner.new(options)
 workers = options.new_workers
 workers.load_files Dir.glob(options.pattern)
-DeepTest::ProcessOrchestrator.run(options, workers, runner)
+DeepTest::Main.run(options, workers, runner)

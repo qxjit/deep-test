@@ -16,7 +16,7 @@ module DeepTest
 
       def central_command
         # Can't create central_command as default argument to initialize
-        # because ProcessOrchestrator hasn't been invoked at 
+        # because Main hasn't been invoked at 
         # instantiation time
         @central_command ||= @deep_test_options.central_command
       end
@@ -26,7 +26,7 @@ module DeepTest
       end
 
       def run
-        ProcessOrchestrator.run(@deep_test_options, @workers, self)
+        Main.run(@deep_test_options, @workers, self)
       end
 
       def process_work_units

@@ -1,5 +1,5 @@
 module DeepTest
-  class ProcessOrchestrator
+  class Main
     def self.run(options, workers, runner)
       new(options, workers, runner).run
     end
@@ -24,7 +24,7 @@ module DeepTest
           shutdown(central_command)
         end
       ensure
-        DeepTest.logger.debug { "ProcessOrchestrator: Stopping CentralCommand" }
+        DeepTest.logger.debug { "Main: Stopping CentralCommand" }
         CentralCommand.stop
       end
 
@@ -32,12 +32,12 @@ module DeepTest
     end
 
     def shutdown(central_command)
-      DeepTest.logger.debug { "ProcessOrchestrator: Shutting Down" }
+      DeepTest.logger.debug { "Main: Shutting Down" }
       central_command.done_with_work
 
       first_exception = $!
       begin
-        DeepTest.logger.debug { "ProcessOrchestrator: Stopping Workers" }
+        DeepTest.logger.debug { "Main: Stopping Workers" }
         @workers.stop_all
       rescue DRb::DRbConnError
         # Workers must have already stopped
