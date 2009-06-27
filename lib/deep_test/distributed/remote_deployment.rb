@@ -33,16 +33,16 @@ module DeepTest
         end
       end
 
-      def start_all
-        @beachheads.start_all
+      def deploy_agents
+        @beachheads.deploy_agents
       rescue => e
         raise if failed_over?
-        fail_over("start_all", e)
+        fail_over("deploy_agents", e)
         retry
       end
 
-      def stop_all
-        @beachheads.stop_all
+      def terminate_agents
+        @beachheads.terminate_agents
       end
 
       def fail_over(method, exception)

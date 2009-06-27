@@ -54,7 +54,7 @@ module DeepTest
         deployment.load_files ["filelist"]
       end
 
-      test "start_all starts agents on agent server" do
+      test "deploy_agents starts agents on agent server" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}),
           landing_ship = stub_everything,
@@ -67,11 +67,11 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        beachhead.expects(:start_all)
-        deployment.start_all
+        beachhead.expects(:deploy_agents)
+        deployment.deploy_agents
       end
 
-      test "stop_all stops agents on agent server that was spawned in load_files" do
+      test "terminate_agents stops agents on agent server that was spawned in load_files" do
         beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
@@ -82,11 +82,11 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        beachhead.expects(:stop_all)
-        deployment.stop_all
+        beachhead.expects(:terminate_agents)
+        deployment.terminate_agents
       end
 
-      test "exception in start_all causes failover to failover_deployment" do
+      test "exception in deploy_agents causes failover to failover_deployment" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
           landing_ship = stub_everything,
@@ -100,13 +100,13 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        beachhead.expects(:start_all).raises("An Error")
+        beachhead.expects(:deploy_agents).raises("An Error")
 
-        failover_deployment.expects(:start_all)
-        deployment.start_all
+        failover_deployment.expects(:deploy_agents)
+        deployment.deploy_agents
 
-        failover_deployment.expects(:stop_all)
-        deployment.stop_all
+        failover_deployment.expects(:terminate_agents)
+        deployment.terminate_agents
       end
 
       test "exception in push_code causes failover to failover_deployment" do
@@ -121,11 +121,11 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        failover_deployment.expects(:start_all)
-        deployment.start_all
+        failover_deployment.expects(:deploy_agents)
+        deployment.deploy_agents
 
-        failover_deployment.expects(:stop_all)
-        deployment.stop_all
+        failover_deployment.expects(:terminate_agents)
+        deployment.terminate_agents
       end
 
       test "exception in load_files causes failover to failover_deployment" do
@@ -147,16 +147,16 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        failover_deployment.expects(:start_all)
-        deployment.start_all
+        failover_deployment.expects(:deploy_agents)
+        deployment.deploy_agents
 
-        failover_deployment.expects(:stop_all)
-        deployment.stop_all
+        failover_deployment.expects(:terminate_agents)
+        deployment.terminate_agents
 
         assert_equal [], beachhead.calls
       end
 
-      test "exception from start_all of failover_deployment is raised" do
+      test "exception from deploy_agents of failover_deployment is raised" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
           landing_ship = stub_everything,
@@ -170,10 +170,10 @@ module DeepTest
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        failover_deployment.expects(:start_all).raises("Failover Error").then.returns(nil)
+        failover_deployment.expects(:deploy_agents).raises("Failover Error").then.returns(nil)
 
         begin 
-          deployment.start_all
+          deployment.deploy_agents
           flunk
         rescue RuntimeError => e
           assert_equal "Failover Error", e.message

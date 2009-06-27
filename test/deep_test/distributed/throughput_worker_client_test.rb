@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "start_all starts agents on a new agent server" do
+      test "deploy_agents starts agents on a new agent server" do
         client = ThroughputWorkerClient.new(
           options = Options.new({}),
           landing_ship = stub_everything
@@ -12,20 +12,20 @@ module DeepTest
         landing_ship.expects(:establish_beachhead).with(options).
           returns(beachhead = stub_everything)
 
-        beachhead.expects(:start_all)
-        client.start_all
+        beachhead.expects(:deploy_agents)
+        client.deploy_agents
       end
 
-      test "stop_all stops agents on agent server that was spawned in start_all" do
+      test "terminate_agents stops agents on agent server that was spawned in deploy_agents" do
         beachhead = stub_everything
         client = ThroughputWorkerClient.new(
           Options.new({}),
           landing_ship = stub_everything(:establish_beachhead => beachhead)
         )
 
-        client.start_all
-        beachhead.expects(:stop_all)
-        client.stop_all
+        client.deploy_agents
+        beachhead.expects(:terminate_agents)
+        client.terminate_agents
       end
     end
   end

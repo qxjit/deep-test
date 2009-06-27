@@ -8,8 +8,8 @@ module DeepTest
         :push_code => "Synchronizing working copies on distributed machines",
         :establish_beachhead => "Spawning test environment processes",
         :load_files => "Loading test files for agents",
-        :start_all => "Starting agents",
-        :stop_all => "Stopping agents"
+        :deploy_agents => "Deploying agents",
+        :terminate_agents => "Terminating agents"
       } unless defined?(METHOD_DESCRIPTIONS)
 
       def distributed_failover_to_local(method, exception)

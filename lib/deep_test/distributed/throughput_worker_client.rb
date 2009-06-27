@@ -6,13 +6,13 @@ module DeepTest
         @landing_ship = landing_ship
       end
 
-      def start_all
+      def deploy_agents
         @beachhead = @landing_ship.establish_beachhead(@options)
-        @beachhead.start_all
+        @beachhead.deploy_agents
       end
 
-      def stop_all
-        @beachhead.stop_all
+      def terminate_agents
+        @beachhead.terminate_agents
       end
     end
   end

@@ -29,14 +29,14 @@ module DeepTest
           @slave_controller.dispatch(:load_files, files)
         end
 
-        def start_all
-          DeepTest.logger.debug { "dispatch start_all" }
-          @slave_controller.dispatch(:start_all)
+        def deploy_agents
+          DeepTest.logger.debug { "dispatch deploy_agents" }
+          @slave_controller.dispatch(:deploy_agents)
         end
 
-        def stop_all
-          DeepTest.logger.debug { "dispatch stop_all" }
-          @slave_controller.dispatch_with_options(:stop_all, :ignore_connection_error => true)
+        def terminate_agents
+          DeepTest.logger.debug { "dispatch terminate_agents" }
+          @slave_controller.dispatch_with_options(:terminate_agents, :ignore_connection_error => true)
         end
       end
     end

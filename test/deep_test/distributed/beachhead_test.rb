@@ -3,25 +3,25 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "start_all delegates to agent implementation" do
+      test "deploy_agents delegates to agent implementation" do
         beachhead = Beachhead.new("", implementation = mock)
-        implementation.expects(:start_all)
-        beachhead.start_all
+        implementation.expects(:deploy_agents)
+        beachhead.deploy_agents
       end
 
-      test "stop_all delegates to agent implementation" do
+      test "terminate_agents delegates to agent implementation" do
         beachhead = Beachhead.new("", implementation = mock)
-        implementation.expects(:stop_all)
-        beachhead.stop_all.join
+        implementation.expects(:terminate_agents)
+        beachhead.terminate_agents.join
       end
 
-      test "stop_all returns without waiting for stops" do
+      test "terminate_agents returns without waiting for stops" do
         implementation = Object.new.instance_eval do
           def done?
             @done == true
           end
 
-          def stop_all
+          def terminate_agents
             sleep 0.01
             @done = true
           end
@@ -29,7 +29,7 @@ module DeepTest
         end
 
         beachhead = Beachhead.new("", implementation)
-        beachhead.stop_all
+        beachhead.terminate_agents
         assert_equal false, implementation.done?
 
         until implementation.done?
@@ -66,7 +66,7 @@ module DeepTest
           assert_equal 0, Beachhead.running_server_count
         ensure
           begin
-            Beachhead.stop_all
+            Beachhead.terminate_agents
           ensure
             DeepTest.logger.level = log_level
           end
@@ -86,13 +86,13 @@ module DeepTest
               0.25
             )
           end
-          beachhead.start_all
+          beachhead.deploy_agents
           # Have to sleep long enough to warlock to reap dead process
           sleep 1.0
           assert_equal 1, Beachhead.running_server_count
         ensure
           begin
-            Beachhead.stop_all
+            Beachhead.terminate_agents
           ensure
             DeepTest.logger.level = log_level
           end

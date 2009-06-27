@@ -40,7 +40,7 @@ module DeepTest
         fleet.establish_beachhead(options)
       end
 
-      test "Beachheads dispatches start_all" do
+      test "Beachheads dispatches deploy_agents" do
         server_1, server_2 = mock, mock
 
         beachheads = LandingFleet::Beachheads.new(
@@ -48,13 +48,13 @@ module DeepTest
           [server_1, server_2]
         )
 
-        server_1.expects(:start_all)
-        server_2.expects(:start_all)
+        server_1.expects(:deploy_agents)
+        server_2.expects(:deploy_agents)
 
-        beachheads.start_all
+        beachheads.deploy_agents
       end
 
-      test "Beachheads dispatches stop_all" do
+      test "Beachheads dispatches terminate_agents" do
         server_1, server_2 = mock, mock
 
         beachheads = LandingFleet::Beachheads.new(
@@ -62,13 +62,13 @@ module DeepTest
           [server_1, server_2]
         )
 
-        server_1.expects(:stop_all)
-        server_2.expects(:stop_all)
+        server_1.expects(:terminate_agents)
+        server_2.expects(:terminate_agents)
 
-        beachheads.stop_all
+        beachheads.terminate_agents
       end
 
-      test "Beachheads stop_all ignores connection errors" do
+      test "Beachheads terminate_agents ignores connection errors" do
         server_1 = mock
 
         beachheads = LandingFleet::Beachheads.new(
@@ -77,9 +77,9 @@ module DeepTest
         )
 
         server_1.expects(:__drburi).never
-        server_1.expects(:stop_all).raises(DRb::DRbConnError)
+        server_1.expects(:terminate_agents).raises(DRb::DRbConnError)
 
-        beachheads.stop_all
+        beachheads.terminate_agents
       end
 
       test "Beachheads dispatches load_files" do

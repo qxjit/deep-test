@@ -21,7 +21,7 @@ module DeepTest
       deployment.load_files([:file_1, :file_2])
     end
 
-    test "start_all redirects stdout and stderr back to central_command" do
+    test "deploy_agents redirects stdout and stderr back to central_command" do
       agent_class = Class.new do
         def initialize(agent_num, central_command, listeners);  end
         def run; puts "hello stdout"; $stderr.puts "hello stderr" end
@@ -53,10 +53,10 @@ module DeepTest
     end
 
     def run_agents_to_completion(deployment)
-      deployment.start_all
+      deployment.deploy_agents
       deployment.wait_for_completion
     ensure
-      deployment.stop_all
+      deployment.terminate_agents
     end
   end
 end

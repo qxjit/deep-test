@@ -16,7 +16,7 @@ module DeepTest
       begin
         central_command = CentralCommand.start(@options)
         @options.new_listener_list.before_starting_agents
-        @deployment.start_all
+        @deployment.deploy_agents
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
           passed = @runner.process_work_units
@@ -38,7 +38,7 @@ module DeepTest
       first_exception = $!
       begin
         DeepTest.logger.debug { "Main: Stopping Agents" }
-        @deployment.stop_all
+        @deployment.terminate_agents
       rescue DRb::DRbConnError
         # Agents must have already stopped
       rescue Exception => e

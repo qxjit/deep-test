@@ -14,7 +14,7 @@ module DeepTest
       @options.central_command
     end
 
-    def start_all
+    def deploy_agents
       each_agent do |agent_num|
         start_agent(agent_num) do
           ProxyIO.replace_stdout_stderr!(central_command.stdout, central_command.stderr) do
@@ -27,8 +27,8 @@ module DeepTest
       end        
     end
 
-    def stop_all
-      @warlock.stop_all
+    def terminate_agents
+      @warlock.terminate_agents
     end
 
     def wait_for_completion

@@ -25,14 +25,14 @@ module DeepTest
         end
       end
 
-      def start_all
+      def deploy_agents
         @agents_deployed = true
-        @deployment.start_all
+        @deployment.deploy_agents
       end
 
-      def stop_all
+      def terminate_agents
         Thread.new do
-          @deployment.stop_all
+          @deployment.terminate_agents
         end
       end
 
@@ -48,8 +48,8 @@ module DeepTest
         @warlock.demon_count if @warlock
       end
 
-      def self.stop_all
-        @warlock.stop_all if @warlock
+      def self.terminate_agents
+        @warlock.terminate_agents if @warlock
       end
 
       def self.start(address, base_path, deployment, grace_period = MERCY_KILLING_GRACE_PERIOD)

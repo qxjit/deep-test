@@ -16,7 +16,7 @@ module DeepTest
                                                   @options.server_port)
       end
 
-      def start_all
+      def deploy_agents
         super
         @warlock.exit_when_none_running
       end
