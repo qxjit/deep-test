@@ -1,6 +1,6 @@
 module DeepTest
   module Distributed
-    class TestServerWorkers < LocalWorkers
+    class TestServerWorkers < LocalDeployment
       def initialize(options, test_server_config, connection_info)
         super(options)
         @test_server_config = test_server_config

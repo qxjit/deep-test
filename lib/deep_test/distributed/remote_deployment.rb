@@ -1,8 +1,8 @@
 module DeepTest
   module Distributed
-    class RemoteWorkerClient
-      def initialize(options, test_server, failover_workers)
-        @failover_workers = failover_workers
+    class RemoteDeployment
+      def initialize(options, test_server, failover_deployment)
+        @failover_deployment = failover_deployment
         @options = options
         @test_server = test_server
       end
@@ -25,8 +25,8 @@ module DeepTest
         begin
           t.join
         rescue => e
-          # The failover here doesn't invoke load_files on the failover_workers
-          # because they will be LocalWorkers, which fork from the current 
+          # The failover here doesn't invoke load_files on the failover_deployment
+          # because it will be a LocalDeployment, which forks from the current 
           # process.  The fact that we depend in this here is damp...
           #
           fail_over("load_files", e)
@@ -47,11 +47,11 @@ module DeepTest
 
       def fail_over(method, exception)
         @options.ui_instance.distributed_failover_to_local(method, exception)
-        @worker_server = @failover_workers
+        @worker_server = @failover_deployment
       end
 
       def failed_over?
-        @worker_server == @failover_workers
+        @worker_server == @failover_deployment
       end
     end
   end

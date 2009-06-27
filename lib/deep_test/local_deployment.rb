@@ -1,5 +1,5 @@
 module DeepTest
-  class LocalWorkers
+  class LocalDeployment
     def initialize(options, worker_class = DeepTest::Worker)
       @options = options
       @warlock = Warlock.new

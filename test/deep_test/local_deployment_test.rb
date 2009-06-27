@@ -3,22 +3,22 @@ require File.dirname(__FILE__) + "/../test_helper"
 module DeepTest
   unit_tests do
     test "number_of_workers is determined by options" do
-      workers = LocalWorkers.new(
+      deployment = LocalDeployment.new(
         Options.new(:number_of_workers => 4)
       )
 
-      assert_equal 4, workers.number_of_workers
+      assert_equal 4, deployment.number_of_workers
     end
 
     test "load_files simply loads each file provided" do
-      workers = LocalWorkers.new(
+      deployment = LocalDeployment.new(
         Options.new(:number_of_workers => 4)
       )
 
-      workers.expects(:load).with(:file_1)
-      workers.expects(:load).with(:file_2)
+      deployment.expects(:load).with(:file_1)
+      deployment.expects(:load).with(:file_2)
 
-      workers.load_files([:file_1, :file_2])
+      deployment.load_files([:file_1, :file_2])
     end
 
     test "start_all redirects stdout and stderr back to central_command" do
@@ -34,7 +34,7 @@ module DeepTest
                        :central_command => DRbObject.new_with_uri(drb_server.uri),
                        :new_listener_list => []
 
-        run_workers_to_completion LocalWorkers.new(options, worker_class)
+        run_workers_to_completion LocalDeployment.new(options, worker_class)
       end
 
       assert_equal "hello stdout\n", central_command.stdout.string
@@ -52,11 +52,11 @@ module DeepTest
       end
     end
 
-    def run_workers_to_completion(workers)
-      workers.start_all
-      workers.wait_for_completion
+    def run_workers_to_completion(deployment)
+      deployment.start_all
+      deployment.wait_for_completion
     ensure
-      workers.stop_all
+      deployment.stop_all
     end
   end
 end

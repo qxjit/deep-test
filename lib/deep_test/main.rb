@@ -1,13 +1,13 @@
 module DeepTest
   class Main
-    def self.run(options, workers, runner)
-      new(options, workers, runner).run
+    def self.run(options, deployment, runner)
+      new(options, deployment, runner).run
     end
     
-    def initialize(options, workers, runner)
+    def initialize(options, deployment, runner)
       @options = options
       @runner = runner
-      @workers = workers
+      @deployment = deployment
     end
     
     def run(exit_when_done = true)
@@ -16,7 +16,7 @@ module DeepTest
       begin
         central_command = CentralCommand.start(@options)
         @options.new_listener_list.before_starting_workers
-        @workers.start_all
+        @deployment.start_all
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
           passed = @runner.process_work_units
@@ -38,7 +38,7 @@ module DeepTest
       first_exception = $!
       begin
         DeepTest.logger.debug { "Main: Stopping Workers" }
-        @workers.stop_all
+        @deployment.stop_all
       rescue DRb::DRbConnError
         # Workers must have already stopped
       rescue Exception => e

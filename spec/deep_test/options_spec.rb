@@ -57,7 +57,7 @@ module DeepTest
         worker_listener.should == "DeepTest::FakeListener"
     end
 
-    it "should allow multiple workers to be specified" do
+    it "should allow multiple listeners to be specified" do
       class FakeListener1; end
       class FakeListener2; end
       options = Options.new(
@@ -131,16 +131,16 @@ module DeepTest
       end
     end
 
-    it "should create local workers by default" do
+    it "should create local deployment by default" do
       options = Options.new({})
-      options.new_workers.should be_instance_of(LocalWorkers) 
+      options.new_deployment.should be_instance_of(LocalDeployment) 
     end
 
-    it "should create remote worker client when distributed hosts are specified" do
+    it "should create remote deployment when distributed hosts are specified" do
       options = Options.new(:distributed_hosts => %w[hosts], :sync_options => {:source => "root"})
       Distributed::Server.should_receive(:new_dispatch_controller).with(options).and_return(:server_instance)
-      Distributed::RemoteWorkerClient.should_receive(:new).with(options, :server_instance, be_instance_of(LocalWorkers))
-      options.new_workers
+      Distributed::RemoteDeployment.should_receive(:new).with(options, :server_instance, be_instance_of(LocalDeployment))
+      options.new_deployment
     end
 
     it "should return localhost as origin_hostname current hostname is same as when created" do

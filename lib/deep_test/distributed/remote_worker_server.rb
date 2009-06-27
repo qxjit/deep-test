@@ -5,15 +5,15 @@ module DeepTest
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 
-      def initialize(base_path, workers)
+      def initialize(base_path, deployment)
         @base_path = base_path
-        @workers = workers
+        @deployment = deployment
       end
 
       def launch_mercy_killer(grace_period)
         Thread.new do
           sleep grace_period
-          exit(0) unless workers_started?
+          exit(0) unless agents_deployed?
         end
       end
 
@@ -26,18 +26,18 @@ module DeepTest
       end
 
       def start_all
-        @workers_started = true
-        @workers.start_all
+        @agents_deployed = true
+        @deployment.start_all
       end
 
       def stop_all
         Thread.new do
-          @workers.stop_all
+          @deployment.stop_all
         end
       end
 
-      def workers_started?
-        @workers_started
+      def agents_deployed?
+        @agents_deployed
       end
 
       def self.warlock
@@ -52,13 +52,13 @@ module DeepTest
         @warlock.stop_all if @warlock
       end
 
-      def self.start(address, base_path, workers, grace_period = MERCY_KILLING_GRACE_PERIOD)
+      def self.start(address, base_path, deployment, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
         warlock.start("RemoteWorkerServer") do
           innie.close
 
-          server = new(base_path, workers)
+          server = new(base_path, deployment)
 
           DRb.start_service("drubyall://#{address}:0", server)
           DeepTest.logger.info { "RemoteWorkerServer started at #{DRb.uri}" }

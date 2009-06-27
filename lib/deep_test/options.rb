@@ -78,14 +78,14 @@ module DeepTest
       "#{base}/#{relative_mirror_path}"
     end
 
-    def new_workers
+    def new_deployment
       if distributed_hosts.nil?
-        LocalWorkers.new self
+        LocalDeployment.new self
       else
-        Distributed::RemoteWorkerClient.new(
+        Distributed::RemoteDeployment.new(
           self, 
           Distributed::Server.new_dispatch_controller(self), 
-          LocalWorkers.new(self))
+          LocalDeployment.new(self))
       end
     end
 

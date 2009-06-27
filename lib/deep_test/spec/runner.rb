@@ -11,7 +11,7 @@ module DeepTest
         @deep_test_options = DeepTest::Options.from_command_line(deep_test_options)
         DeepTest.init(@deep_test_options)
         @central_command = central_command
-        @workers = @deep_test_options.new_workers
+        @deployment = @deep_test_options.new_deployment
       end
 
       def central_command
@@ -22,11 +22,11 @@ module DeepTest
       end
 
       def load_files(files)
-        @workers.load_files files
+        @deployment.load_files files
       end
 
       def run
-        Main.run(@deep_test_options, @workers, self)
+        Main.run(@deep_test_options, @deployment, self)
       end
 
       def process_work_units
