@@ -12,14 +12,14 @@ module DeepTest
       assert_equal 20, t.timeout_in_seconds
     end
 
-    test "should support worker_listener" do
+    test "should support listener" do
       t = TestTask.new :deep_test do |t|
         t.stubs(:desc)
         t.stubs(:task)
-        t.worker_listener = "A"
+        t.listener = "A"
       end
-      assert_equal "A", t.instance_variable_get(:@options).worker_listener
-      assert_equal "A", t.worker_listener
+      assert_equal "A", t.instance_variable_get(:@options).listener
+      assert_equal "A", t.listener
     end
 
     test "should support server_port" do

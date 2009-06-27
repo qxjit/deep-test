@@ -64,7 +64,7 @@ require File.dirname(__FILE__) + "/deep_test/local_deployment"
 require File.dirname(__FILE__) + "/deep_test/logger"
 
 require File.dirname(__FILE__) + "/deep_test/marshallable_exception_wrapper"
-require File.dirname(__FILE__) + "/deep_test/null_worker_listener"
+require File.dirname(__FILE__) + "/deep_test/null_listener"
 require File.dirname(__FILE__) + "/deep_test/listener_list"
 require File.dirname(__FILE__) + "/deep_test/cpu_info"
 require File.dirname(__FILE__) + "/deep_test/options"

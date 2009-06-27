@@ -34,8 +34,8 @@ In your Rakefile:
 
 === Specifying a Listener to be Notified of Events
 
-In my_worker_listener.rb
-  class MyWorkerListener
+In my_listener.rb
+  class MyListener
     def before_sync
     end
 
@@ -56,16 +56,16 @@ In your Rakefile
 
   DeepTest::TestTask.new "task_name" do |t|
     ... 
-    t.worker_listener = "MyWorkerListener"
+    t.listener = "MyListener"
   end
 
-An instance of MyWorkerListener will be created for each worker that is
+An instance of MyListener will be created for each worker that is
 started, and will receive events from that worker.  However, you must ensure
-that the MyWorkerListener class is loaded at the time that the test files are
+that the MyListener class is loaded at the time that the test files are
 loaded, so it is available to be instantiated.  You can specify multiple
 listener classes by separating them with a comma.  For more information about
 when events are triggered, see the documentation at
-DeepTest::NullWorkerListener.
+DeepTest::NullListener.
 
 
 === Setting Up A New Database For Each Worker
@@ -79,7 +79,7 @@ follows in your Rakefile:
 
   DeepTest::TestTask.new "task_name" do |t|
     ...
-    t.worker_listener = "DeepTest::Database::MysqlSetupListener"
+    t.listener = "DeepTest::Database::MysqlSetupListener"
   end
 
 

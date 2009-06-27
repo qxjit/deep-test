@@ -5,7 +5,7 @@ require 'deep_test/rake_tasks'
 DeepTest::TestTask.new(:deep_test) do |t|
   t.number_of_workers = 1
   t.pattern = "test/unit/**/*_test.rb"
-  t.worker_listener = "ForeignHostWorkerSimulationListener,DeepTest::Database::MysqlSetupListener"
+  t.listener = "ForeignHostWorkerSimulationListener,DeepTest::Database::MysqlSetupListener"
 end
 Rake::Task[:deep_test].enhance ["db:test:prepare"]
 
@@ -19,7 +19,7 @@ DeepTest::TestTask.new(:distributed_test => %w[db:test:prepare]) do |t|
   t.number_of_workers = 1
   t.distributed_hosts = %w[localhost]
   t.requires = File.dirname(__FILE__) + "/../foreign_host_worker_simulation_listener"
-  t.worker_listener = "ForeignHostWorkerSimulationListener,DeepTest::Database::MysqlSetupListener"
+  t.listener = "ForeignHostWorkerSimulationListener,DeepTest::Database::MysqlSetupListener"
   t.sync_options = {:source => File.expand_path(File.dirname(__FILE__) + "/../.."), 
                     :rsync_options => "--exclude=.svn --copy-dirlinks"}
 end

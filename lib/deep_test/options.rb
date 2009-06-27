@@ -12,7 +12,7 @@ module DeepTest
         Option.new(:sync_options,      {}),
         Option.new(:timeout_in_seconds,30),
         Option.new(:ui,                "DeepTest::UI::Console"),
-        Option.new(:worker_listener,   "DeepTest::NullWorkerListener"),
+        Option.new(:listener,          "DeepTest::NullListener"),
       ]
     end
 
@@ -27,8 +27,8 @@ module DeepTest
       @ui = value.to_s
     end
 
-    def worker_listener=(value)
-      @worker_listener = value.to_s
+    def listener=(value)
+      @listener = value.to_s
     end
 
     def self.from_command_line(command_line)
@@ -49,7 +49,7 @@ module DeepTest
     end
 
     def new_listener_list
-      listeners = worker_listener.split(',').map do |listener|
+      listeners = listener.split(',').map do |listener|
         eval(listener).new
       end
       ListenerList.new(listeners)

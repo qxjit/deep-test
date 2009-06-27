@@ -42,26 +42,26 @@ module DeepTest
       Options.new(:sync_options => {:options => 1}).sync_options.should == {:options => 1}
     end
 
-    it "should support worker_listener" do
-      Options.new(:worker_listener => "AListener").
-        worker_listener.should == "AListener"
+    it "should support listener" do
+      Options.new(:listener => "AListener").
+        listener.should == "AListener"
     end
 
-    it "should use DeepTest::NullWorkerListener as the default listener" do
-      Options.new({}).worker_listener.should == "DeepTest::NullWorkerListener"
+    it "should use DeepTest::NullListener as the default listener" do
+      Options.new({}).listener.should == "DeepTest::NullListener"
     end
     
-    it "should allow worker_listener to be set with class" do
+    it "should allow listener to be set with class" do
       class FakeListener; end
-      Options.new(:worker_listener => FakeListener).
-        worker_listener.should == "DeepTest::FakeListener"
+      Options.new(:listener => FakeListener).
+        listener.should == "DeepTest::FakeListener"
     end
 
     it "should allow multiple listeners to be specified" do
       class FakeListener1; end
       class FakeListener2; end
       options = Options.new(
-        :worker_listener => "DeepTest::FakeListener1,DeepTest::FakeListener2"
+        :listener => "DeepTest::FakeListener1,DeepTest::FakeListener2"
       )
       listener = options.new_listener_list
       listener.should be_instance_of(DeepTest::ListenerList)

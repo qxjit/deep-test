@@ -6,7 +6,7 @@ module DeepTest
     # and +drop_database+ hooks provided by subclasses that implement database
     # setup strategies for particular database flavors.
     #
-    class SetupListener < NullWorkerListener
+    class SetupListener < NullListener
       DUMPED_SCHEMAS = [] unless defined?(DUMPED_SCHEMAS)
 
       def before_sync # :nodoc:

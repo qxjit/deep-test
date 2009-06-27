@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 module DeepTest
   unit_tests do
-    test "forwards methods defined in NullWorkerListener to all listeners" do
+    test "forwards methods defined in NullListener to all listeners" do
       listener_1, listener_2 = mock, mock
       list = ListenerList.new([listener_1, listener_2])
       listener_1.expects(:starting).with(:worker)
@@ -13,7 +13,7 @@ module DeepTest
       list.starting_work(:worker, :work)
     end
 
-    test "doesn't forward methods not defined in NullWorkerListener" do
+    test "doesn't forward methods not defined in NullListener" do
       listener = mock
       listener.expects(:to_s).never
       ListenerList.new([listener]).to_s

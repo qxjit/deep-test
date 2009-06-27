@@ -125,7 +125,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include(
     'README.rdoc', 
     'CHANGELOG', 
-    'lib/deep_test/null_worker_listener.rb',
+    'lib/deep_test/null_listener.rb',
     'lib/deep_test/database/*.rb'
   )
 end

@@ -2,10 +2,10 @@ module DeepTest
   class Worker
     attr_reader :number
 
-    def initialize(number, central_command, worker_listener)
+    def initialize(number, central_command, listener)
       @number = number
       @central_command = central_command
-      @listener = worker_listener
+      @listener = listener
     end
 
     def run

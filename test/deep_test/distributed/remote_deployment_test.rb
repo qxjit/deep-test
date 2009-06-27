@@ -6,7 +6,7 @@ module DeepTest
       test "load_files broadcasts before_sync" do
         class FakeListener; end
         deployment = RemoteDeployment.new(
-          options = Options.new(:worker_listener => FakeListener,
+          options = Options.new(:listener => FakeListener,
                                 :sync_options => {:source => "/tmp"}),
           landing_ship = stub_everything(:establish_beachhead => stub_everything),
           failover_deployment = mock

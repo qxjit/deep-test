@@ -6,7 +6,7 @@ module DeepTest
       @listeners = listeners
     end
 
-    NullWorkerListener.instance_methods(false).each do |event|
+    NullListener.instance_methods(false).each do |event|
       eval <<-end_src
         def #{event}(*args)
           @listeners.each {|l| l.#{event}(*args)}
