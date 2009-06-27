@@ -1,10 +1,10 @@
 module DeepTest
-  class Server
+  class CentralCommand
     def self.start(options)
-      server = new(options)
-      DRb.start_service("druby://0.0.0.0:#{options.server_port}", server)
+      central_command = new(options)
+      DRb.start_service("druby://0.0.0.0:#{options.server_port}", central_command)
       DeepTest.logger.info { "Started DeepTest service at #{DRb.uri}" }
-      server
+      central_command
     end
 
     def self.stop
@@ -13,9 +13,9 @@ module DeepTest
 
     def self.remote_reference(address, port)
       DRb.start_service
-      blackboard = DRbObject.new_with_uri("druby://#{address}:#{port}")
-      DeepTest.logger.debug { "Connecting to DeepTest server at #{blackboard.__drburi}" }
-      blackboard
+      central_command = DRbObject.new_with_uri("druby://#{address}:#{port}")
+      DeepTest.logger.debug { "Connecting to DeepTest central_command at #{central_command.__drburi}" }
+      central_command
     end
 
     def initialize(options)
@@ -27,7 +27,7 @@ module DeepTest
         require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
         @work_queue.extend Metrics::QueueLockWaitTimeMeasurement
         @result_queue.extend Metrics::QueueLockWaitTimeMeasurement
-        Metrics::Gatherer.section("server queue lock wait times") do |s|
+        Metrics::Gatherer.section("central_command queue lock wait times") do |s|
           s.measurement("work queue total pop wait time", @work_queue.total_pop_time)
           s.measurement("work queue total push wait time", @work_queue.total_push_time)
           s.measurement("result queue total pop wait time", @result_queue.total_pop_time)

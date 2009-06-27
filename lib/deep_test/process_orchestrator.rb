@@ -14,26 +14,26 @@ module DeepTest
       passed = false
 
       begin
-        server = Server.start(@options)
+        central_command = CentralCommand.start(@options)
         @options.new_listener_list.before_starting_workers
         @workers.start_all
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
           passed = @runner.process_work_units
         ensure
-          shutdown(server)
+          shutdown(central_command)
         end
       ensure
-        DeepTest.logger.debug { "ProcessOrchestrator: Stopping Server" }
-        Server.stop
+        DeepTest.logger.debug { "ProcessOrchestrator: Stopping CentralCommand" }
+        CentralCommand.stop
       end
 
       Kernel.exit(passed ? 0 : 1) if exit_when_done
     end
 
-    def shutdown(server)
+    def shutdown(central_command)
       DeepTest.logger.debug { "ProcessOrchestrator: Shutting Down" }
-      server.done_with_work
+      central_command.done_with_work
 
       first_exception = $!
       begin

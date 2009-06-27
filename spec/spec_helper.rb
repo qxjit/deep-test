@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + "/../lib/deep_test"
 require File.dirname(__FILE__) + "/../test/fake_deadlock_error"
-require File.dirname(__FILE__) + "/../test/simple_test_blackboard"
+require File.dirname(__FILE__) + "/../test/simple_test_central_command"
 require File.dirname(__FILE__) + "/thread_worker"
 require 'spec'
 

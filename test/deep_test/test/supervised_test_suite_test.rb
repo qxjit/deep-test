@@ -5,7 +5,7 @@ module DeepTest
     unit_tests do
       test "run yields name for start and finished of underlying suite" do
         suite = ::Test::Unit::TestSuite.new("name")
-        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestBlackboard.new)
+        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestCentralCommand.new)
 
         yielded = []
         supervised_suite.run(stub_everything) do |channel,name|
@@ -16,16 +16,16 @@ module DeepTest
                       [::Test::Unit::TestSuite::FINISHED, "name"]], yielded
       end
 
-      test "run adds tests to blackboard and reads results" do
+      test "run adds tests to central_command and reads results" do
         test_case_class = Class.new(::Test::Unit::TestCase) do
           test("1") {}
           test("2") {assert_equal true, false}
         end
-        blackboard = SimpleTestBlackboard.new
-        supervised_suite = SupervisedTestSuite.new(test_case_class.suite, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        supervised_suite = SupervisedTestSuite.new(test_case_class.suite, central_command)
         result = ::Test::Unit::TestResult.new
 
-        worker = ThreadWorker.new(blackboard, 2)
+        worker = ThreadWorker.new(central_command, 2)
         Timeout.timeout(5) do
           supervised_suite.run(result) {}
         end
@@ -40,11 +40,11 @@ module DeepTest
           test("1") {}
         end.new("test_1")
 
-        blackboard = SimpleTestBlackboard.new
-        supervised_suite = SupervisedTestSuite.new(test_case, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        supervised_suite = SupervisedTestSuite.new(test_case, central_command)
         result = ::Test::Unit::TestResult.new
 
-        blackboard.write_result Worker::Error.new(test_case, RuntimeError.new)
+        central_command.write_result Worker::Error.new(test_case, RuntimeError.new)
         capture_stdout {supervised_suite.run(result) {}}
 
         assert_equal 1, result.error_count
@@ -55,12 +55,12 @@ module DeepTest
           test("1") {}
         end.new("test_1")
 
-        blackboard = SimpleTestBlackboard.new
-        supervised_suite = SupervisedTestSuite.new(test_case, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        supervised_suite = SupervisedTestSuite.new(test_case, central_command)
 
         yielded = []
 
-        worker = ThreadWorker.new(blackboard, 1)
+        worker = ThreadWorker.new(central_command, 1)
         Timeout.timeout(5) do
           supervised_suite.run(stub_everything) do |channel,name|
             yielded << [channel, name]
@@ -74,7 +74,7 @@ module DeepTest
       test "has same size as underlying suite" do
         suite = ::Test::Unit::TestSuite.new("name")
         suite << "test"
-        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestBlackboard.new)
+        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestCentralCommand.new)
         
         assert_equal suite.size, supervised_suite.size
       end

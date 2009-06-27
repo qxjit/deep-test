@@ -11,16 +11,16 @@ module DeepTest
         assert_equal 4, workers.number_of_workers
       end
 
-      test "server is retrieved using client connection information" do
+      test "central_command is retrieved using client connection information" do
         workers = TestServerWorkers.new(
           options = Options.new({}),
           {:number_of_workers => 4},
           mock(:address => "address")
         )
-        DeepTest::Server.expects(:remote_reference).
-          with("address", options.server_port).returns(:server_reference)
+        DeepTest::CentralCommand.expects(:remote_reference).
+          with("address", options.server_port).returns(:central_command_reference)
 
-        assert_equal :server_reference, workers.server
+        assert_equal :central_command_reference, workers.central_command
       end
     end
   end

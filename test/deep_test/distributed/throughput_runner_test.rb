@@ -3,26 +3,26 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "runner adds specified number of work units to blackboard" do
-        blackboard = SimpleTestBlackboard.new
-        runner = ThroughputRunner.new(Options.new({}), 5, blackboard)
+      test "runner adds specified number of work units to central_command" do
+        central_command = SimpleTestCentralCommand.new
+        runner = ThroughputRunner.new(Options.new({}), 5, central_command)
 
-        worker = ThreadWorker.new(blackboard, 5)
+        worker = ThreadWorker.new(central_command, 5)
         Timeout.timeout(5) do
           runner.process_work_units
         end
         worker.wait_until_done
       end
 
-      test "runner yields all results from blackboard" do
-        blackboard = SimpleTestBlackboard.new
+      test "runner yields all results from central_command" do
+        central_command = SimpleTestCentralCommand.new
         count = 0
-        runner = ThroughputRunner.new(Options.new({}), 2, blackboard) do |result|
+        runner = ThroughputRunner.new(Options.new({}), 2, central_command) do |result|
           assert_equal :null_work_unit_result, result
           count += 1
         end
 
-        worker = ThreadWorker.new(blackboard, 2)
+        worker = ThreadWorker.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units
         end
@@ -32,10 +32,10 @@ module DeepTest
       end
 
       test "statistics are available after run" do
-        blackboard = SimpleTestBlackboard.new
-        runner = ThroughputRunner.new(Options.new({}), 2, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = ThroughputRunner.new(Options.new({}), 2, central_command)
 
-        worker = ThreadWorker.new(blackboard, 2)
+        worker = ThreadWorker.new(central_command, 2)
         count = 0
         Timeout.timeout(5) do
           runner.process_work_units
@@ -47,7 +47,7 @@ module DeepTest
 
       test "runner returns true" do
         runner = ThroughputRunner.new(
-          Options.new({}), 0, SimpleTestBlackboard.new 
+          Options.new({}), 0, SimpleTestCentralCommand.new 
         )
 
         assert_equal true, runner.process_work_units

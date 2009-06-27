@@ -4,10 +4,10 @@ module DeepTest
   unit_tests do
     test "shutdown calls done_with_work" do
       orchestrator = ProcessOrchestrator.new(nil, stub_everything, nil)
-      server = mock
-      server.expects(:done_with_work)
+      central_command = mock
+      central_command.expects(:done_with_work)
 
-      orchestrator.shutdown(server)
+      orchestrator.shutdown(central_command)
     end
   end
 end

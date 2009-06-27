@@ -5,16 +5,16 @@ module DeepTest
     describe Runner do
       it_should_behave_like 'sandboxed rspec_options'
 
-      it "should run each test using blackboard" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+      it "should run each test using central_command" do
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           it("passes1") {}
           it("passes2") {}
         end
 
-        worker = ThreadWorker.new(blackboard, 2)
+        worker = ThreadWorker.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units.should == true
         end
@@ -22,21 +22,21 @@ module DeepTest
 
         worker.work_done.should == 2
         options.reporter.number_of_examples.should == 2
-        blackboard.take_result.should be_nil
+        central_command.take_result.should be_nil
         options.reporter.examples_finished.should == ['passes1','passes2']
         options.reporter.should be_ended
       end
 
       it "should return failure when a spec fails" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           it("passes") {}; 
           it("fails") {1.should == 2}; 
         end
 
-        worker = ThreadWorker.new(blackboard, 2)
+        worker = ThreadWorker.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units.should == false
         end
@@ -44,14 +44,14 @@ module DeepTest
       end
 
       it "should return success when there are pending examples" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           it("pending") {pending {1.should == 2}}; 
         end
 
-        worker = ThreadWorker.new(blackboard, 1)
+        worker = ThreadWorker.new(central_command, 1)
         Timeout.timeout(5) do
           runner.process_work_units.should == true
         end
@@ -59,14 +59,14 @@ module DeepTest
       end
 
       it "should return failure when a pending example passes" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
         end
 
-        worker = ThreadWorker.new(blackboard, 1)
+        worker = ThreadWorker.new(central_command, 1)
         Timeout.timeout(5) do
           runner.process_work_units.should == false
         end
@@ -74,14 +74,14 @@ module DeepTest
       end
 
       it "should return failure when a worker error occurs" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
         end
 
-        blackboard.write_result Worker::Error.new("example", RuntimeError.new)
+        central_command.write_result Worker::Error.new("example", RuntimeError.new)
         capture_stdout do
           runner.process_work_units.should == false
         end
@@ -90,8 +90,8 @@ module DeepTest
       end
 
       it "should raise error if duplicate spec is found" do
-        blackboard = SimpleTestBlackboard.new
-        runner = Runner.new(options, Options.new({}).to_command_line, blackboard)
+        central_command = SimpleTestCentralCommand.new
+        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
           2.times {it("example") {}}; 

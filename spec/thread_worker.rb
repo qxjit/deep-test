@@ -1,8 +1,8 @@
 class ThreadWorker
   attr_reader :work_done
 
-  def initialize(blackboard, expected_work)
-    @blackboard, @expected_work = blackboard, expected_work
+  def initialize(central_command, expected_work)
+    @central_command, @expected_work = central_command, expected_work
     @thread = Thread.new {run}
   end
 
@@ -15,9 +15,9 @@ class ThreadWorker
     @work_done = 0
     until @work_done >= @expected_work
       Thread.pass
-      work = @blackboard.take_work
+      work = @central_command.take_work
       if work
-        @blackboard.write_result work.run 
+        @central_command.write_result work.run 
         @work_done += 1
       end
     end

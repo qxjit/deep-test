@@ -11,8 +11,9 @@ module DeepTest
         @test_server_config[:number_of_workers]
       end
 
-      def server
-        DeepTest::Server.remote_reference(@connection_info.address, @options.server_port)
+      def central_command
+        DeepTest::CentralCommand.remote_reference(@connection_info.address, 
+                                                  @options.server_port)
       end
 
       def start_all

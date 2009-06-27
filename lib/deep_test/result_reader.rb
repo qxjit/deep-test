@@ -1,7 +1,7 @@
 module DeepTest
   class ResultReader
-    def initialize(blackboard)
-      @blackboard = blackboard
+    def initialize(central_command)
+      @central_command = central_command
     end
 
     def read(original_work_units_by_id)
@@ -11,7 +11,7 @@ module DeepTest
       begin
         until errors == work_units_by_id.size
           Thread.pass
-          result = @blackboard.take_result
+          result = @central_command.take_result
           next if result.nil?
 
           if Worker::Error === result
@@ -26,8 +26,8 @@ module DeepTest
             yield [work_unit, result]
           end
         end
-      rescue Server::ResultOverdueError
-        DeepTest.logger.error { "Results are overdue from server, ending run" }
+      rescue CentralCommand::ResultOverdueError
+        DeepTest.logger.error { "Results are overdue from central_command, ending run" }
       end
 
       work_units_by_id

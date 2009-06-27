@@ -1,4 +1,4 @@
 * Graceful handling if workers fail to start.
 * test loader
-* Log blackboard write error
+* Log central_command write error
 * Handle not getting all results make more gracefully

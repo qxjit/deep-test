@@ -21,24 +21,24 @@ module DeepTest
       workers.load_files([:file_1, :file_2])
     end
 
-    test "start_all redirects stdout and stderr back to server" do
+    test "start_all redirects stdout and stderr back to central_command" do
       worker_class = Class.new do
-        def initialize(worker_num, server, listeners);  end
+        def initialize(worker_num, central_command, listeners);  end
         def run; puts "hello stdout"; $stderr.puts "hello stderr" end
       end
 
-      server = stub :stdout => StringIO.new, :stderr => StringIO.new
+      central_command = stub :stdout => StringIO.new, :stderr => StringIO.new
 
-      with_drb_server_for server do |drb_server|
+      with_drb_server_for central_command do |drb_server|
         options = stub :number_of_workers => 1, 
-                       :server => DRbObject.new_with_uri(drb_server.uri),
+                       :central_command => DRbObject.new_with_uri(drb_server.uri),
                        :new_listener_list => []
 
         run_workers_to_completion LocalWorkers.new(options, worker_class)
       end
 
-      assert_equal "hello stdout\n", server.stdout.string
-      assert_equal "hello stderr\n", server.stderr.string
+      assert_equal "hello stdout\n", central_command.stdout.string
+      assert_equal "hello stderr\n", central_command.stderr.string
     end
 
     def with_drb_server_for(front)

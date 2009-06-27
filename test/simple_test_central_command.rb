@@ -1,5 +1,5 @@
 module DeepTest
-  class SimpleTestBlackboard
+  class SimpleTestCentralCommand
     attr_accessor :debug, :simulate_result_overdue_error
 
     def initialize
@@ -9,7 +9,7 @@ module DeepTest
     end
 
     def take_result
-      raise DeepTest::Server::ResultOverdueError if @simulate_result_overdue_error
+      raise DeepTest::CentralCommand::ResultOverdueError if @simulate_result_overdue_error
       @semaphore.synchronize do
         log_and_return "take_result", @test_results.shift
       end

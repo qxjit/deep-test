@@ -2,9 +2,9 @@ module DeepTest
   class Worker
     attr_reader :number
 
-    def initialize(number, blackboard, worker_listener)
+    def initialize(number, central_command, worker_listener)
       @number = number
-      @blackboard = blackboard
+      @central_command = central_command
       @listener = worker_listener
     end
 
@@ -20,19 +20,19 @@ module DeepTest
                  end
 
         @listener.finished_work(self, work_unit, result)
-        @blackboard.write_result result
+        @central_command.write_result result
         if ENV['DEEP_TEST_SHOW_WORKER_DOTS'] == 'yes'
           $stdout.print '.'
           $stdout.flush
         end
       end
-    rescue Server::NoWorkUnitsRemainingError
+    rescue CentralCommand::NoWorkUnitsRemainingError
       DeepTest.logger.debug { "Worker #{number}: no more work to do" }
     end
 
     def next_work_unit
-      @blackboard.take_work
-    rescue Server::NoWorkUnitsAvailableError
+      @central_command.take_work
+    rescue CentralCommand::NoWorkUnitsAvailableError
       sleep 0.02
       retry
     end

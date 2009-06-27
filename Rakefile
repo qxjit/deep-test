@@ -80,7 +80,7 @@ end
 
 task :distributed_with_failover do |t|
   puts
-  puts "*** Running distributed with no server - expect a failover message ***"
+  puts "*** Running distributed with no bad hostname - expect a failover message ***"
   puts
 
   Spec::Rake::SpecTask.new(:distributed_spec_with_failover_spec) do |t|

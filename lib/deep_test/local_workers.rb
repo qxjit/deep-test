@@ -10,18 +10,18 @@ module DeepTest
       files.each {|f| load f}
     end
 
-    def server
-      @options.server
+    def central_command
+      @options.central_command
     end
 
     def start_all
       each_worker do |worker_num|
         start_worker(worker_num) do
-          ProxyIO.replace_stdout_stderr!(server.stdout, server.stderr) do
+          ProxyIO.replace_stdout_stderr!(central_command.stdout, central_command.stderr) do
             reseed_random_numbers
             reconnect_to_database
             worker = @worker_class.new(worker_num,
-                                      server, 
+                                      central_command, 
                                       @options.new_listener_list)
             worker.run
           end

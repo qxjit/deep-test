@@ -1,9 +1,9 @@
 module DeepTest
   module Test
     class SupervisedTestSuite
-      def initialize(suite, blackboard)
+      def initialize(suite, central_command)
         @suite = suite
-        @blackboard = blackboard
+        @central_command = central_command
       end
 
       def run(result, &progress_block)
@@ -25,14 +25,14 @@ module DeepTest
           end
         else
           tests_by_name[test_suite.name] = test_suite
-          @blackboard.write_work Test::WorkUnit.new(test_suite)
+          @central_command.write_work Test::WorkUnit.new(test_suite)
         end
       end
 
       def read_results(result, tests_by_name)
         DeepTest.logger.debug { "SupervisedTestSuite: going to read #{tests_by_name.size} results" }
         missing_tests =
-          ResultReader.new(@blackboard).read(tests_by_name) do |test, remote_result|
+          ResultReader.new(@central_command).read(tests_by_name) do |test, remote_result|
             remote_result.add_to result
             yield ::Test::Unit::TestCase::FINISHED, test.name if block_given?
           end
