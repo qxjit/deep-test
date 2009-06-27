@@ -25,17 +25,17 @@ module DeepTest
         supervised_suite = SupervisedTestSuite.new(test_case_class.suite, central_command)
         result = ::Test::Unit::TestResult.new
 
-        worker = ThreadWorker.new(central_command, 2)
+        agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
           supervised_suite.run(result) {}
         end
-        worker.wait_until_done
+        agent.wait_until_done
 
         assert_equal 2, result.run_count
         assert_equal 1, result.failure_count
       end
 
-      test "worker errors are counted as errors" do
+      test "agent errors are counted as errors" do
         test_case = Class.new(::Test::Unit::TestCase) do
           test("1") {}
         end.new("test_1")
@@ -44,7 +44,7 @@ module DeepTest
         supervised_suite = SupervisedTestSuite.new(test_case, central_command)
         result = ::Test::Unit::TestResult.new
 
-        central_command.write_result Worker::Error.new(test_case, RuntimeError.new)
+        central_command.write_result Agent::Error.new(test_case, RuntimeError.new)
         capture_stdout {supervised_suite.run(result) {}}
 
         assert_equal 1, result.error_count
@@ -60,13 +60,13 @@ module DeepTest
 
         yielded = []
 
-        worker = ThreadWorker.new(central_command, 1)
+        agent = ThreadAgent.new(central_command, 1)
         Timeout.timeout(5) do
           supervised_suite.run(stub_everything) do |channel,name|
             yielded << [channel, name]
           end
         end
-        worker.wait_until_done
+        agent.wait_until_done
 
         assert_equal true, yielded.include?([::Test::Unit::TestCase::FINISHED, test_case.name])
       end

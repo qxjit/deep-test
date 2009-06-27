@@ -76,12 +76,12 @@ module DeepTest
       assert_equal "", out
     end
 
-    test "prints useful error information in case of Worker::Error" do
+    test "prints useful error information in case of Agent::Error" do
       error = RuntimeError.new "message"
       error.set_backtrace ['a', 'b']
 
       central_command = SimpleTestCentralCommand.new
-      central_command.write_result Worker::Error.new("work_unit", error)
+      central_command.write_result Agent::Error.new("work_unit", error)
 
 
       out = capture_stdout do
@@ -91,9 +91,9 @@ module DeepTest
       assert_equal "work_unit: message\na\nb\n", out
     end
 
-    test "doesn't yield Worker::Error results" do
+    test "doesn't yield Agent::Error results" do
       central_command = SimpleTestCentralCommand.new
-      central_command.write_result Worker::Error.new("work_unit", RuntimeError.new)
+      central_command.write_result Agent::Error.new("work_unit", RuntimeError.new)
 
 
       results = []
@@ -115,7 +115,7 @@ module DeepTest
     test "returns remaining tests that didn't have errors" do
       central_command = SimpleTestCentralCommand.new
       central_command.write_result FakeResult.new(1)
-      central_command.write_result Worker::Error.new("work_unit", RuntimeError.new)
+      central_command.write_result Agent::Error.new("work_unit", RuntimeError.new)
 
       work_units = {1 => "One", 2 => "Two"}
 

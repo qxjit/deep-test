@@ -7,8 +7,8 @@ module DeepTest
         @connection_info = connection_info
       end
       
-      def number_of_workers
-        @test_server_config[:number_of_workers]
+      def number_of_agents
+        @test_server_config[:number_of_agents]
       end
 
       def central_command

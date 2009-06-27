@@ -74,7 +74,7 @@ require File.dirname(__FILE__) + "/deep_test/result_reader"
 require File.dirname(__FILE__) + "/deep_test/rspec_detector"
 require File.dirname(__FILE__) + "/deep_test/central_command"
 require File.dirname(__FILE__) + "/deep_test/test_task"
-require File.dirname(__FILE__) + "/deep_test/worker"
+require File.dirname(__FILE__) + "/deep_test/agent"
 require File.dirname(__FILE__) + "/deep_test/warlock"
 
 require File.dirname(__FILE__) + "/deep_test/database/setup_listener"

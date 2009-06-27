@@ -1,5 +1,5 @@
 module DeepTest
-  class Worker
+  class Agent
     attr_reader :number
 
     def initialize(number, central_command, listener)
@@ -27,7 +27,7 @@ module DeepTest
         end
       end
     rescue CentralCommand::NoWorkUnitsRemainingError
-      DeepTest.logger.debug { "Worker #{number}: no more work to do" }
+      DeepTest.logger.debug { "Agent #{number}: no more work to do" }
     end
 
     def next_work_unit

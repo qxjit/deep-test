@@ -1,4 +1,4 @@
-* Graceful handling if workers fail to start.
+* Graceful handling if agents fail to start.
 * test loader
 * Log central_command write error
 * Handle not getting all results make more gracefully

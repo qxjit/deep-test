@@ -23,7 +23,7 @@ task :'deep_test:establish_beachhead' do
     options.mirror_path('/tmp'),
     DeepTest::Distributed::TestServerWorkers.new(
       options, 
-      {:number_of_workers => options.number_of_workers}, 
+      {:number_of_agents => options.number_of_agents}, 
       DeepTest::Distributed::SshClientConnectionInfo.new
     )
   ) do

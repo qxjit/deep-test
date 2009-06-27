@@ -5,11 +5,11 @@ module DeepTest
       end
 
       METHOD_DESCRIPTIONS = {
-        :push_code => "Synchronizing working copies on worker machines",
+        :push_code => "Synchronizing working copies on distributed machines",
         :establish_beachhead => "Spawning test environment processes",
-        :load_files => "Loading test files for workers",
-        :start_all => "Starting workers",
-        :stop_all => "Stopping workers"
+        :load_files => "Loading test files for agents",
+        :start_all => "Starting agents",
+        :stop_all => "Stopping agents"
       } unless defined?(METHOD_DESCRIPTIONS)
 
       def distributed_failover_to_local(method, exception)

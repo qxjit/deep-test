@@ -26,25 +26,25 @@ module DeepTest
       #
       def create_database
         admin_connection do |connection|
-          connection.create_database worker_database
+          connection.create_database agent_database
           grant_privileges connection
         end
       end
 
       #
-      # Grants 'all' privilege on worker database to username and password
-      # specified by worker database config.  If your application has
+      # Grants 'all' privilege on agent database to username and password
+      # specified by agent database config.  If your application has
       # special database privilege needs beyond 'all', you should override
       # this method and grant them.
       #
       def grant_privileges(connection)
-        identified_by = if worker_database_config[:password]
-                          %{identified by %s} % connection.quote(worker_database_config[:password])
+        identified_by = if agent_database_config[:password]
+                          %{identified by %s} % connection.quote(agent_database_config[:password])
                         else
                           ""
                         end
-        sql = %{grant all on #{worker_database}.* to %s@'localhost' #{identified_by} ; } % 
-          connection.quote(worker_database_config[:username])
+        sql = %{grant all on #{agent_database}.* to %s@'localhost' #{identified_by} ; } % 
+          connection.quote(agent_database_config[:username])
 
         connection.execute sql
       end
@@ -54,7 +54,7 @@ module DeepTest
       #
       def drop_database
         admin_connection do |connection|
-          connection.drop_database worker_database
+          connection.drop_database agent_database
         end
       end
 
@@ -68,10 +68,10 @@ module DeepTest
       end
 
       #
-      # Loads dumpfile into worker database using mysql command
+      # Loads dumpfile into agent database using mysql command
       #
       def load_schema
-        config = command_line_config(worker_database_config)
+        config = command_line_config(agent_database_config)
         system "mysql #{config} < #{dump_file_name}"
         raise "Error Loading schema" unless $?.success?
       end

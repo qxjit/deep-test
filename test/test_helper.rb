@@ -10,7 +10,7 @@ require File.dirname(__FILE__) + "/fake_deadlock_error"
 require File.dirname(__FILE__) + "/simple_test_central_command"
 require File.dirname(__FILE__) + "/test_factory"
 require File.dirname(__FILE__) + "/test_logger"
-require File.dirname(__FILE__) + "/../spec/thread_worker"
+require File.dirname(__FILE__) + "/../spec/thread_agent"
 
 class SomeCustomException < RuntimeError
 end

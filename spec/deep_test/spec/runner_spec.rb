@@ -14,13 +14,13 @@ module DeepTest
           it("passes2") {}
         end
 
-        worker = ThreadWorker.new(central_command, 2)
+        agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units.should == true
         end
-        worker.wait_until_done
+        agent.wait_until_done
 
-        worker.work_done.should == 2
+        agent.work_done.should == 2
         options.reporter.number_of_examples.should == 2
         central_command.take_result.should be_nil
         options.reporter.examples_finished.should == ['passes1','passes2']
@@ -36,11 +36,11 @@ module DeepTest
           it("fails") {1.should == 2}; 
         end
 
-        worker = ThreadWorker.new(central_command, 2)
+        agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units.should == false
         end
-        worker.wait_until_done
+        agent.wait_until_done
       end
 
       it "should return success when there are pending examples" do
@@ -51,11 +51,11 @@ module DeepTest
           it("pending") {pending {1.should == 2}}; 
         end
 
-        worker = ThreadWorker.new(central_command, 1)
+        agent = ThreadAgent.new(central_command, 1)
         Timeout.timeout(5) do
           runner.process_work_units.should == true
         end
-        worker.wait_until_done
+        agent.wait_until_done
       end
 
       it "should return failure when a pending example passes" do
@@ -66,14 +66,14 @@ module DeepTest
           it("pending") {pending {1.should == 1}}; 
         end
 
-        worker = ThreadWorker.new(central_command, 1)
+        agent = ThreadAgent.new(central_command, 1)
         Timeout.timeout(5) do
           runner.process_work_units.should == false
         end
-        worker.wait_until_done
+        agent.wait_until_done
       end
 
-      it "should return failure when a worker error occurs" do
+      it "should return failure when a agent error occurs" do
         central_command = SimpleTestCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
@@ -81,7 +81,7 @@ module DeepTest
           it("pending") {pending {1.should == 1}}; 
         end
 
-        central_command.write_result Worker::Error.new("example", RuntimeError.new)
+        central_command.write_result Agent::Error.new("example", RuntimeError.new)
         capture_stdout do
           runner.process_work_units.should == false
         end

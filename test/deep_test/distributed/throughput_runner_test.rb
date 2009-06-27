@@ -7,11 +7,11 @@ module DeepTest
         central_command = SimpleTestCentralCommand.new
         runner = ThroughputRunner.new(Options.new({}), 5, central_command)
 
-        worker = ThreadWorker.new(central_command, 5)
+        agent = ThreadAgent.new(central_command, 5)
         Timeout.timeout(5) do
           runner.process_work_units
         end
-        worker.wait_until_done
+        agent.wait_until_done
       end
 
       test "runner yields all results from central_command" do
@@ -22,11 +22,11 @@ module DeepTest
           count += 1
         end
 
-        worker = ThreadWorker.new(central_command, 2)
+        agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
           runner.process_work_units
         end
-        worker.wait_until_done
+        agent.wait_until_done
 
         assert_equal 2, count
       end
@@ -35,12 +35,12 @@ module DeepTest
         central_command = SimpleTestCentralCommand.new
         runner = ThroughputRunner.new(Options.new({}), 2, central_command)
 
-        worker = ThreadWorker.new(central_command, 2)
+        agent = ThreadAgent.new(central_command, 2)
         count = 0
         Timeout.timeout(5) do
           runner.process_work_units
         end
-        worker.wait_until_done
+        agent.wait_until_done
 
         assert_kind_of ThroughputStatistics, runner.statistics
       end

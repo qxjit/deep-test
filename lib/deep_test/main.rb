@@ -15,7 +15,7 @@ module DeepTest
 
       begin
         central_command = CentralCommand.start(@options)
-        @options.new_listener_list.before_starting_workers
+        @options.new_listener_list.before_starting_agents
         @deployment.start_all
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
@@ -37,10 +37,10 @@ module DeepTest
 
       first_exception = $!
       begin
-        DeepTest.logger.debug { "Main: Stopping Workers" }
+        DeepTest.logger.debug { "Main: Stopping Agents" }
         @deployment.stop_all
       rescue DRb::DRbConnError
-        # Workers must have already stopped
+        # Agents must have already stopped
       rescue Exception => e
         raise first_exception || e
       end

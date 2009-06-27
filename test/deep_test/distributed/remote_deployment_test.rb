@@ -29,7 +29,7 @@ module DeepTest
         deployment.load_files ["filelist"]
       end
 
-      test "load_files loads files on worker server" do
+      test "load_files loads files on agent server" do
         beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
@@ -54,7 +54,7 @@ module DeepTest
         deployment.load_files ["filelist"]
       end
 
-      test "start_all starts workers on worker server" do
+      test "start_all starts agents on agent server" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}),
           landing_ship = stub_everything,
@@ -71,7 +71,7 @@ module DeepTest
         deployment.start_all
       end
 
-      test "stop_all stops workers on worker server that was spawned in load_files" do
+      test "stop_all stops agents on agent server that was spawned in load_files" do
         beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),

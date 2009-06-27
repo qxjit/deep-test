@@ -27,7 +27,7 @@ module DeepTest
         fleet.establish_beachhead(options)
       end
 
-      test "establish_beachhead returns Beachheads with each worker" do
+      test "establish_beachhead returns Beachheads with each agent" do
         server_1 = mock(:establish_beachhead => :beachhead_1)
         server_2 = mock(:establish_beachhead => :beachhead_2)
         options = Options.new({:ui => "UI::Null"})

@@ -56,20 +56,20 @@ module DeepTest
       Rake::Task["deep_test"].instance_variable_get("@actions").last.call
     end
     
-    test "number_of_workers defaults to count from CpuInfo" do
+    test "number_of_agents defaults to count from CpuInfo" do
       task = TestTask.new do |t|
         t.stubs(:define)
       end
       CpuInfo.expects(:new).returns stub(:count => 2)
-      assert_equal 2, task.number_of_workers
+      assert_equal 2, task.number_of_agents
     end
     
-    test "number_of_workers can be set" do
+    test "number_of_agents can be set" do
       task = TestTask.new do |t|
-        t.number_of_workers = 42
+        t.number_of_agents = 42
         t.stubs(:define)
       end
-      assert_equal 42, task.number_of_workers
+      assert_equal 42, task.number_of_agents
     end
   end
 end

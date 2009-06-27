@@ -1,9 +1,9 @@
 module DeepTest
   class LocalDeployment
-    def initialize(options, worker_class = DeepTest::Worker)
+    def initialize(options, agent_class = DeepTest::Agent)
       @options = options
       @warlock = Warlock.new
-      @worker_class = worker_class
+      @agent_class = agent_class
     end
 
     def load_files(files)
@@ -15,15 +15,13 @@ module DeepTest
     end
 
     def start_all
-      each_worker do |worker_num|
-        start_worker(worker_num) do
+      each_agent do |agent_num|
+        start_agent(agent_num) do
           ProxyIO.replace_stdout_stderr!(central_command.stdout, central_command.stderr) do
             reseed_random_numbers
             reconnect_to_database
-            worker = @worker_class.new(worker_num,
-                                      central_command, 
-                                      @options.new_listener_list)
-            worker.run
+            agent = @agent_class.new(agent_num, central_command, @options.new_listener_list)
+            agent.run
           end
         end
       end        
@@ -37,8 +35,8 @@ module DeepTest
       @warlock.wait_for_all_to_finish
     end
 
-    def number_of_workers
-      @options.number_of_workers
+    def number_of_agents
+      @options.number_of_agents
     end
 
     private
@@ -47,16 +45,16 @@ module DeepTest
       ActiveRecord::Base.connection.reconnect! if defined?(ActiveRecord::Base)
     end
 
-    def start_worker(worker_num, &blk)
-      @warlock.start("worker #{worker_num}", &blk)
+    def start_agent(agent_num, &blk)
+      @warlock.start("agent #{agent_num}", &blk)
     end
 
     def reseed_random_numbers
       srand
     end
 
-    def each_worker
-      number_of_workers.to_i.times { |worker_num| yield worker_num }
+    def each_agent
+      number_of_agents.to_i.times { |agent_num| yield agent_num }
     end
   end
 end

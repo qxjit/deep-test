@@ -1,4 +1,4 @@
-class ThreadWorker
+class ThreadAgent
   attr_reader :work_done
 
   def initialize(central_command, expected_work)

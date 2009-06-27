@@ -5,7 +5,7 @@ module DeepTest
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
         Option.new(:distributed_hosts, nil),
-        Option.new(:number_of_workers, nil),
+        Option.new(:number_of_agents,   nil),
         Option.new(:metrics_file,      nil),
         Option.new(:pattern,           nil),
         Option.new(:server_port,       6969),
@@ -18,9 +18,9 @@ module DeepTest
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
 
-    def number_of_workers
-      return CpuInfo.new.count unless @number_of_workers
-      @number_of_workers
+    def number_of_agents
+      return CpuInfo.new.count unless @number_of_agents
+      @number_of_agents
     end
 
     def ui=(value)

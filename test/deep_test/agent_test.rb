@@ -6,7 +6,7 @@ module DeepTest
       central_command = SimpleTestCentralCommand.new
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
 
-      Worker.new(0, central_command,stub_everything).run
+      Agent.new(0, central_command,stub_everything).run
 
       assert_kind_of ::Test::Unit::TestResult, central_command.take_result
     end
@@ -16,7 +16,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
       central_command.write_work Test::WorkUnit.new(TestFactory.failing_test)
 
-      Worker.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).run
 
       result_1 = central_command.take_result
       result_2 = central_command.take_result
@@ -28,9 +28,9 @@ module DeepTest
     test "notifies listener that it is starting" do
       central_command = SimpleTestCentralCommand.new
       listener = stub_everything
-      worker = Worker.new(0, central_command, listener)
-      listener.expects(:starting).with(worker)
-      worker.run
+      agent = Agent.new(0, central_command, listener)
+      listener.expects(:starting).with(agent)
+      agent.run
     end
 
     test "notifies listener that it is about to do work" do
@@ -38,9 +38,9 @@ module DeepTest
       work_unit = Test::WorkUnit.new(TestFactory.passing_test)
       central_command.write_work work_unit
       listener = stub_everything
-      worker = Worker.new(0, central_command, listener)
-      listener.expects(:starting_work).with(worker, work_unit)
-      worker.run
+      agent = Agent.new(0, central_command, listener)
+      listener.expects(:starting_work).with(agent, work_unit)
+      agent.run
     end
 
     test "notifies listener that it has done work" do
@@ -48,20 +48,20 @@ module DeepTest
       work_unit = mock(:run => :result)
       central_command.write_work work_unit
       listener = stub_everything
-      worker = Worker.new(0, central_command, listener)
-      listener.expects(:finished_work).with(worker, work_unit, :result)
-      worker.run
+      agent = Agent.new(0, central_command, listener)
+      listener.expects(:finished_work).with(agent, work_unit, :result)
+      agent.run
     end
 
-    test "exception raised by work unit gives in Worker::Error" do
+    test "exception raised by work unit gives in Agent::Error" do
       central_command = SimpleTestCentralCommand.new
       work_unit = mock
       work_unit.expects(:run).raises(exception = RuntimeError.new)
       central_command.write_work work_unit
 
-      Worker.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).run
       
-      assert_equal Worker::Error.new(work_unit, exception),
+      assert_equal Agent::Error.new(work_unit, exception),
                    central_command.take_result
     end
 
@@ -74,7 +74,7 @@ module DeepTest
 
       central_command.expects(:write_result)
 
-      Worker.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).run
     end
 
     test "finishes running when no more work units are remaining" do
@@ -82,11 +82,11 @@ module DeepTest
       central_command.expects(:take_work).
         raises(CentralCommand::NoWorkUnitsRemainingError)
 
-      Worker.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).run
     end
 
-    test "number is available to indentify worker" do
-      assert_equal 1, Worker.new(1, nil, nil).number
+    test "number is available to indentify agent" do
+      assert_equal 1, Agent.new(1, nil, nil).number
     end
     
     test "does not fork from rake" do

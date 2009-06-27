@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "start_all starts workers on a new worker server" do
+      test "start_all starts agents on a new agent server" do
         client = ThroughputWorkerClient.new(
           options = Options.new({}),
           landing_ship = stub_everything
@@ -16,7 +16,7 @@ module DeepTest
         client.start_all
       end
 
-      test "stop_all stops workers on worker server that was spawned in start_all" do
+      test "stop_all stops agents on agent server that was spawned in start_all" do
         beachhead = stub_everything
         client = ThroughputWorkerClient.new(
           Options.new({}),

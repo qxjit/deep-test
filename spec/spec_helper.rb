@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/../lib/deep_test"
 require File.dirname(__FILE__) + "/../test/fake_deadlock_error"
 require File.dirname(__FILE__) + "/../test/simple_test_central_command"
-require File.dirname(__FILE__) + "/thread_worker"
+require File.dirname(__FILE__) + "/thread_agent"
 require 'spec'
 
 describe "sandboxed rspec_options", :shared => true do

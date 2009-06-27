@@ -14,7 +14,7 @@ module DeepTest
           result = @central_command.take_result
           next if result.nil?
 
-          if Worker::Error === result
+          if Agent::Error === result
             puts result
             errors += 1
           else

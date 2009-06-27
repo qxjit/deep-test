@@ -2,7 +2,7 @@ module DeepTest
   module Database
     #
     # Skeleton Listener to help with setting up a separate database
-    # for each worker.  Calls +dump_schema+, +load_schema+, +create_database+,
+    # for each agent.  Calls +dump_schema+, +load_schema+, +create_database+,
     # and +drop_database+ hooks provided by subclasses that implement database
     # setup strategies for particular database flavors.
     #
@@ -13,7 +13,7 @@ module DeepTest
         dump_schema_once
       end
 
-      def before_starting_workers # :nodoc:
+      def before_starting_agents # :nodoc:
         dump_schema_once
       end
 
@@ -23,11 +23,11 @@ module DeepTest
         DUMPED_SCHEMAS << schema_name
       end
 
-      def starting(worker) # :nodoc:
-        @worker = worker
+      def starting(agent) # :nodoc:
+        @agent = agent
 
         at_exit do
-          DeepTest.logger.debug { "dropping database #{worker_database}" }
+          DeepTest.logger.debug { "dropping database #{agent_database}" }
           drop_database
         end
 
@@ -38,26 +38,26 @@ module DeepTest
       end
 
       #
-      # Called on each worker after creating database and before loading
+      # Called on each agent after creating database and before loading
       # schema to initialize connections
       # 
       def connect_to_database
-        ActiveRecord::Base.establish_connection(worker_database_config)
+        ActiveRecord::Base.establish_connection(agent_database_config)
       end
 
       #
-      # Called in each worker to create the database named by 
-      # +worker_database+.
+      # Called in each agent to create the database named by 
+      # +agent_database+.
       #
       def create_database
         raise "Subclass must implement"
       end
 
       #
-      # Called in each worker to drop the database created by
+      # Called in each agent to drop the database created by
       # +create_database+.  This method is called twice, once before
       # +create_database+ to ensure that no database exists and once
-      # at exit to clean as the worker process exits.  This method
+      # at exit to clean as the agent process exits.  This method
       # must not fail if the database does not exist when it is called.
       #
       def drop_database
@@ -65,12 +65,12 @@ module DeepTest
       end
 
       #
-      # Called before any workers are spawned to dump the schema that
+      # Called before any agents are spawned to dump the schema that
       # will be used for testing.  When running distributed, this method
       # is called on the local machine providing the tests to run.
       #
       # For distributed testing to work, the schema must be dumped in
-      # location accessible by all worker machines.  The easiest way to
+      # location accessible by all agent machines.  The easiest way to
       # accomplish this is to dump it to a location within the working copy.
       #
       def dump_schema
@@ -79,21 +79,21 @@ module DeepTest
 
 
       #
-      # Called once in each worker as it is starting to load the schema
+      # Called once in each agent as it is starting to load the schema
       # dumped from dump_schema.  Subclasses should load the schema definition
-      # into the +worker_database+
+      # into the +agent_database+
       #
       def load_schema
         raise "Subclass must implement"
       end
 
       #
-      # ActiveRecord configuration for the worker database.  By default,
+      # ActiveRecord configuration for the agent database.  By default,
       # the same as +master_database_config+, except that points to
-      # +worker_database+ instead of the database named in the master config.
+      # +agent_database+ instead of the database named in the master config.
       # 
-      def worker_database_config
-        master_database_config.merge(:database => worker_database)
+      def agent_database_config
+        master_database_config.merge(:database => agent_database)
       end
 
       #
@@ -106,10 +106,10 @@ module DeepTest
       end
 
       #
-      # Unique name for database on machine that worker is running on.
+      # Unique name for database on machine that agent is running on.
       #
-      def worker_database
-        "deep_test_worker_#{@worker.number}_pid_#{Process.pid}" 
+      def agent_database
+        "deep_test_agent_#{@agent.number}_pid_#{Process.pid}" 
       end
     end
   end

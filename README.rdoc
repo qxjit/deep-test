@@ -15,7 +15,7 @@ In your Rakefile:
   # sample DeepTest task
 
   DeepTest::TestTask.new "task_name" do |t|
-    t.number_of_workers = 2   # optional, defaults to 2
+    t.number_of_agents = 2   # optional, defaults to 2
     t.timeout_in_seconds = 30 # optional, defaults to 30
     t.server_port = 6969      # optional, defaults to 6969
     t.pattern = "test/**/*_test.rb"
@@ -26,7 +26,7 @@ In your Rakefile:
 
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2,   # optional, defaults to 2
+    t.deep_test :number_of_agents => 2,   # optional, defaults to 2
                 :timeout_in_seconds => 30, # optional, defaults to 30
                 :server_port => 6969       # optional, defaults to 6969
   end
@@ -39,16 +39,16 @@ In my_listener.rb
     def before_sync
     end
 
-    def before_starting_workers
+    def before_starting_agents
     end
 
-    def starting(worker)
+    def starting(agent)
     end
 
-    def starting_work(worker, work_unit)
+    def starting_work(agent, work_unit)
     end
 
-    def finished_work(worker, work_unit, result)
+    def finished_work(agent, work_unit, result)
     end
   end
 
@@ -59,8 +59,8 @@ In your Rakefile
     t.listener = "MyListener"
   end
 
-An instance of MyListener will be created for each worker that is
-started, and will receive events from that worker.  However, you must ensure
+An instance of MyListener will be created for each agent that is
+started, and will receive events from that agent.  However, you must ensure
 that the MyListener class is loaded at the time that the test files are
 loaded, so it is available to be instantiated.  You can specify multiple
 listener classes by separating them with a comma.  For more information about
@@ -68,12 +68,12 @@ when events are triggered, see the documentation at
 DeepTest::NullListener.
 
 
-=== Setting Up A New Database For Each Worker
+=== Setting Up A New Database For Each Agent
 
 By default, DeepTest will reinitialize ActiveRecord connections if ActiveRecord
-is loaded when the workers are started.  This means all workers are running
-against the same database.  You may want each worker to use a database
-decidicated to it.  To facilitate this, DeepTest provides a worker listener to
+is loaded when the agents are started.  This means all agents are running
+against the same database.  You may want each agent to use a database
+decidicated to it.  To facilitate this, DeepTest provides a agent listener to
 help you.  If you're using Rails with Mysql, simply configure DeepTest as 
 follows in your Rakefile:
 
@@ -83,10 +83,10 @@ follows in your Rakefile:
   end
 
 
-Before spawning workers, DeepTest will dump the schema of the database for the
-current Rails environment (usually test).  As each worker starts up, the
-listener will create a database dedicated to that worker and load the schema
-into it.  The database will be dropped when the worker process exits.  
+Before spawning agents, DeepTest will dump the schema of the database for the
+current Rails environment (usually test).  As each agent starts up, the
+listener will create a database dedicated to that agent and load the schema
+into it.  The database will be dropped when the agent process exits.  
 
 If you're using Mysql but not using Rails, you'll have to create a subclass of
 MysqlSetupListener and override +master_database_config+ and +dump_file_name+,
@@ -103,7 +103,7 @@ project so that it can be included in later releases of DeepTest.
 In addition to running your tests in parallel, DeepTest can also distribute
 them across multiple machines.  It does this by first mirroring the local
 working copy that launched the tests on each machine that will be running tests.
-Then workers are launched on each of the machines and consume tests in the same
+Then agents are launched on each of the machines and consume tests in the same
 fashion as when DeepTest is running locally.
 
 ==== Requirements
@@ -125,9 +125,9 @@ machine.
 On each test machine, execute the following:
   > deep_test test_server
 
-This will launch a server providing mirroring and worker services.  By default,
-2 workers will be launched for each set of tests run.  If you wish to change
-the number of workers, simply specify the --number_of_workers option.  For
+This will launch a server providing mirroring and agent services.  By default,
+2 agents will be launched for each set of tests run.  If you wish to change
+the number of agents, simply specify the --number_of_agents option.  For
 information about what options are available, use -h.  The test_server will
 print out the uri it is bound to, druby://<hostname>:4022 by default.
 
@@ -210,7 +210,7 @@ least have something like this:
 That way you can avoid spending any time mirroring tmp and log files that don't
 have any effect on the tests.  If you are running distributed tests against a
 database, consult the section above about creating a new database for each
-worker to see how to configure DeepTest for your project.  
+agent to see how to configure DeepTest for your project.  
 
 Any number of projects can be run using the same test servers, as long as
 they're all using the same version of Ruby and DeepTest.  

@@ -3,13 +3,13 @@ require File.dirname(__FILE__) + "/../../test_helper"
 module DeepTest
   module Distributed
     unit_tests do
-      test "start_all delegates to worker implementation" do
+      test "start_all delegates to agent implementation" do
         beachhead = Beachhead.new("", implementation = mock)
         implementation.expects(:start_all)
         beachhead.start_all
       end
 
-      test "stop_all delegates to worker implementation" do
+      test "stop_all delegates to agent implementation" do
         beachhead = Beachhead.new("", implementation = mock)
         implementation.expects(:stop_all)
         beachhead.stop_all.join
@@ -51,7 +51,7 @@ module DeepTest
         beachhead.load_files(["/source/path/my/file.rb"])
       end
 
-      test "service is removed after grace period if workers haven't been started" do
+      test "service is removed after grace period if agents haven't been started" do
         log_level = DeepTest.logger.level
         begin
           DeepTest.logger.level = Logger::ERROR
@@ -73,7 +73,7 @@ module DeepTest
         end
       end
 
-      test "service is not removed after grace period if workers have been started" do
+      test "service is not removed after grace period if agents have been started" do
         log_level = DeepTest.logger.level
         begin
           DeepTest.logger.level = Logger::ERROR

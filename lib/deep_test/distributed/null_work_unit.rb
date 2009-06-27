@@ -1,7 +1,7 @@
 module DeepTest
   module Distributed
     #
-    # Work Unit used to measure throughput of workers.
+    # Work Unit used to measure throughput of agents.
     #
     class NullWorkUnit
       def run

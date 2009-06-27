@@ -2,19 +2,19 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 module DeepTest
   describe Options do
-    it "should support number_of_workers" do
-      Options.new(:number_of_workers => 3).number_of_workers.should == 3
+    it "should support number_of_agents" do
+      Options.new(:number_of_agents => 3).number_of_agents.should == 3
     end
 
-    it "should default to number_of_workers based on cpu info at time of call" do
+    it "should default to number_of_agents based on cpu info at time of call" do
       options = Options.new({})
       CpuInfo.should_receive(:new).and_return stub("cpu_info", :count => 4)
-      options.number_of_workers.should == 4
+      options.number_of_agents.should == 4
     end
 
     it "should have reasonable defaults" do
       options = Options.new({})
-      options.number_of_workers.should == 2
+      options.number_of_agents.should == 2
       options.timeout_in_seconds.should == 30
       options.server_port.should == 6969
       options.pattern.should == nil
@@ -70,7 +70,7 @@ module DeepTest
       listener.listeners.last.should be_instance_of(FakeListener2)
     end
 
-    it "should create a list of worker listeners upon request" do
+    it "should create a list of agent listeners upon request" do
       Options.new({}).new_listener_list.should be_instance_of(DeepTest::ListenerList)
     end
 
@@ -99,7 +99,7 @@ module DeepTest
     end
 
     it "should support strings as well as symbols" do
-      Options.new("number_of_workers" => 2).number_of_workers.should == 2
+      Options.new("number_of_agents" => 2).number_of_agents.should == 2
     end
 
     it "should raise error when invalid option is specifed" do
@@ -109,17 +109,17 @@ module DeepTest
     end
 
     it "should convert to command line option string" do
-      options = Options.new(:number_of_workers => 1, :timeout_in_seconds => 3)
+      options = Options.new(:number_of_agents => 1, :timeout_in_seconds => 3)
       options.to_command_line.should == 
         Base64.encode64(Marshal.dump(options)).gsub("\n","")
     end
 
     it "should parse from command line option string" do
-      options = Options.new(:number_of_workers => 2, 
+      options = Options.new(:number_of_agents => 2, 
                             :timeout_in_seconds => 3,
                             :pattern => '*')
       parsed_options = Options.from_command_line(options.to_command_line)
-      parsed_options.number_of_workers.should == 2
+      parsed_options.number_of_agents.should == 2
       parsed_options.timeout_in_seconds.should == 3
       parsed_options.pattern.should == '*'
     end
