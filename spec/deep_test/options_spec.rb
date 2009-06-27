@@ -138,10 +138,24 @@ module DeepTest
 
     it "should create remote deployment when distributed hosts are specified" do
       options = Options.new(:distributed_hosts => %w[hosts], :sync_options => {:source => "root"})
-      Distributed::LandingShip.should_receive(:new_dispatch_controller).with(options).and_return(:landing_ship)
-      Distributed::RemoteDeployment.should_receive(:new).with(options, :landing_ship, be_instance_of(LocalDeployment))
+      Distributed::RemoteDeployment.should_receive(:new).with(options, 
+                                                              be_instance_of(Distributed::LandingFleet), 
+                                                              be_instance_of(LocalDeployment))
       options.new_deployment
     end
+
+    it "should create a landing fleet with a ship for each host" do
+      Socket.should_receive(:gethostname).and_return("myhost")
+      options = Options.new(:ui => "DeepTest::UI::Null",
+                            :sync_options => {:source => "/my/local/dir"},
+                            :distributed_hosts => %w[host1 host2])
+
+      Distributed::RSync.should_receive(:push).with("host1", options, "/tmp/myhost_my_local_dir")
+      Distributed::RSync.should_receive(:push).with("host2", options, "/tmp/myhost_my_local_dir")
+
+      options.new_landing_fleet.push_code(options)
+    end
+
 
     it "should return localhost as origin_hostname current hostname is same as when created" do
       options = Options.new({})

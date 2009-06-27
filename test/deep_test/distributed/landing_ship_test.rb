@@ -10,20 +10,8 @@ module DeepTest
         RSync.expects(:push).with("host", options, "/tmp/myhost_my_local_dir")
         landing_ship.push_code(options)
       end
-      
-      test "new_dispatch_controller creates dispatch controller for all landing_ships" do
-        Socket.stubs(:gethostname).returns("myhost")
-        options = Options.new(:ui => "DeepTest::UI::Null",
-                              :sync_options => {:source => "/my/local/dir"},
-                              :distributed_hosts => %w[server1 server2])
 
-        RSync.expects(:push).with("server1", options, "/tmp/myhost_my_local_dir")
-        RSync.expects(:push).with("server2", options, "/tmp/myhost_my_local_dir")
-
-        LandingShip.new_dispatch_controller(options).push_code(options)
-      end
-
-      test "establish_beachhead launches worker server on remote machine" do
+      test "establish_beachhead launches beachhead process on remote machine" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
         options = Options.new(:sync_options => {:source => "/my/local/dir"})
@@ -39,7 +27,7 @@ module DeepTest
         assert_equal "druby://remote_host:9999", beachhead.__drburi
       end
 
-      test "establish_beachhead launches worker server on remote machine with usernames specified in sync_options" do
+      test "establish_beachhead launches beachhead process on remote machine with usernames specified in sync_options" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
         options = Options.new(:sync_options => {:username => "me", 

@@ -82,11 +82,15 @@ module DeepTest
       if distributed_hosts.nil?
         LocalDeployment.new self
       else
-        Distributed::RemoteDeployment.new(
-          self, 
-          Distributed::LandingShip.new_dispatch_controller(self), 
-          LocalDeployment.new(self))
+        Distributed::RemoteDeployment.new self, new_landing_fleet, LocalDeployment.new(self)
       end
+    end
+
+    def new_landing_fleet
+      landing_ships = distributed_hosts.map do |host|
+        Distributed::LandingShip.new :address => host, :work_dir => '/tmp'
+      end
+      Distributed::LandingFleet.new self, landing_ships
     end
 
     def central_command

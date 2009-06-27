@@ -37,13 +37,6 @@ module DeepTest
         "rake deep_test:establish_beachhead " + 
         "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
       end
-
-      def self.new_dispatch_controller(options)
-        landing_ships = options.distributed_hosts.map do |host|
-          new :address => host, :work_dir => '/tmp'
-        end
-        LandingFleet.new(options, landing_ships)
-      end
     end
   end
 end
