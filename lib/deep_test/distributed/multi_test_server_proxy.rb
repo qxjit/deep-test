@@ -6,10 +6,10 @@ module DeepTest
         @slave_controller = DispatchController.new(options, slaves)
       end
 
-      def spawn_worker_server(options)
-        DeepTest.logger.debug { "dispatch spawn_worker_server for #{options.origin_hostname}" }
+      def establish_beachhead(options)
+        DeepTest.logger.debug { "dispatch establish_beachhead for #{options.origin_hostname}" }
         WorkerServerProxy.new options,
-                              @slave_controller.dispatch(:spawn_worker_server, 
+                              @slave_controller.dispatch(:establish_beachhead, 
                                                          options)
       end
 

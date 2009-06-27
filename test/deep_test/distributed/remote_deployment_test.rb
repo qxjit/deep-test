@@ -8,7 +8,7 @@ module DeepTest
         deployment = RemoteDeployment.new(
           options = Options.new(:worker_listener => FakeListener,
                                 :sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:spawn_worker_server => stub_everything),
+          landing_ship = stub_everything(:establish_beachhead => stub_everything),
           failover_deployment = mock
         )
         FakeListener.any_instance.expects(:before_sync)
@@ -20,7 +20,7 @@ module DeepTest
       test "load_files pushes code to remote machines" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:spawn_worker_server => stub_everything),
+          landing_ship = stub_everything(:establish_beachhead => stub_everything),
           failover_deployment = mock
         )
 
@@ -30,23 +30,23 @@ module DeepTest
       end
 
       test "load_files loads files on worker server" do
-        worker_server = stub_everything
+        beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:establish_beachhead => beachhead),
           failover_deployment = mock
         )
 
-        worker_server.expects(:load_files).with(["filelist"])
+        beachhead.expects(:load_files).with(["filelist"])
         deployment.expects(:load)
         deployment.load_files ["filelist"]
       end
 
       test "load_files loads files locally" do
-        worker_server = stub_everything
+        beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:establish_beachhead => beachhead),
           failover_deployment = mock
         )
 
@@ -61,28 +61,28 @@ module DeepTest
           failover_deployment = mock
         )
 
-        landing_ship.expects(:spawn_worker_server).with(options).
-          returns(worker_server = stub_everything)
+        landing_ship.expects(:establish_beachhead).with(options).
+          returns(beachhead = stub_everything)
 
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        worker_server.expects(:start_all)
+        beachhead.expects(:start_all)
         deployment.start_all
       end
 
       test "stop_all stops workers on worker server that was spawned in load_files" do
-        worker_server = stub_everything
+        beachhead = stub_everything
         deployment = RemoteDeployment.new(
           Options.new(:sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:spawn_worker_server => worker_server),
+          landing_ship = stub_everything(:establish_beachhead => beachhead),
           failover_deployment = mock
         )
 
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        worker_server.expects(:stop_all)
+        beachhead.expects(:stop_all)
         deployment.stop_all
       end
 
@@ -93,14 +93,14 @@ module DeepTest
           failover_deployment = mock
         )
 
-        landing_ship.expects(:spawn_worker_server).with(options).
-          returns(worker_server = mock)
+        landing_ship.expects(:establish_beachhead).with(options).
+          returns(beachhead = mock)
 
-        worker_server.expects(:load_files)
+        beachhead.expects(:load_files)
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 
-        worker_server.expects(:start_all).raises("An Error")
+        beachhead.expects(:start_all).raises("An Error")
 
         failover_deployment.expects(:start_all)
         deployment.start_all
@@ -135,10 +135,10 @@ module DeepTest
           failover_deployment = mock
         )
 
-        landing_ship.expects(:spawn_worker_server).with(options).
-          returns(worker_server = Object.new)
+        landing_ship.expects(:establish_beachhead).with(options).
+          returns(beachhead = Object.new)
 
-        worker_server.instance_eval do
+        beachhead.instance_eval do
           def calls() @calls ||= []; end
           def method_missing(sym, *args) calls << sym; end
           def load_files(filelist) raise "An Error"; end
@@ -153,7 +153,7 @@ module DeepTest
         failover_deployment.expects(:stop_all)
         deployment.stop_all
 
-        assert_equal [], worker_server.calls
+        assert_equal [], beachhead.calls
       end
 
       test "exception from start_all of failover_deployment is raised" do
@@ -163,10 +163,10 @@ module DeepTest
           failover_deployment = mock
         )
 
-        landing_ship.expects(:spawn_worker_server).with(options).
-          returns(worker_server = mock)
+        landing_ship.expects(:establish_beachhead).with(options).
+          returns(beachhead = mock)
 
-        worker_server.expects(:load_files).raises("An Error")
+        beachhead.expects(:load_files).raises("An Error")
         deployment.expects(:load)
         deployment.load_files ["filelist"]
 

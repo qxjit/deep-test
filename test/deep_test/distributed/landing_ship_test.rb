@@ -23,7 +23,7 @@ module DeepTest
         LandingShip.new_dispatch_controller(options).push_code(options)
       end
 
-      test "spawn_worker_server launches worker server on remote machine" do
+      test "establish_beachhead launches worker server on remote machine" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
         options = Options.new(:sync_options => {:source => "/my/local/dir"})
@@ -31,15 +31,15 @@ module DeepTest
         landing_ship.expects(:`).with(
           "ssh -4 remote_host " + 
           "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
-          "rake deep_test:start_distributed_server " + 
+          "rake deep_test:establish_beachhead " + 
           "OPTIONS=#{options.to_command_line} HOST=remote_host'"
-        ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
+        ).returns("blah blah\nBeachhead url: druby://remote_host:9999\nblah")
 
-        worker_server = landing_ship.spawn_worker_server(options)
-        assert_equal "druby://remote_host:9999", worker_server.__drburi
+        beachhead = landing_ship.establish_beachhead(options)
+        assert_equal "druby://remote_host:9999", beachhead.__drburi
       end
 
-      test "spawn_worker_server launches worker server on remote machine with usernames specified in sync_options" do
+      test "establish_beachhead launches worker server on remote machine with usernames specified in sync_options" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
         options = Options.new(:sync_options => {:username => "me", 
@@ -48,11 +48,11 @@ module DeepTest
         landing_ship.expects(:`).with(
           "ssh -4 remote_host -l me " + 
           "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
-          "rake deep_test:start_distributed_server " + 
+          "rake deep_test:establish_beachhead " + 
           "OPTIONS=#{options.to_command_line} HOST=remote_host'"
-        ).returns("blah blah\nRemoteWorkerServer url: druby://remote_host:9999\nblah")
+        ).returns("blah blah\nBeachhead url: druby://remote_host:9999\nblah")
 
-        landing_ship.spawn_worker_server(options)
+        landing_ship.establish_beachhead(options)
       end
     end
   end

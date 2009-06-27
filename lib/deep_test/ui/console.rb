@@ -6,7 +6,7 @@ module DeepTest
 
       METHOD_DESCRIPTIONS = {
         :push_code => "Synchronizing working copies on worker machines",
-        :spawn_worker_server => "Spawning test environment processes",
+        :establish_beachhead => "Spawning test environment processes",
         :load_files => "Loading test files for workers",
         :start_all => "Starting workers",
         :stop_all => "Stopping workers"

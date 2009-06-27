@@ -9,7 +9,7 @@ module DeepTest
     def start(name, &block)
       # Not synchronizing for the fork seems to cause
       # random errors (Bus Error, Segfault, and GC non-object)
-      # in RemoteWorkerServer processes.
+      # in Beachhead processes.
       #
       begin
         pid = nil

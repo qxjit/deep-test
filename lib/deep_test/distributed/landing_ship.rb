@@ -12,10 +12,10 @@ module DeepTest
         RSync.push(@config[:address], options, path)
       end
 
-      def spawn_worker_server(options)
+      def establish_beachhead(options)
         output  = `#{ssh_command(options)} '#{spawn_command(options)}'`
         output.each do |line|
-          if line =~ /RemoteWorkerServer url: (.*)/
+          if line =~ /Beachhead url: (.*)/
             return DRb::DRbObject.new_with_uri($1)
           end
         end
@@ -34,7 +34,7 @@ module DeepTest
       def spawn_command(options)
         "#{ShellEnvironment.like_login} && " + 
         "cd #{options.mirror_path(@config[:work_dir])} && " + 
-        "rake deep_test:start_distributed_server " + 
+        "rake deep_test:establish_beachhead " + 
         "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
       end
 

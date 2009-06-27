@@ -11,14 +11,14 @@ DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/spec/extensions/spec_task"
 end
 
-task :'deep_test:start_distributed_server' do
+task :'deep_test:establish_beachhead' do
   require File.dirname(__FILE__) + "/../deep_test"
   options = DeepTest::Options.from_command_line(ENV['OPTIONS'])
-  DeepTest.logger.debug { "mirror spawn_worker_server for #{options.origin_hostname}" }
+  DeepTest.logger.debug { "mirror establish_beachhead for #{options.origin_hostname}" }
 
   STDIN.close
 
-  server = DeepTest::Distributed::RemoteWorkerServer.start(
+  beachhead = DeepTest::Distributed::Beachhead.start(
     ENV['HOST'],
     options.mirror_path('/tmp'),
     DeepTest::Distributed::TestServerWorkers.new(
@@ -31,7 +31,7 @@ task :'deep_test:start_distributed_server' do
     STDERR.reopen(STDOUT)
   end
 
-  puts "RemoteWorkerServer url: #{server.__drburi}"
+  puts "Beachhead url: #{beachhead.__drburi}"
 
   STDOUT.close
   STDERR.close

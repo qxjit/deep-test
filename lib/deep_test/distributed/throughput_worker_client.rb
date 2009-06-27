@@ -7,12 +7,12 @@ module DeepTest
       end
 
       def start_all
-        @worker_server = @landing_ship.spawn_worker_server(@options)
-        @worker_server.start_all
+        @beachhead = @landing_ship.establish_beachhead(@options)
+        @beachhead.start_all
       end
 
       def stop_all
-        @worker_server.stop_all
+        @beachhead.stop_all
       end
     end
   end

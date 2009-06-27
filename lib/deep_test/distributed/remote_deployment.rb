@@ -16,8 +16,8 @@ module DeepTest
 
         t = Thread.new do
           @landing_ship.push_code(@options)
-          @worker_server = @landing_ship.spawn_worker_server(@options)
-          @worker_server.load_files filelist
+          @beachhead = @landing_ship.establish_beachhead(@options)
+          @beachhead.load_files filelist
         end
 
         filelist[1..-1].each {|f| load f}
@@ -34,7 +34,7 @@ module DeepTest
       end
 
       def start_all
-        @worker_server.start_all
+        @beachhead.start_all
       rescue => e
         raise if failed_over?
         fail_over("start_all", e)
@@ -42,16 +42,16 @@ module DeepTest
       end
 
       def stop_all
-        @worker_server.stop_all
+        @beachhead.stop_all
       end
 
       def fail_over(method, exception)
         @options.ui_instance.distributed_failover_to_local(method, exception)
-        @worker_server = @failover_deployment
+        @beachhead = @failover_deployment
       end
 
       def failed_over?
-        @worker_server == @failover_deployment
+        @beachhead == @failover_deployment
       end
     end
   end

@@ -1,6 +1,6 @@
 module DeepTest
   module Distributed
-    class RemoteWorkerServer
+    class Beachhead
       include DRb::DRbUndumped
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
@@ -55,13 +55,13 @@ module DeepTest
       def self.start(address, base_path, deployment, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start("RemoteWorkerServer") do
+        warlock.start("Beachhead") do
           innie.close
 
           server = new(base_path, deployment)
 
           DRb.start_service("drubyall://#{address}:0", server)
-          DeepTest.logger.info { "RemoteWorkerServer started at #{DRb.uri}" }
+          DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
 
           outie.write DRb.uri
           outie.close

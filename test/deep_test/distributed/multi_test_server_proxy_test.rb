@@ -15,29 +15,29 @@ module DeepTest
         master.push_code(options)
       end
 
-      test "spawn_worker_server is invoked on all server" do
+      test "establish_beachhead is invoked on all server" do
         server_1, server_2 = mock, mock
         options = Options.new({:ui => "UI::Null"})
 
         master = MultiTestServerProxy.new(options, [server_1, server_2])
 
-        server_1.expects(:spawn_worker_server).with(options)
-        server_2.expects(:spawn_worker_server).with(options)
+        server_1.expects(:establish_beachhead).with(options)
+        server_2.expects(:establish_beachhead).with(options)
 
-        master.spawn_worker_server(options)
+        master.establish_beachhead(options)
       end
 
-      test "spawn_worker_server returns WorkerServerProxy with each worker" do
-        server_1 = mock(:spawn_worker_server => :worker_server_1)
-        server_2 = mock(:spawn_worker_server => :worker_server_2)
+      test "establish_beachhead returns WorkerServerProxy with each worker" do
+        server_1 = mock(:establish_beachhead => :beachhead_1)
+        server_2 = mock(:establish_beachhead => :beachhead_2)
         options = Options.new({:ui => "UI::Null"})
 
         master = MultiTestServerProxy.new(options, [server_1, server_2])
 
         MultiTestServerProxy::WorkerServerProxy.
-          expects(:new).with(options, [:worker_server_1, :worker_server_2])
+          expects(:new).with(options, [:beachhead_1, :beachhead_2])
 
-        master.spawn_worker_server(options)
+        master.establish_beachhead(options)
       end
 
       test "WorkerServerProxy dispatches start_all" do
