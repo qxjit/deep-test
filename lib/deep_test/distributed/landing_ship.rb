@@ -42,7 +42,7 @@ module DeepTest
         landing_ships = options.distributed_hosts.map do |host|
           new :address => host, :work_dir => '/tmp'
         end
-        MultiTestServerProxy.new(options, landing_ships)
+        LandingFleet.new(options, landing_ships)
       end
     end
   end

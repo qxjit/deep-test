@@ -1,10 +1,10 @@
 module DeepTest
   module Distributed
     class RemoteDeployment
-      def initialize(options, landing_ship, failover_deployment)
+      def initialize(options, landing_fleet, failover_deployment)
         @failover_deployment = failover_deployment
         @options = options
-        @landing_ship = landing_ship
+        @landing_fleet = landing_fleet
       end
 
       def load_files(filelist)
@@ -15,9 +15,9 @@ module DeepTest
         @options.new_listener_list.before_sync
 
         t = Thread.new do
-          @landing_ship.push_code(@options)
-          @beachhead = @landing_ship.establish_beachhead(@options)
-          @beachhead.load_files filelist
+          @landing_fleet.push_code(@options)
+          @beachheads = @landing_fleet.establish_beachhead(@options)
+          @beachheads.load_files filelist
         end
 
         filelist[1..-1].each {|f| load f}
@@ -34,7 +34,7 @@ module DeepTest
       end
 
       def start_all
-        @beachhead.start_all
+        @beachheads.start_all
       rescue => e
         raise if failed_over?
         fail_over("start_all", e)
@@ -42,16 +42,16 @@ module DeepTest
       end
 
       def stop_all
-        @beachhead.stop_all
+        @beachheads.stop_all
       end
 
       def fail_over(method, exception)
         @options.ui_instance.distributed_failover_to_local(method, exception)
-        @beachhead = @failover_deployment
+        @beachheads = @failover_deployment
       end
 
       def failed_over?
-        @beachhead == @failover_deployment
+        @beachheads == @failover_deployment
       end
     end
   end

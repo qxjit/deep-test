@@ -1,14 +1,14 @@
 module DeepTest
   module Distributed
-    class MultiTestServerProxy
+    class LandingFleet
       def initialize(options, slaves)
-        DeepTest.logger.debug { "MultiTestServerProxy#initialize #{slaves.length} slaves" }
+        DeepTest.logger.debug { "LandingFleet#initialize #{slaves.length} slaves" }
         @slave_controller = DispatchController.new(options, slaves)
       end
 
       def establish_beachhead(options)
         DeepTest.logger.debug { "dispatch establish_beachhead for #{options.origin_hostname}" }
-        WorkerServerProxy.new options,
+        Beachheads.new options,
                               @slave_controller.dispatch(:establish_beachhead, 
                                                          options)
       end
@@ -18,9 +18,9 @@ module DeepTest
         @slave_controller.dispatch(:push_code, options)
       end
 
-      class WorkerServerProxy
+      class Beachheads
         def initialize(options, slaves)
-          DeepTest.logger.debug { "WorkerServerProxy#initialize #{slaves.inspect}" }
+          DeepTest.logger.debug { "Beachheads#initialize #{slaves.inspect}" }
           @slave_controller = DispatchController.new(options, slaves)
         end
 
