@@ -1,13 +1,14 @@
 module DeepTest
   module Distributed
-    class Beachhead
+    class Beachhead < LocalDeployment
       include DRb::DRbUndumped
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 
-      def initialize(base_path, deployment)
+      def initialize(base_path, options, connection_info)
+        super options
+        @connection_info = connection_info
         @base_path = base_path
-        @deployment = deployment
       end
 
       def launch_mercy_killer(grace_period)
@@ -25,48 +26,33 @@ module DeepTest
         end
       end
 
-      def deploy_agents
-        @agents_deployed = true
-        @deployment.deploy_agents
+      def central_command
+        CentralCommand.remote_reference @connection_info.address, @options.server_port
       end
 
-      def terminate_agents
-        Thread.new do
-          @deployment.terminate_agents
-        end
+      def deploy_agents
+        @agents_deployed = true
+        super
+        @warlock.exit_when_none_running
       end
 
       def agents_deployed?
         @agents_deployed
       end
 
-      def self.warlock
-        @warlock ||= DeepTest::Warlock.new
-      end
-
-      def self.running_server_count
-        @warlock.demon_count if @warlock
-      end
-
-      def self.terminate_agents
-        @warlock.terminate_agents if @warlock
-      end
-
-      def self.start(address, base_path, deployment, grace_period = MERCY_KILLING_GRACE_PERIOD)
+      def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start("Beachhead") do
+        self.class.warlock.start("Beachhead") do
           innie.close
 
-          server = new(base_path, deployment)
-
-          DRb.start_service("drubyall://#{address}:0", server)
+          DRb.start_service("drubyall://#{address}:0", self)
           DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
 
           outie.write DRb.uri
           outie.close
 
-          server.launch_mercy_killer(grace_period)
+          launch_mercy_killer(grace_period)
 
           yield if block_given?
 
@@ -79,6 +65,9 @@ module DeepTest
         DRbObject.new_with_uri(uri)
       end
 
+      def self.warlock
+        @warlock ||= DeepTest::Warlock.new
+      end
     end
   end
 end

@@ -28,7 +28,7 @@ module DeepTest
     end
 
     def terminate_agents
-      @warlock.terminate_agents
+      @warlock.stop_demons
     end
 
     def wait_for_completion

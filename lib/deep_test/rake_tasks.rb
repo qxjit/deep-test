@@ -18,15 +18,9 @@ task :'deep_test:establish_beachhead' do
 
   STDIN.close
 
-  beachhead = DeepTest::Distributed::Beachhead.start(
-    ENV['HOST'],
-    options.mirror_path('/tmp'),
-    DeepTest::Distributed::TestServerWorkers.new(
-      options, 
-      {:number_of_agents => options.number_of_agents}, 
-      DeepTest::Distributed::SshClientConnectionInfo.new
-    )
-  ) do
+  beachhead = DeepTest::Distributed::Beachhead.new(
+    options.mirror_path('/tmp'), options, DeepTest::Distributed::SshClientConnectionInfo.new
+  ).daemonize(ENV['HOST']) do
     STDOUT.reopen("/tmp/deep_test_server.log", "a")
     STDERR.reopen(STDOUT)
   end

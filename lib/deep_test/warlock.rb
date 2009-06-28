@@ -56,7 +56,7 @@ module DeepTest
       end
     end
 
-    def terminate_agents
+    def stop_demons
       DeepTest.logger.debug { "stopping all demons" }
       receivers = @demons_semaphore.synchronize do
         @demons.reverse
