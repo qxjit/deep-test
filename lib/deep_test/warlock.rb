@@ -1,12 +1,13 @@
 module DeepTest
   class Warlock
-    def initialize
+    def initialize(central_command)
+      @central_command = central_command
       @demons_semaphore = Mutex.new
       @demons = []
       @reapers = []
     end
 
-    def start(name, &block)
+    def start(name, options = {}, &block)
       # Not synchronizing for the fork seems to cause
       # random errors (Bus Error, Segfault, and GC non-object)
       # in Beachhead processes.
@@ -15,23 +16,30 @@ module DeepTest
         pid = nil
         @demons_semaphore.synchronize do 
           pid = DeepTest.drb_safe_fork do
-            catch(:exit_demon) do
-              Signal.trap("TERM") { throw :exit_demon }
+            if options[:detach_io]
+              $stdout.reopen("/dev/null")
+              $stderr.reopen("/dev/null")
+            end
 
-              # Fork leaves the semaphore locked and we'll never make it
-              # to end of synchronize block.
-              #
-              # The Ruby 1.8.6 C mutex implementation automatically treats
-              # a mutex locked by a dead thread as unlocked and will raise
-              # an error if we try to unlock it from this thread.
-              #
-              @demons_semaphore.unlock if @demons_semaphore.locked?
+            ProxyIO.replace_stdout_stderr!(@central_command.stdout, @central_command.stderr) do
+              catch(:exit_demon) do
+                Signal.trap("TERM") { throw :exit_demon }
 
-              begin
-                yield
-              rescue Exception => e
-                DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
-                raise
+                # Fork leaves the semaphore locked and we'll never make it
+                # to end of synchronize block.
+                #
+                # The Ruby 1.8.6 C mutex implementation automatically treats
+                # a mutex locked by a dead thread as unlocked and will raise
+                # an error if we try to unlock it from this thread.
+                #
+                @demons_semaphore.unlock if @demons_semaphore.locked?
+
+                begin
+                  yield
+                rescue Exception => e
+                  DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
+                  raise
+                end
               end
             end
 
@@ -80,6 +88,7 @@ module DeepTest
     def exit_when_none_running
       Thread.new do
         wait_for_all_to_finish
+        DeepTest.logger.debug { "exiting #{Process.pid} with all demons finished" }
         exit(0)
       end
     end

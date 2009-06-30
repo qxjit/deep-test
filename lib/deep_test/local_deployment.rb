@@ -1,9 +1,14 @@
 module DeepTest
   class LocalDeployment
+    attr_reader :warlock
+
     def initialize(options, agent_class = DeepTest::Agent)
       @options = options
-      @warlock = Warlock.new
       @agent_class = agent_class
+    end
+
+    def warlock
+      @warlock ||= Warlock.new central_command
     end
 
     def load_files(files)
@@ -17,22 +22,16 @@ module DeepTest
     def deploy_agents
       each_agent do |agent_num|
         start_agent(agent_num) do
-          ProxyIO.replace_stdout_stderr!(central_command.stdout, central_command.stderr) do
-            reseed_random_numbers
-            reconnect_to_database
-            agent = @agent_class.new(agent_num, central_command, @options.new_listener_list)
-            agent.run
-          end
+          reseed_random_numbers
+          reconnect_to_database
+          agent = @agent_class.new(agent_num, central_command, @options.new_listener_list)
+          agent.run
         end
       end        
     end
 
     def terminate_agents
-      @warlock.stop_demons
-    end
-
-    def wait_for_completion
-      @warlock.wait_for_all_to_finish
+      warlock.stop_demons
     end
 
     def number_of_agents
@@ -46,7 +45,7 @@ module DeepTest
     end
 
     def start_agent(agent_num, &blk)
-      @warlock.start("agent #{agent_num}", &blk)
+      warlock.start("agent #{agent_num}", &blk)
     end
 
     def reseed_random_numbers

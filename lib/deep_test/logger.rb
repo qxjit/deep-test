@@ -6,6 +6,10 @@ module DeepTest
       self.level = configured_log_level
     end
 
+    def io_stream
+      @logdev.dev
+    end
+
     def configured_log_level
       if ENV['DEEP_TEST_LOG_LEVEL']
         Logger.const_get(ENV['DEEP_TEST_LOG_LEVEL'])

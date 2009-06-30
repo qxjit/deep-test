@@ -1,27 +1,27 @@
 module DeepTest
   class Main
-    def self.run(options, deployment, runner)
-      new(options, deployment, runner).run
-    end
-    
-    def initialize(options, deployment, runner)
+    def initialize(options, deployment, runner, central_command = nil)
       @options = options
-      @runner = runner
       @deployment = deployment
+      @runner = runner
+      @central_command = central_command || CentralCommand.start(options)
+    end
+
+    def load_files(files)
+      @deployment.load_files files
     end
     
     def run(exit_when_done = true)
       passed = false
 
       begin
-        central_command = CentralCommand.start(@options)
         @options.new_listener_list.before_starting_agents
         @deployment.deploy_agents
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
           passed = @runner.process_work_units
         ensure
-          shutdown(central_command)
+          shutdown
         end
       ensure
         DeepTest.logger.debug { "Main: Stopping CentralCommand" }
@@ -31,9 +31,9 @@ module DeepTest
       Kernel.exit(passed ? 0 : 1) if exit_when_done
     end
 
-    def shutdown(central_command)
+    def shutdown
       DeepTest.logger.debug { "Main: Shutting Down" }
-      central_command.done_with_work
+      @central_command.done_with_work
 
       first_exception = $!
       begin

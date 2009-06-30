@@ -1,10 +1,10 @@
 class TestLogger < DeepTest::Logger
-  def initialize
+  def initialize(device = nil)
     super(StringIO.new)
   end
 
   def logged_output
-    @logdev.dev.string
+    io_stream.string
   end
 end
 

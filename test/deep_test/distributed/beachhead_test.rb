@@ -25,41 +25,47 @@ module DeepTest
 
       test "service is removed after grace period if agents haven't been started" do
         log_level = DeepTest.logger.level
-        begin
-          DeepTest.logger.level = Logger::ERROR
-          beachhead = Beachhead.new("", Options.new({}), stub_everything)
-          beachhead.stubs(:start_agent)
-          beachhead.daemonize("localhost", 0.25)
-          # Have to sleep long enough to warlock to reap dead process
-          sleep 1.0
-          assert_equal 0, Beachhead.warlock.demon_count
-        ensure
+        SimpleTestCentralCommand.new.with_drb_server do |central_command|
           begin
-            Beachhead.warlock.stop_demons
+            DeepTest.logger.level = Logger::ERROR
+            beachhead = Beachhead.new("", Options.new({}), stub_everything)
+            beachhead.stubs(:central_command).returns central_command
+            beachhead.stubs(:start_agent)
+            beachhead.daemonize("localhost", 0.25)
+            # Have to sleep long enough to warlock to reap dead process
+            sleep 1.0
+            assert_equal 0, beachhead.warlock.demon_count
           ensure
-            DeepTest.logger.level = log_level
+            begin
+              beachhead.warlock.stop_demons
+            ensure
+              DeepTest.logger.level = log_level
+            end
           end
         end
       end
 
       test "service is not removed after grace period if agents have been started" do
         log_level = DeepTest.logger.level
-        begin
-          DeepTest.logger.level = Logger::ERROR
-          beachhead = Beachhead.new("", Options.new({}), stub_everything)
-          beachhead.stubs(:start_agent)
-          # Since we're not actually starting agents, we don't want to exit when none are running for this test
-          beachhead.instance_variable_get(:@warlock).stubs(:exit_when_none_running)
-          remote_reference = beachhead.daemonize("localhost", 0.25)
-          remote_reference.deploy_agents
-          # Have to sleep long enough to warlock to reap dead process
-          sleep 1.0
-          assert_equal 1, Beachhead.warlock.demon_count
-        ensure
+        SimpleTestCentralCommand.new.with_drb_server do |central_command|
           begin
-            Beachhead.warlock.stop_demons
+            DeepTest.logger.level = Logger::ERROR
+            beachhead = Beachhead.new "", Options.new({}), stub(:address => "localhost")
+            beachhead.stubs(:central_command).returns central_command
+            beachhead.stubs(:start_agent)
+            # Since we're not actually starting agents, we don't want to exit when none are running for this test
+            beachhead.warlock.stubs(:exit_when_none_running)
+            remote_reference = beachhead.daemonize("localhost", 0.25)
+            remote_reference.deploy_agents
+            # Have to sleep long enough to warlock to reap dead process
+            sleep 1.0
+            assert_equal 1, beachhead.warlock.demon_count
           ensure
-            DeepTest.logger.level = log_level
+            begin
+              beachhead.warlock.stop_demons
+            ensure
+              DeepTest.logger.level = log_level
+            end
           end
         end
       end

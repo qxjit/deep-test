@@ -33,7 +33,7 @@ module DeepTest
       def deploy_agents
         @agents_deployed = true
         super
-        @warlock.exit_when_none_running
+        warlock.exit_when_none_running
       end
 
       def agents_deployed?
@@ -43,18 +43,16 @@ module DeepTest
       def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        self.class.warlock.start("Beachhead") do
+        warlock.start("Beachhead", :detach_io => true) do
           innie.close
 
-          DRb.start_service("drubyall://#{address}:0", self)
+          DRb.start_service "drubyall://#{address}:0", self
           DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
 
           outie.write DRb.uri
           outie.close
 
-          launch_mercy_killer(grace_period)
-
-          yield if block_given?
+          launch_mercy_killer grace_period
 
           DRb.thread.join
         end
@@ -62,11 +60,7 @@ module DeepTest
         outie.close
         uri = innie.gets
         innie.close
-        DRbObject.new_with_uri(uri)
-      end
-
-      def self.warlock
-        @warlock ||= DeepTest::Warlock.new
+        DRbObject.new_with_uri uri
       end
     end
   end

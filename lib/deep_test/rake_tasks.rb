@@ -20,14 +20,10 @@ task :'deep_test:establish_beachhead' do
 
   beachhead = DeepTest::Distributed::Beachhead.new(
     options.mirror_path('/tmp'), options, DeepTest::Distributed::SshClientConnectionInfo.new
-  ).daemonize(ENV['HOST']) do
-    STDOUT.reopen("/tmp/deep_test_server.log", "a")
-    STDERR.reopen(STDOUT)
-  end
+  ).daemonize(ENV['HOST'])
 
   puts "Beachhead url: #{beachhead.__drburi}"
+  $stdout.flush
 
-  STDOUT.close
-  STDERR.close
   exit!(0)
 end

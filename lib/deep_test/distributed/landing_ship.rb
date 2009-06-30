@@ -13,12 +13,13 @@ module DeepTest
       end
 
       def establish_beachhead(options)
-        output  = `#{ssh_command(options)} '#{spawn_command(options)}'`
+        output  = `#{ssh_command(options)} '#{spawn_command(options)}' 2>&1`
         output.each do |line|
           if line =~ /Beachhead url: (.*)/
             return DRb::DRbObject.new_with_uri($1)
           end
         end
+        raise "LandingShip unable to establish Beachhead.  Output from #{@config[:address]} was:\n#{output}"
       end
 
       def ssh_command(options)

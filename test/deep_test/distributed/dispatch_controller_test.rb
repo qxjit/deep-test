@@ -112,7 +112,7 @@ module DeepTest
         assert_raises(NoDispatchReceiversError) {controller.dispatch(:another_call)}
       end
 
-      test "error is printed with backtrace when it occurr" do
+      test "error is printed with backtrace when it occurrs" do
         e = Exception.new("message")
         e.set_backtrace %w[file1:1 file2:2]
         receiver = mock

@@ -9,9 +9,9 @@ module DeepTest
           @runner_options = options # added to make work with 1.1.12
         end
         @deep_test_options = DeepTest::Options.from_command_line(deep_test_options)
-        DeepTest.init(@deep_test_options)
+        DeepTest.init @deep_test_options
+        @main = Main.new @deep_test_options, @deep_test_options.new_deployment, self, central_command
         @central_command = central_command
-        @deployment = @deep_test_options.new_deployment
       end
 
       def central_command
@@ -22,11 +22,11 @@ module DeepTest
       end
 
       def load_files(files)
-        @deployment.load_files files
+        @main.load_files files
       end
 
       def run
-        Main.run(@deep_test_options, @deployment, self)
+        @main.run
       end
 
       def process_work_units

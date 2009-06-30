@@ -15,6 +15,10 @@ module DeepTest
       @target.flush
     end
 
+    def reopen(*args)
+      @target.reopen *args
+    end
+
     def self.replace_stdout_stderr!(new_stdout, new_stderr)
       old_stdout_const, old_stdout_global = STDOUT, $stdout
       old_stderr_const, old_stderr_global = STDERR, $stderr
