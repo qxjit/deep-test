@@ -17,8 +17,9 @@ module DeepTest
 
       attr_reader :type
 
-      def initialize(type)
+      def initialize(type, fatal_heartbeat_interval = (Heartbeat::INTERVAL + 2))
         @type = type
+        @fatal_heartbeat_interval = fatal_heartbeat_interval
         beep
       end
 
@@ -28,7 +29,7 @@ module DeepTest
       end
 
       def fatal?
-        (Time.now - @last_beep) > 5
+        (Time.now - @last_beep) > @fatal_heartbeat_interval
       end
     end
 
