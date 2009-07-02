@@ -1,27 +1,12 @@
 module DeepTest
   class CentralCommand
-    def self.start(options)
-      central_command = new(options)
-      DRb.start_service("druby://0.0.0.0:#{options.server_port}", central_command)
-      DeepTest.logger.info { "Started DeepTest service at #{DRb.uri}" }
-      central_command
-    end
-
-    def self.stop
-      DRb.stop_service
-    end
-
-    def self.remote_reference(address, port)
-      DRb.start_service
-      central_command = DRbObject.new_with_uri("druby://#{address}:#{port}")
-      DeepTest.logger.debug { "Connecting to DeepTest central_command at #{central_command.__drburi}" }
-      central_command
-    end
+    attr_reader :medic
 
     def initialize(options)
       @options = options
       @work_queue = Queue.new
       @result_queue = Queue.new
+      @medic = Medic.new
 
       if Metrics::Gatherer.enabled?
         require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
@@ -74,6 +59,24 @@ module DeepTest
 
     def stderr
       $stderr
+    end
+
+    def self.start(options)
+      central_command = new(options)
+      DRb.start_service("druby://0.0.0.0:#{options.server_port}", central_command)
+      DeepTest.logger.info { "Started DeepTest service at #{DRb.uri}" }
+      central_command
+    end
+
+    def self.stop
+      DRb.stop_service
+    end
+
+    def self.remote_reference(address, port)
+      DRb.start_service
+      central_command = DRbObject.new_with_uri("druby://#{address}:#{port}")
+      DeepTest.logger.debug { "Connecting to DeepTest central_command at #{central_command.__drburi}" }
+      central_command
     end
 
     class NoWorkUnitsAvailableError < StandardError; end

@@ -1,5 +1,7 @@
 module DeepTest
   class Medic
+    include DRb::DRbUndumped
+
     def assign_monitor(type)
       (monitors << Monitor.new(type)).last
     end
