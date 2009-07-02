@@ -2,9 +2,12 @@ require 'rubygems'
 require 'test/unit'
 require 'dust'
 require 'mocha'
-$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/../lib")
-require "deep_test"
 require 'set'
+
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/../lib")
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/../infrastructure/timewarp/lib")
+require "deep_test"
+require 'timewarp'
 
 require File.dirname(__FILE__) + "/fake_deadlock_error"
 require File.dirname(__FILE__) + "/drb_test_help"
