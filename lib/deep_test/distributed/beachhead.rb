@@ -45,7 +45,7 @@ module DeepTest
       def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start("Beachhead", :detach_io => true) do
+        warlock.start "Beachhead", {:detach_io => true}, ProcDemon.new(proc do
           innie.close
 
           DRb.start_service "drubyall://#{address}:0", self
@@ -57,7 +57,7 @@ module DeepTest
           launch_mercy_killer grace_period
 
           DRb.thread.join
-        end
+        end)
 
         outie.close
         uri = innie.gets

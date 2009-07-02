@@ -42,10 +42,10 @@ module DeepTest
       central_command.with_drb_server do |remote_reference|
         warlock = Warlock.new remote_reference
         begin
-          warlock.start("test") do
+          warlock.start "test", {}, ProcDemon.new(proc do
             puts "hello stdout"
             $stderr.puts "hello stderr"
-          end
+          end)
           warlock.wait_for_all_to_finish
         ensure
           warlock.stop_demons
@@ -64,10 +64,10 @@ module DeepTest
         begin
           require 'tempfile'
           ProxyIO.replace_stdout_stderr! test_stdout, test_stderr do
-            warlock.start("test", :detach_io => true) do
+            warlock.start "test", {:detach_io => true}, ProcDemon.new(proc do
               test_stdout.puts "hello stdout"
               test_stderr.puts "hello stderr"
-            end
+            end)
             warlock.wait_for_all_to_finish
           end
         ensure
@@ -88,10 +88,10 @@ module DeepTest
         begin
           require 'tempfile'
           ProxyIO.replace_stdout_stderr! test_stdout, test_stderr do
-            warlock.start("test", :detach_io => false) do
+            warlock.start "test", {:detach_io => false}, ProcDemon.new(proc do
               test_stdout.puts "hello stdout"
               test_stderr.puts "hello stderr"
-            end
+            end)
             warlock.wait_for_all_to_finish
           end
         ensure

@@ -45,7 +45,7 @@ module DeepTest
     end
 
     def start_agent(agent_num, &blk)
-      warlock.start("agent #{agent_num}", &blk)
+      warlock.start "agent #{agent_num}", {}, ProcDemon.new(blk)
     end
 
     def reseed_random_numbers
