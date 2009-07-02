@@ -1,5 +1,7 @@
 module DeepTest
   class SimpleTestCentralCommand
+    include DRbTestHelp
+
     attr_accessor :debug, :simulate_result_overdue_error
     attr_accessor :stdout, :stderr
 
@@ -11,15 +13,8 @@ module DeepTest
       @stderr = StringIO.new
     end
 
-    def with_drb_server
-      # using drbunix prevents a getaddrinfo on our host, which can take 5 seconds
-      drb_server = DRb::DRbServer.new "drbunix:", self
-
-      begin
-        yield DRbObject.new_with_uri(drb_server.uri)
-      ensure
-        drb_server.stop_service
-      end
+    def with_drb_server(&block)
+      with_drb_server_for self, &block
     end
 
     def take_result

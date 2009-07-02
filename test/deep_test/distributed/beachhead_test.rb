@@ -15,6 +15,15 @@ module DeepTest
         beachhead.load_files(["/source/path/my/file.rb"])
       end
 
+      test "load_files returns nil so nothing is sent back over DRb" do
+        beachhead = Beachhead.new("/mirror/dir", Options.new({}), stub_everything)
+        beachhead.expects(:load)
+        FilenameResolver.any_instance.expects(:resolve)
+        Dir.expects(:chdir)
+
+        assert_equal nil, beachhead.load_files(["/source/path/my/file.rb"])
+      end
+
       test "central_command is retrieved using client connection information" do
         beachhead = Beachhead.new("/tmp", options = Options.new({}), mock(:address => "address"))
         DeepTest::CentralCommand.expects(:remote_reference).
@@ -23,12 +32,17 @@ module DeepTest
         assert_equal :central_command_reference, beachhead.central_command
       end
 
-      test "service is removed after grace period if agents haven't been started" do
-        log_level = DeepTest.logger.level
+      test "deploy_agents returns nil so nothing is serialized over DRb" do
+        beachhead = Beachhead.new "", Options.new({:number_of_agents => 0}), stub(:address => "localhost")
+        # Since we're not actually starting agents, we don't want to exit when none are running for this test
+        beachhead.warlock.stubs(:exit_when_none_running).returns(:not_nil)
+        assert_equal nil, beachhead.deploy_agents
+      end
+
+      test "service is removed after grace period if agents have not been started" do
         SimpleTestCentralCommand.new.with_drb_server do |central_command|
           begin
-            DeepTest.logger.level = Logger::ERROR
-            beachhead = Beachhead.new("", Options.new({}), stub_everything)
+            beachhead = Beachhead.new("", Options.new({:number_of_agents => 1}), stub_everything)
             beachhead.stubs(:central_command).returns central_command
             beachhead.stubs(:start_agent)
             beachhead.daemonize("localhost", 0.25)
@@ -36,23 +50,16 @@ module DeepTest
             sleep 1.0
             assert_equal 0, beachhead.warlock.demon_count
           ensure
-            begin
-              beachhead.warlock.stop_demons
-            ensure
-              DeepTest.logger.level = log_level
-            end
+            beachhead.warlock.stop_demons
           end
         end
       end
 
       test "service is not removed after grace period if agents have been started" do
-        log_level = DeepTest.logger.level
         SimpleTestCentralCommand.new.with_drb_server do |central_command|
           begin
-            DeepTest.logger.level = Logger::ERROR
-            beachhead = Beachhead.new "", Options.new({}), stub(:address => "localhost")
+            beachhead = Beachhead.new "", Options.new({:number_of_agents => 0}), stub(:address => "localhost")
             beachhead.stubs(:central_command).returns central_command
-            beachhead.stubs(:start_agent)
             # Since we're not actually starting agents, we don't want to exit when none are running for this test
             beachhead.warlock.stubs(:exit_when_none_running)
             remote_reference = beachhead.daemonize("localhost", 0.25)
@@ -61,11 +68,7 @@ module DeepTest
             sleep 1.0
             assert_equal 1, beachhead.warlock.demon_count
           ensure
-            begin
-              beachhead.warlock.stop_demons
-            ensure
-              DeepTest.logger.level = log_level
-            end
+            beachhead.warlock.stop_demons
           end
         end
       end

@@ -24,6 +24,7 @@ module DeepTest
         files.each do |file|
           load resolver.resolve(file)
         end
+        nil
       end
 
       def central_command
@@ -34,6 +35,7 @@ module DeepTest
         @agents_deployed = true
         super
         warlock.exit_when_none_running
+        nil
       end
 
       def agents_deployed?

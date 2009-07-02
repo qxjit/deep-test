@@ -65,6 +65,17 @@ module DeepTest
                    central_command.take_result
     end
 
+    test "Agent::Error can marshal itself even if it's contents are not marshallable" do
+      o = Object.new
+      o.extend DRb::DRbUndumped
+
+      error = Agent::Error.new o, Exception.new("my error")
+      error_through_marshalling = Marshal.load Marshal.dump(error)
+      assert_equal Exception, error_through_marshalling.error.class
+      assert_equal "my error", error_through_marshalling.error.message
+      assert_equal "<< Undumpable >>", error_through_marshalling.work_unit
+    end
+
     test "requests work until it finds some" do
       central_command = mock
       central_command.expects(:take_work).times(3).

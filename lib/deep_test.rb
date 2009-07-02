@@ -25,6 +25,14 @@ module DeepTest
         DRb.instance_variable_get(:@server).each do |uri, server|
           server.stop_service
         end
+        DRb::DRbConn.instance_eval do
+          @mutex.synchronize do
+            @pool.each do |conn|
+              conn.close if conn.alive?
+            end
+            @pool.clear
+          end
+        end
         yield
       end
     end.value
@@ -103,3 +111,4 @@ require File.dirname(__FILE__) + "/deep_test/test"
 
 require File.dirname(__FILE__) + "/deep_test/ui/console"
 require File.dirname(__FILE__) + "/deep_test/ui/null"
+

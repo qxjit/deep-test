@@ -44,6 +44,16 @@ module DeepTest
         @work_unit, @error = work_unit, error
       end
 
+      def _dump(limit)
+        Marshal.dump([@work_unit, @error], limit)
+      rescue
+        Marshal.dump(["<< Undumpable >>", @error], limit)
+      end
+
+      def self._load(string)
+        new *Marshal.load(string)
+      end
+
       def ==(other)
         work_unit == other.work_unit &&
             error == other.error
