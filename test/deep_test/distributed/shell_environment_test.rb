@@ -6,7 +6,7 @@ module DeepTest
       test "like_login creates enviroment that will behave like login shell" do
         expected_env = ShellEnvironment.new
         expected_env.include_first '/etc/profile'
-        expected_env.include_first '~/.profile', '~/.bashrc'
+        expected_env.include_first '~/.profile', '~/.bash_profile', '~/.bashrc'
 
         assert_equal expected_env, ShellEnvironment.like_login
       end
