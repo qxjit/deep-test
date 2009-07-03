@@ -7,7 +7,7 @@ module DeepTest
       @reapers = []
     end
 
-    def start(name, options, demon, &block)
+    def start(name, options, demon, *demon_args)
       # Not synchronizing for the fork seems to cause
       # random errors (Bus Error, Segfault, and GC non-object)
       # in Beachhead processes.
@@ -35,7 +35,7 @@ module DeepTest
                 @demons_semaphore.unlock if @demons_semaphore.locked?
 
                 begin
-                  demon.execute
+                  demon.execute *demon_args
                 rescue Exception => e
                   DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
                   raise

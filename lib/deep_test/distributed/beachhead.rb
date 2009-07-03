@@ -1,7 +1,7 @@
 module DeepTest
   module Distributed
     class Beachhead < LocalDeployment
-      include DRb::DRbUndumped
+      include Demon, DRb::DRbUndumped
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 
@@ -42,22 +42,25 @@ module DeepTest
         @agents_deployed
       end
 
+      def execute(address, innie, outie, grace_period)
+        innie.close
+
+        DRb.start_service "drubyall://#{address}:0", self
+
+        DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
+
+        outie.write DRb.uri
+        outie.close
+
+        launch_mercy_killer grace_period
+        DRb.thread.join
+      end
+
       def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start "Beachhead", {:detach_io => true}, ProcDemon.new(proc do
-          innie.close
-
-          DRb.start_service "drubyall://#{address}:0", self
-          DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
-
-          outie.write DRb.uri
-          outie.close
-
-          launch_mercy_killer grace_period
-
-          DRb.thread.join
-        end)
+        warlock.start "Beachhead", {:detach_io => true}, self, 
+                      address, innie, outie, grace_period
 
         outie.close
         uri = innie.gets

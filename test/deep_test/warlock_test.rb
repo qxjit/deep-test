@@ -37,6 +37,18 @@ module DeepTest
       assert_equal 0, warlock.demon_count
     end
 
+    class ProcDemon
+      include Demon
+
+      def initialize(block)
+        @block = block
+      end
+
+      def execute
+        @block.call
+      end
+    end
+
     test "start redirects stdout and stderr back to central_command" do
       central_command = SimpleTestCentralCommand.new
       central_command.with_drb_server do |remote_reference|

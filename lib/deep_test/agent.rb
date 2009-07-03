@@ -1,11 +1,18 @@
 module DeepTest
   class Agent
+    include Demon
     attr_reader :number
 
     def initialize(number, central_command, listener)
       @number = number
       @central_command = central_command
       @listener = listener
+    end
+
+    def execute
+      reseed_random_numbers
+      reconnect_to_database
+      run
     end
 
     def run
@@ -30,12 +37,23 @@ module DeepTest
       DeepTest.logger.debug { "Agent #{number}: no more work to do" }
     end
 
+    private
+
     def next_work_unit
       @central_command.take_work
     rescue CentralCommand::NoWorkUnitsAvailableError
       sleep 0.02
       retry
     end
+
+    def reconnect_to_database
+      ActiveRecord::Base.connection.reconnect! if defined?(ActiveRecord::Base)
+    end
+
+    def reseed_random_numbers
+      srand
+    end
+
 
     class Error
       attr_accessor :work_unit, :error

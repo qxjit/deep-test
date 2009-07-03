@@ -73,7 +73,6 @@ module DeepTest
     end
 
     def self.remote_reference(address, port)
-      DRb.start_service
       central_command = DRbObject.new_with_uri("druby://#{address}:#{port}")
       DeepTest.logger.debug { "Connecting to DeepTest central_command at #{central_command.__drburi}" }
       central_command
