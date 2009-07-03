@@ -12,10 +12,7 @@ module DeepTest
     def execute
       reseed_random_numbers
       reconnect_to_database
-      run
-    end
 
-    def run
       @listener.starting(self)
       while work_unit = next_work_unit
         @listener.starting_work(self, work_unit)

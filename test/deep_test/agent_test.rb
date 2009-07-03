@@ -6,7 +6,7 @@ module DeepTest
       central_command = SimpleTestCentralCommand.new
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
 
-      Agent.new(0, central_command,stub_everything).run
+      Agent.new(0, central_command,stub_everything).execute
 
       assert_kind_of ::Test::Unit::TestResult, central_command.take_result
     end
@@ -16,7 +16,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
       central_command.write_work Test::WorkUnit.new(TestFactory.failing_test)
 
-      Agent.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).execute
 
       result_1 = central_command.take_result
       result_2 = central_command.take_result
@@ -30,7 +30,7 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, central_command, listener)
       listener.expects(:starting).with(agent)
-      agent.run
+      agent.execute
     end
 
     test "notifies listener that it is about to do work" do
@@ -40,7 +40,7 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, central_command, listener)
       listener.expects(:starting_work).with(agent, work_unit)
-      agent.run
+      agent.execute
     end
 
     test "notifies listener that it has done work" do
@@ -50,7 +50,7 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, central_command, listener)
       listener.expects(:finished_work).with(agent, work_unit, :result)
-      agent.run
+      agent.execute
     end
 
     test "exception raised by work unit gives in Agent::Error" do
@@ -59,7 +59,7 @@ module DeepTest
       work_unit.expects(:run).raises(exception = RuntimeError.new)
       central_command.write_work work_unit
 
-      Agent.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).execute
       
       assert_equal Agent::Error.new(work_unit, exception),
                    central_command.take_result
@@ -85,7 +85,7 @@ module DeepTest
 
       central_command.expects(:write_result)
 
-      Agent.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).execute
     end
 
     test "finishes running when no more work units are remaining" do
@@ -93,7 +93,7 @@ module DeepTest
       central_command.expects(:take_work).
         raises(CentralCommand::NoWorkUnitsRemainingError)
 
-      Agent.new(0, central_command, stub_everything).run
+      Agent.new(0, central_command, stub_everything).execute
     end
 
     test "number is available to indentify agent" do
