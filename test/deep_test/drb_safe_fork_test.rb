@@ -10,6 +10,7 @@ module DeepTest
 
         pid = DeepTest.drb_safe_fork do
           with_drb_server_for RemoteObjectThatForksWithOpenConnections.new(drb_object) do |fork_object|
+            Signal.trap("TERM") {exit!}
             innie.close
             outie.puts Marshal.dump(fork_object)
             outie.close

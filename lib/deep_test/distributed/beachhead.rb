@@ -42,6 +42,12 @@ module DeepTest
         @agents_deployed
       end
 
+      def forked(name, central_command, demon_args)
+        $stdout.reopen("/dev/null")
+        $stderr.reopen("/dev/null")
+        super
+      end
+
       def execute(address, innie, outie, grace_period)
         innie.close
 
@@ -59,7 +65,7 @@ module DeepTest
       def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start "Beachhead", {:detach_io => true}, self, 
+        warlock.start "Beachhead", self, 
                       address, innie, outie, grace_period
 
         outie.close

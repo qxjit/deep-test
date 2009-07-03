@@ -7,7 +7,7 @@ module DeepTest
       @reapers = []
     end
 
-    def start(name, options, demon, *demon_args)
+    def start(name, demon, *demon_args)
       # Not synchronizing for the fork seems to cause
       # random errors (Bus Error, Segfault, and GC non-object)
       # in Beachhead processes.
@@ -16,32 +16,16 @@ module DeepTest
         pid = nil
         @demons_semaphore.synchronize do 
           pid = DeepTest.drb_safe_fork do
-            if options[:detach_io]
-              $stdout.reopen("/dev/null")
-              $stderr.reopen("/dev/null")
-            end
+            # Fork leaves the semaphore locked and we'll never make it
+            # to end of synchronize block.
+            #
+            # The Ruby 1.8.6 C mutex implementation automatically treats
+            # a mutex locked by a dead thread as unlocked and will raise
+            # an error if we try to unlock it from this thread.
+            #
+            @demons_semaphore.unlock if @demons_semaphore.locked?
 
-            ProxyIO.replace_stdout_stderr!(@central_command.stdout, @central_command.stderr) do
-              catch(:exit_demon) do
-                Signal.trap("TERM") { throw :exit_demon }
-
-                # Fork leaves the semaphore locked and we'll never make it
-                # to end of synchronize block.
-                #
-                # The Ruby 1.8.6 C mutex implementation automatically treats
-                # a mutex locked by a dead thread as unlocked and will raise
-                # an error if we try to unlock it from this thread.
-                #
-                @demons_semaphore.unlock if @demons_semaphore.locked?
-
-                begin
-                  demon.execute *demon_args
-                rescue Exception => e
-                  DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
-                  raise
-                end
-              end
-            end
+            demon.forked name, @central_command, demon_args
 
             exit
           end
