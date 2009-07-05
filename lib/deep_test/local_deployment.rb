@@ -23,6 +23,7 @@ module DeepTest
       each_agent do |agent_num|
         warlock.start "agent #{agent_num}", @agent_class.new(agent_num, central_command, @options.new_listener_list)
       end        
+      central_command.medic.expect_live_monitors @agent_class
     end
 
     def terminate_agents

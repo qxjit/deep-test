@@ -36,6 +36,7 @@ module DeepTest
         beachhead = Beachhead.new "", Options.new({:number_of_agents => 0}), stub(:address => "localhost")
         # Since we're not actually starting agents, we don't want to exit when none are running for this test
         beachhead.warlock.stubs(:exit_when_none_running).returns(:not_nil)
+        beachhead.stubs(:central_command).returns stub(:medic => stub_everything)
         assert_equal nil, beachhead.deploy_agents
       end
 
