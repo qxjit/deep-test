@@ -1,9 +1,14 @@
 module DeepTest
   class Medic
     include DRb::DRbUndumped
+    attr_reader :fatal_heartbeat_padding
+
+    def initialize(fatal_heartbeat_padding = 2)
+      @fatal_heartbeat_padding = fatal_heartbeat_padding
+    end
 
     def assign_monitor(type)
-      (monitors << Monitor.new(type)).last
+      (monitors << Monitor.new(type, fatal_heartbeat_padding)).last
     end
 
     def monitors
@@ -19,9 +24,9 @@ module DeepTest
 
       attr_reader :type
 
-      def initialize(type, fatal_heartbeat_interval = (Heartbeat::INTERVAL + 2))
+      def initialize(type, fatal_heartbeat_padding)
         @type = type
-        @fatal_heartbeat_interval = fatal_heartbeat_interval
+        @fatal_heartbeat_padding = fatal_heartbeat_padding
         beep
       end
 
@@ -31,7 +36,7 @@ module DeepTest
       end
 
       def fatal?
-        (Time.now - @last_beep) > @fatal_heartbeat_interval
+        (Time.now - @last_beep) > (type.heartbeat_interval + @fatal_heartbeat_padding)
       end
     end
 

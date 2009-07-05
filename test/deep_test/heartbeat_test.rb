@@ -2,8 +2,11 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 module DeepTest
   unit_tests do
+    class HeartbeatTestDemon
+      def self.heartbeat_interval; 0.01; end
+    end
     test "beeps monitor at specified interval" do
-      monitor = Medic::Monitor.new :foo, 0.02
+      monitor = Medic::Monitor.new HeartbeatTestDemon, 0.02
       heartbeat = Heartbeat.new monitor, 0.01
 
       begin
@@ -18,10 +21,10 @@ module DeepTest
     end
     
     test "stop causes the heartbeat to stop deeping the monitor" do
-      monitor = Medic::Monitor.new :foo, 0.02
+      monitor = Medic::Monitor.new HeartbeatTestDemon, 0.02
       heartbeat = Heartbeat.new monitor, 0.01
       heartbeat.stop
-      sleep 0.02
+      sleep 0.03
       assert_equal true, monitor.fatal?
     end
   end

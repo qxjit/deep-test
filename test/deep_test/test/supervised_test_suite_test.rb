@@ -5,7 +5,7 @@ module DeepTest
     unit_tests do
       test "run yields name for start and finished of underlying suite" do
         suite = ::Test::Unit::TestSuite.new("name")
-        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestCentralCommand.new)
+        supervised_suite = SupervisedTestSuite.new(suite, FakeCentralCommand.new)
 
         yielded = []
         supervised_suite.run(stub_everything) do |channel,name|
@@ -21,7 +21,7 @@ module DeepTest
           test("1") {}
           test("2") {assert_equal true, false}
         end
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         supervised_suite = SupervisedTestSuite.new(test_case_class.suite, central_command)
         result = ::Test::Unit::TestResult.new
 
@@ -40,7 +40,7 @@ module DeepTest
           test("1") {}
         end.new("test_1")
 
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         supervised_suite = SupervisedTestSuite.new(test_case, central_command)
         result = ::Test::Unit::TestResult.new
 
@@ -55,7 +55,7 @@ module DeepTest
           test("1") {}
         end.new("test_1")
 
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         supervised_suite = SupervisedTestSuite.new(test_case, central_command)
 
         yielded = []
@@ -74,7 +74,7 @@ module DeepTest
       test "has same size as underlying suite" do
         suite = ::Test::Unit::TestSuite.new("name")
         suite << "test"
-        supervised_suite = SupervisedTestSuite.new(suite, SimpleTestCentralCommand.new)
+        supervised_suite = SupervisedTestSuite.new(suite, FakeCentralCommand.new)
         
         assert_equal suite.size, supervised_suite.size
       end

@@ -40,7 +40,7 @@ module DeepTest
       end
 
       test "service is removed after grace period if agents have not been started" do
-        SimpleTestCentralCommand.new.with_drb_server do |central_command|
+        FakeCentralCommand.new.with_drb_server do |central_command|
           begin
             beachhead = Beachhead.new("", Options.new({:number_of_agents => 1}), stub_everything)
             beachhead.stubs(:central_command).returns central_command
@@ -56,7 +56,7 @@ module DeepTest
       end
 
       test "service is not removed after grace period if agents have been started" do
-        SimpleTestCentralCommand.new.with_drb_server do |central_command|
+        FakeCentralCommand.new.with_drb_server do |central_command|
           begin
             beachhead = Beachhead.new "", Options.new({:number_of_agents => 0}), stub(:address => "localhost")
             beachhead.stubs(:central_command).returns central_command

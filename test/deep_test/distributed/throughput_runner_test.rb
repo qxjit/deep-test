@@ -4,7 +4,7 @@ module DeepTest
   module Distributed
     unit_tests do
       test "runner adds specified number of work units to central_command" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = ThroughputRunner.new(Options.new({}), 5, central_command)
 
         agent = ThreadAgent.new(central_command, 5)
@@ -15,7 +15,7 @@ module DeepTest
       end
 
       test "runner yields all results from central_command" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         count = 0
         runner = ThroughputRunner.new(Options.new({}), 2, central_command) do |result|
           assert_equal :null_work_unit_result, result
@@ -32,7 +32,7 @@ module DeepTest
       end
 
       test "statistics are available after run" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = ThroughputRunner.new(Options.new({}), 2, central_command)
 
         agent = ThreadAgent.new(central_command, 2)
@@ -47,7 +47,7 @@ module DeepTest
 
       test "runner returns true" do
         runner = ThroughputRunner.new(
-          Options.new({}), 0, SimpleTestCentralCommand.new 
+          Options.new({}), 0, FakeCentralCommand.new 
         )
 
         assert_equal true, runner.process_work_units

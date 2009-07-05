@@ -1,9 +1,10 @@
 module DeepTest
-  class SimpleTestCentralCommand
+  class FakeCentralCommand
     include DRbTestHelp
 
     attr_accessor :debug, :simulate_result_overdue_error
     attr_accessor :stdout, :stderr
+    attr_accessor :medic
 
     def initialize
       @work_units = []
@@ -11,6 +12,7 @@ module DeepTest
       @semaphore = Mutex.new
       @stdout = StringIO.new
       @stderr = StringIO.new
+      @medic = Medic.new 0.1
     end
 
     def with_drb_server(&block)

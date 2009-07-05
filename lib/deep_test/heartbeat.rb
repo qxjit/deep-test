@@ -1,7 +1,8 @@
 module DeepTest
   class Heartbeat
-    INTERVAL = 3 unless defined?(INTERVAL)
-    def initialize(monitor, beat_interval = INTERVAL)
+    class <<self; alias start new; end
+
+    def initialize(monitor, beat_interval)
       @thread = Thread.new do
         loop do
           sleep beat_interval

@@ -4,6 +4,7 @@ module DeepTest
       ProxyIO.replace_stdout_stderr!(central_command.stdout, central_command.stderr) do
         catch(:exit_demon) do
           Signal.trap("TERM") { throw :exit_demon }
+          Heartbeat.start central_command.medic.assign_monitor(self.class), self.class.heartbeat_interval
 
           begin
             execute *demon_args
@@ -13,6 +14,20 @@ module DeepTest
           end
         end
       end
+    end
+
+    def execute(*args)
+      raise "#{self.class} must implement the execute method to be a Demon"
+    end
+
+    module ClassMethods
+      def heartbeat_interval
+        3
+      end
+    end
+
+    def self.included(mod)
+      mod.extend ClassMethods
     end
   end
 end

@@ -8,9 +8,7 @@ module DeepTest
 
       def establish_beachhead(options)
         DeepTest.logger.debug { "dispatch establish_beachhead for #{options.origin_hostname}" }
-        Beachheads.new options,
-                              @slave_controller.dispatch(:establish_beachhead, 
-                                                         options)
+        Beachheads.new options, @slave_controller.dispatch(:establish_beachhead, options)
       end
 
       def push_code(options)

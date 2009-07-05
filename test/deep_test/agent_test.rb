@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../test_helper"
 module DeepTest
   unit_tests do
     test "puts result on central_command" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
 
       Agent.new(0, central_command,stub_everything).execute
@@ -12,7 +12,7 @@ module DeepTest
     end
 
     test "puts passing and failing tests on central_command for each test" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
       central_command.write_work Test::WorkUnit.new(TestFactory.failing_test)
 
@@ -26,7 +26,7 @@ module DeepTest
     end
 
     test "notifies listener that it is starting" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       listener = stub_everything
       agent = Agent.new(0, central_command, listener)
       listener.expects(:starting).with(agent)
@@ -34,7 +34,7 @@ module DeepTest
     end
 
     test "notifies listener that it is about to do work" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       work_unit = Test::WorkUnit.new(TestFactory.passing_test)
       central_command.write_work work_unit
       listener = stub_everything
@@ -44,7 +44,7 @@ module DeepTest
     end
 
     test "notifies listener that it has done work" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       work_unit = mock(:run => :result)
       central_command.write_work work_unit
       listener = stub_everything
@@ -54,7 +54,7 @@ module DeepTest
     end
 
     test "exception raised by work unit gives in Agent::Error" do
-      central_command = SimpleTestCentralCommand.new
+      central_command = FakeCentralCommand.new
       work_unit = mock
       work_unit.expects(:run).raises(exception = RuntimeError.new)
       central_command.write_work work_unit

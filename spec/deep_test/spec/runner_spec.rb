@@ -6,7 +6,7 @@ module DeepTest
       it_should_behave_like 'sandboxed rspec_options'
 
       it "should run each test using central_command" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
@@ -28,7 +28,7 @@ module DeepTest
       end
 
       it "should return failure when a spec fails" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
@@ -44,7 +44,7 @@ module DeepTest
       end
 
       it "should return success when there are pending examples" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
@@ -59,7 +59,7 @@ module DeepTest
       end
 
       it "should return failure when a pending example passes" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
@@ -74,7 +74,7 @@ module DeepTest
       end
 
       it "should return failure when a agent error occurs" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
@@ -90,7 +90,7 @@ module DeepTest
       end
 
       it "should raise error if duplicate spec is found" do
-        central_command = SimpleTestCentralCommand.new
+        central_command = FakeCentralCommand.new
         runner = Runner.new(options, Options.new({}).to_command_line, central_command)
 
         describe("test") do
