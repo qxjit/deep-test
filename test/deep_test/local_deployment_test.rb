@@ -24,15 +24,13 @@ module DeepTest
     end
 
     test "deploy_agents tells Medic to expect live Agents" do
-      deployment = LocalDeployment.new Options.new(:number_of_agents => 1), DieWithoutStartingHeartbeatAgent
       central_command = FakeCentralCommand.new
-      central_command.with_drb_server do |remote_reference|
-        deployment.stubs(:central_command => remote_reference)
-        deployment.deploy_agents
-        3.times do
-          sleep DieWithoutStartingHeartbeatAgent.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
-          assert_equal true, central_command.medic.triage(DieWithoutStartingHeartbeatAgent).fatal?
-        end
+      options = Options.new(:number_of_agents => 1, :server_port => central_command.port)
+      deployment = LocalDeployment.new options, DieWithoutStartingHeartbeatAgent
+      deployment.deploy_agents
+      3.times do
+        sleep DieWithoutStartingHeartbeatAgent.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
+        assert_equal true, central_command.medic.triage(DieWithoutStartingHeartbeatAgent).fatal?
       end
     end
   end

@@ -22,34 +22,30 @@ module DeepTest
 
     test "demon starts a heartbeat connected to Medic from CentralCommand" do
       central_command = FakeCentralCommand.new
-      central_command.with_drb_server do |remote_reference|
-        warlock = Warlock.new(remote_reference)
-        begin
-          warlock.start "name", ProcDemon.new(proc { sleep })
-          3.times do |i|
-            sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
-            assert_equal false, central_command.medic.triage(ProcDemon).fatal?, "no heartbeat on check #{i}"
-          end
-        ensure
-          warlock.stop_demons
+      warlock = Warlock.new(central_command.remote_reference)
+      begin
+        warlock.start "name", ProcDemon.new(proc { sleep })
+        3.times do |i|
+          sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
+          assert_equal false, central_command.medic.triage(ProcDemon).fatal?, "no heartbeat on check #{i}"
         end
+      ensure
+        warlock.stop_demons
       end
     end
 
     test "demon heartbeat stops once the demon has exited" do
       central_command = FakeCentralCommand.new
-      central_command.with_drb_server do |remote_reference|
-        warlock = Warlock.new(remote_reference)
-        begin
-          warlock.start "name", ProcDemon.new(proc {})
-          warlock.wait_for_all_to_finish
-          3.times do
-            sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
-            assert_equal true, central_command.medic.triage(ProcDemon).fatal?
-          end
-        ensure
-          warlock.stop_demons
+      warlock = Warlock.new(central_command.remote_reference)
+      begin
+        warlock.start "name", ProcDemon.new(proc {})
+        warlock.wait_for_all_to_finish
+        3.times do
+          sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
+          assert_equal true, central_command.medic.triage(ProcDemon).fatal?
         end
+      ensure
+        warlock.stop_demons
       end
     end
   end

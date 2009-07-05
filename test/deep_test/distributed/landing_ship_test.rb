@@ -14,7 +14,8 @@ module DeepTest
       test "establish_beachhead launches beachhead process on remote machine" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
-        options = Options.new(:sync_options => {:source => "/my/local/dir"})
+        central_command = FakeCentralCommand.new
+        options = Options.new(:sync_options => {:source => "/my/local/dir"}, :server_port => central_command.port)
 
         landing_ship.expects(:`).with(
           "ssh -4 remote_host " + 
@@ -30,8 +31,8 @@ module DeepTest
       test "establish_beachhead launches beachhead process on remote machine with usernames specified in sync_options" do
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
-        options = Options.new(:sync_options => {:username => "me", 
-                                                :source => "/my/local/dir"})
+        central_command = FakeCentralCommand.new
+        options = Options.new(:sync_options => {:username => "me", :source => "/my/local/dir"}, :server_port => central_command.port)
 
         landing_ship.expects(:`).with(
           "ssh -4 remote_host -l me " + 
@@ -40,6 +41,17 @@ module DeepTest
           "OPTIONS=#{options.to_command_line} HOST=remote_host' 2>&1"
         ).returns("blah blah\nBeachhead url: druby://remote_host:9999\nblah")
 
+        landing_ship.establish_beachhead(options)
+      end
+
+      test "establish_beachhead tells Medic to expect live Beachhead processes" do
+        landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
+        central_command = FakeCentralCommand.new
+        options = Options.new(:sync_options => {:source => "/my/local/dir"}, :server_port => central_command.port)
+                                                
+        landing_ship.expects(:`).returns "Beachhead url: druby://remote_host:9999"
+
+        options.central_command.medic.expects(:expect_live_monitors).with(Beachhead)
         landing_ship.establish_beachhead(options)
       end
     end

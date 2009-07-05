@@ -5,6 +5,7 @@ module DeepTest
     attr_accessor :debug, :simulate_result_overdue_error
     attr_accessor :stdout, :stderr
     attr_accessor :medic
+    attr_reader :remote_reference
 
     def initialize
       @work_units = []
@@ -13,10 +14,11 @@ module DeepTest
       @stdout = StringIO.new
       @stderr = StringIO.new
       @medic = Medic.new 0.1
+      @remote_reference = drb_server_for self
     end
 
-    def with_drb_server(&block)
-      with_drb_server_for self, &block
+    def port
+      URI.parse(@remote_reference.__drburi).port
     end
 
     def take_result
