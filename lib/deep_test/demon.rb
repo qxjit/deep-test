@@ -24,6 +24,10 @@ module DeepTest
       def heartbeat_interval
         3
       end
+
+      def is_lack_of_heartbeat_fatal?(last_beat_time, fatality_padding_time)
+        (Time.now - last_beat_time) > (heartbeat_interval + fatality_padding_time)
+      end
     end
 
     def self.included(mod)

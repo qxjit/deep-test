@@ -38,9 +38,33 @@ module DeepTest
     test "triage is fatal if monitor of another type has beeped" do
       medic = Medic.new
       foo_monitor = at("12:00:00") { medic.assign_monitor FooDemon }
-      at("12:00:00") { medic.assign_monitor FooDemon }
+      at("12:01:00") { medic.assign_monitor FooDemon }
+      at("12:01:00") { medic.assign_monitor BarDemon }
       at("12:01:01") { foo_monitor.beep }
       at("12:01:06") { assert_equal true, medic.triage(BarDemon).fatal? }
+    end
+
+    test "triage is not fatal if no monitors have been assigned but none have been expected" do
+      medic = at("12:00:00") { Medic.new }
+      at("12:00:06") { assert_equal false, medic.triage(FooDemon).fatal? }
+    end
+
+    test "triage is fatal no monitors have been assigned but some where expected" do
+      medic = Medic.new
+      at("12:00:00") { medic.expect_live_monitors FooDemon } 
+      at("12:00:06") { assert_equal true, medic.triage(FooDemon).fatal? }
+    end
+
+    test "triage is not fatal if no monitors have been assigned but none have been expected for the given type" do
+      medic = at("12:00:00") { Medic.new }
+      at("12:00:00") { medic.expect_live_monitors BarDemon } 
+      at("12:00:06") { assert_equal false, medic.triage(FooDemon).fatal? }
+    end
+
+    test "triage is not fatal if no monitors have been assigned but less than 5 seconds has passed since they were expected" do
+      medic = Medic.new
+      at("12:00:00") { medic.expect_live_monitors FooDemon } 
+      at("12:00:05") { assert_equal false, medic.triage(FooDemon).fatal? }
     end
 
     test "beep returns nil so nothing is serialized over the wire" do

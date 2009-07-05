@@ -5,6 +5,11 @@ module DeepTest
 
     def initialize(fatal_heartbeat_padding = 2)
       @fatal_heartbeat_padding = fatal_heartbeat_padding
+      @expect_live = false
+    end
+
+    def expect_live_monitors(type)
+      expected_live_monitors[type] = Time.now
     end
 
     def assign_monitor(type)
@@ -16,8 +21,15 @@ module DeepTest
     end
 
     def triage(type)
-      Triage.new monitors.select {|m| m.type == type}
+      Triage.new type, expected_live_monitors[type], @fatal_heartbeat_padding, monitors.select {|m| m.type == type}
     end
+
+    private
+
+    def expected_live_monitors
+      @expect_live_monitors ||= {}
+    end
+
 
     class Monitor
       include DRb::DRbUndumped
@@ -36,17 +48,24 @@ module DeepTest
       end
 
       def fatal?
-        (Time.now - @last_beep) > (type.heartbeat_interval + @fatal_heartbeat_padding)
+        type.is_lack_of_heartbeat_fatal? @last_beep, @fatal_heartbeat_padding
       end
     end
 
     class Triage
-      def initialize(monitors)
+      def initialize(type, expected_live_time, fatal_heartbeat_padding, monitors)
+        @type = type
+        @expected_live_time = expected_live_time
         @monitors = monitors
+        @fatal_heartbeat_padding = fatal_heartbeat_padding
       end
 
       def fatal?
-        @monitors.all? {|m| m.fatal?}
+        if @monitors.empty? && @expected_live_time
+          @type.is_lack_of_heartbeat_fatal? @expected_live_time, @fatal_heartbeat_padding
+        else
+          @monitors.any? && @monitors.all? {|m| m.fatal?}
+        end
       end
     end
   end

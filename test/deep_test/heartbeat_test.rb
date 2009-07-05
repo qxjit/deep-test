@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + "/../test_helper"
 module DeepTest
   unit_tests do
     class HeartbeatTestDemon
+      include Demon
       def self.heartbeat_interval; 0.01; end
     end
     test "beeps monitor at specified interval" do
