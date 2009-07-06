@@ -15,7 +15,7 @@ In your Rakefile:
   # sample DeepTest task
 
   DeepTest::TestTask.new "task_name" do |t|
-    t.number_of_agents = 2   # optional, defaults to 2
+    t.number_of_agents = 2   # optional, defaults to number of cores
     t.timeout_in_seconds = 30 # optional, defaults to 30
     t.server_port = 6969      # optional, defaults to 6969
     t.pattern = "test/**/*_test.rb"
@@ -26,7 +26,7 @@ In your Rakefile:
 
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_agents => 2,   # optional, defaults to 2
+    t.deep_test :number_of_agents => 2,   # optional, defaults to number of cores
                 :timeout_in_seconds => 30, # optional, defaults to 30
                 :server_port => 6969       # optional, defaults to 6969
   end
@@ -120,52 +120,19 @@ local development machine. DeepTest must also be installed as a gem on each
 test machine and available either as a gem or in your project on the local
 machine.
 
-==== Starting a Test Server
-
-On each test machine, execute the following:
-  > deep_test test_server
-
-This will launch a server providing mirroring and agent services.  By default,
-2 agents will be launched for each set of tests run.  If you wish to change
-the number of agents, simply specify the --number_of_agents option.  For
-information about what options are available, use -h.  The test_server will
-print out the uri it is bound to, druby://<hostname>:4022 by default.
-
-==== Starting a Master Test Server
-
-On a single machine (probably one of the test machines), execute this:
-  > deep_test master_test_server <uris of test servers>
-
-The master_test_server will also print it's binding uri,
-druby://<hostname>:4021 by default.  It will also provide a webserver bound
-to port 4020 that provides a status page summarizing the state of all the
-test servers. 
-
-==== Overriding the DRb uri for the Test Server or Master Test Server
-
-The DRb url that the Test Server or Master Test Server should bind to can be
-specified when the process is started.  Use the --uri option followed by the
-DRb url that you would like DRb to bind to and return to clients.  By default,
-DRb does not provide any capability to bind to all addresses but return a
-specific IP or hostname as part of the DRb url for clients.  DeepTest provides
-a special DRb protocol to enable this, drubyall.  If you wish your test server
-to listen on all addresses (which you probably do), start the server
-with a command like this (where deeptest1.local is the hostname of the machine):
-  > deep_test test_server --uri drubyall://deeptest1.local/
-
-The server will report that it is listening on druby://deeptest1.local as the
-public DRb url, but it will actually accept connections on all addresses to
-server requests.
- 
-
 ==== Configuring Your Project
+
+There is no need to start a special daemon process on the machines that will
+be used to run DeepTest.  Simply specify the names of the hosts that you
+would like DeepTest to distribute to along with a set of sync_options telling
+it how to to rsync the project code.
 
 If you're using rsync over ssh, create a DeepTest test task similar to that
 below in your Rakefile.
 
   DeepTest::TestTask.new "deep_test_distributed" do |t|
     t.pattern = "test/**/*_test.rb" # whatever is appropriate for your project
-    t.distributed_server = <drb uri of master_test_server>
+    t.distributed_hosts = %w[host1 host2]
     t.sync_options = {
       :source => <absolute path of project root on machine>,
       :username => "username"
@@ -181,14 +148,13 @@ rake task as follows.
 
   DeepTest::TestTask.new "deep_test_distributed" do |t|
     t.pattern = "test/**/*_test.rb" # whatever is appropriate for your project
-    t.distributed_server = <drb uri of master_test_server>
+    t.distributed_hosts = %w[host1 host2]
     t.sync_options = {
       :source => <name of rsync module from daemon configuration>,
       :daemon => true,
       :username => "username"
     }
   end
-
 
 Username is optional in both cases.  You'll need to either setup passwordless
 ssh access or run an rsync daemon that doesn't require passwords.
