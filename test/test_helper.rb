@@ -28,4 +28,8 @@ class Test::Unit::TestCase
   def teardown
     DeepTest.logger = @old_logger if @old_logger
   end
+
+  def at(time, &block)
+    Timewarp.freeze(time, &block)
+  end
 end

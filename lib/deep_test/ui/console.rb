@@ -13,12 +13,11 @@ module DeepTest
       } unless defined?(METHOD_DESCRIPTIONS)
 
       def distributed_failover_to_local(method, exception)
-        width = 70
-        puts " Distributed DeepTest Failure ".center(width, '*')
-        puts "*   Failed during #{method}".ljust(width - 1) + "*"
-        puts "* #{exception.message}".ljust(width - 1) + "*"
-        puts "* Failing over to local run".ljust(width - 1) + "*"
-        puts "*" * width
+        FailureMessage.show "Distributed DeepTest Failure", <<-end_msg
+          Failed during #{method}
+          #{exception.message}
+          Failing over to local run
+        end_msg
       end
 
       def dispatch_starting(method_name)

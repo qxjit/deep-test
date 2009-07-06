@@ -2,7 +2,7 @@ module DeepTest
   class FakeCentralCommand
     include DRbTestHelp
 
-    attr_accessor :debug, :simulate_result_overdue_error
+    attr_accessor :debug, :simulate_no_agents_running_error
     attr_accessor :stdout, :stderr
     attr_accessor :medic
     attr_reader :remote_reference
@@ -22,7 +22,7 @@ module DeepTest
     end
 
     def take_result
-      raise DeepTest::CentralCommand::ResultOverdueError if @simulate_result_overdue_error
+      raise DeepTest::CentralCommand::NoAgentsRunningError if @simulate_no_agents_running_error
       @semaphore.synchronize do
         log_and_return "take_result", @test_results.shift
       end

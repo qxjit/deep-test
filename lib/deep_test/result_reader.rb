@@ -26,8 +26,12 @@ module DeepTest
             yield [work_unit, result]
           end
         end
-      rescue CentralCommand::ResultOverdueError
-        DeepTest.logger.error { "Results are overdue from central_command, ending run" }
+      rescue CentralCommand::NoAgentsRunningError
+        FailureMessage.show "DeepTest Agents Are Not Running", <<-end_msg
+          DeepTest's test running agents have not contacted the 
+          server to indicate they are still running.
+          Shutting down the test run on the assumption that they have died. 
+        end_msg
       end
 
       work_units_by_id

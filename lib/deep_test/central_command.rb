@@ -26,9 +26,10 @@ module DeepTest
     end
 
     def take_result
-      Timeout.timeout(@options.timeout_in_seconds, ResultOverdueError) do
-        @result_queue.pop
-      end
+      raise NoAgentsRunningError if medic.triage(Agent).fatal?
+      Timeout.timeout(1, CheckIfAgentsAreStillRunning) { @result_queue.pop }
+    rescue CheckIfAgentsAreStillRunning
+      retry
     end
 
     def take_work
@@ -80,6 +81,7 @@ module DeepTest
 
     class NoWorkUnitsAvailableError < StandardError; end
     class NoWorkUnitsRemainingError < StandardError; end
-    class ResultOverdueError < StandardError; end
+    class NoAgentsRunningError < StandardError; end
+    class CheckIfAgentsAreStillRunning < StandardError; end
   end
 end

@@ -16,10 +16,11 @@ module DeepTest
       assert_equal FakeResult.new(4), central_command.take_result
     end
 
-    test "returns unread tests on ResultOverdueError" do
+    test "returns unread tests on NoAgentsRunningError" do
       central_command = FakeCentralCommand.new
-      central_command.simulate_result_overdue_error = true
+      central_command.simulate_no_agents_running_error = true
       work_units = {1 => "One"}
+      FailureMessage.expects(:show)
       ResultReader.new(central_command).read(work_units) {}
       assert_equal({1 => "One"}, work_units)
     end

@@ -12,13 +12,12 @@ require "deep_test/rake_tasks"
 task :default => %w[
   test 
   spec 
-  failing_test
   deep_test
   deep_spec_1.1.8
   deep_spec_1.1.12
   distributed_test
   distributed_spec
-  distributed_with_failover
+  negative_acceptance_tests
   test_rails_project
 ]
 
@@ -78,39 +77,8 @@ if rspec_present?
   end
 end
 
-task :distributed_with_failover do |t|
-  puts
-  puts "*** Running distributed with no bad hostname - expect a failover message ***"
-  puts
-
-  Spec::Rake::SpecTask.new(:distributed_spec_with_failover_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => %w[foobar_host],
-                :sync_options => {:source => File.dirname(__FILE__), 
-                                  :rsync_options => "--exclude=.svn"}
-  end
-  Rake::Task[:distributed_spec_with_failover_spec].execute "dummy arg"
-end
-
-if rspec_present?
-  Spec::Rake::SpecTask.new(:distributed_with_host_down) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => %w[localhost foobar_host],
-                :sync_options => {:source => File.dirname(__FILE__), 
-                                  :rsync_options => "--exclude=.svn"}
-  end
-end
-
-task :failing_test do
-  command = "rake --rakefile test/failing.rake 2>&1"
-  puts command
-  `#{command}`
-  if $?.success?
-    puts "F"
-    fail "****\ntest/failing.rake should have failed\n****"
-  else
-    puts "."
-  end
+Rake::TestTask.new(:negative_acceptance_tests) do |t|
+  t.pattern = "negative_acceptance_tests/tests.rb"
 end
 
 Rake::TestTask.new(:test_rails_project) do |t|

@@ -78,9 +78,5 @@ module DeepTest
     test "medic will not be dumped over the wire after assignment" do
       assert_kind_of DRb::DRbUndumped, Medic.new
     end
-
-    def at(time, &block)
-      Timewarp.freeze(time, &block)
-    end
   end
 end
