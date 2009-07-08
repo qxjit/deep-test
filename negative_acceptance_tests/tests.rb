@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'dust'
+require 'timeout'
 
 unit_tests do
   test "DeepTest a failing test results in failure" do
@@ -30,10 +31,7 @@ unit_tests do
   end
   
   test "DeepTest processes go away after the test run ends" do
-    puts "figure out correct setup and assertion here"
-    #result, output = run_rake :deep_test_passing
-    #assert_equal true, result.success?
-    #assert_equal "", `ps | grep ruby | grep -v grep | grep -v #{Process.pid}`
+    Timeout.timeout(4) { run_rake :deep_test_passing }
   end
 
   def run_rake(task)
