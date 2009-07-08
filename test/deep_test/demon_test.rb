@@ -22,30 +22,29 @@ module DeepTest
 
     test "demon starts a heartbeat connected to Medic from CentralCommand" do
       central_command = FakeCentralCommand.new
-      warlock = Warlock.new(central_command.remote_reference)
+      central_command.medic.expect_live_monitors ProcDemon
+      t = Thread.new { ProcDemon.new( proc { sleep }).forked "name", central_command, [] }
       begin
-        warlock.start "name", ProcDemon.new(proc { sleep })
         3.times do |i|
           sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
           assert_equal false, central_command.medic.triage(ProcDemon).fatal?, "no heartbeat on check #{i}"
         end
       ensure
-        warlock.stop_demons
+        t.kill
       end
     end
 
-    test "demon heartbeat stops once the demon has exited" do
+    test "demon heartbeat stops once the demon has executed" do
       central_command = FakeCentralCommand.new
-      warlock = Warlock.new(central_command.remote_reference)
+      central_command.medic.expect_live_monitors ProcDemon
+      t = Thread.new { ProcDemon.new( proc {} ).forked "name", central_command, [] }
       begin
-        warlock.start "name", ProcDemon.new(proc {})
-        warlock.wait_for_all_to_finish
         3.times do
           sleep ProcDemon.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
           assert_equal true, central_command.medic.triage(ProcDemon).fatal?
         end
       ensure
-        warlock.stop_demons
+        t.kill
       end
     end
   end

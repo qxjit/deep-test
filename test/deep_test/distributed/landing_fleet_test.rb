@@ -54,34 +54,6 @@ module DeepTest
         beachheads.deploy_agents
       end
 
-      test "Beachheads dispatches terminate_agents" do
-        server_1, server_2 = mock, mock
-
-        beachheads = LandingFleet::Beachheads.new(
-          Options.new({:ui => "UI::Null"}),
-          [server_1, server_2]
-        )
-
-        server_1.expects(:terminate_agents)
-        server_2.expects(:terminate_agents)
-
-        beachheads.terminate_agents
-      end
-
-      test "Beachheads terminate_agents ignores connection errors" do
-        server_1 = mock
-
-        beachheads = LandingFleet::Beachheads.new(
-          Options.new({:ui => "UI::Null"}),
-          [server_1]
-        )
-
-        server_1.expects(:__drburi).never
-        server_1.expects(:terminate_agents).raises(DRb::DRbConnError)
-
-        beachheads.terminate_agents
-      end
-
       test "Beachheads dispatches load_files" do
         server_1, server_2 = mock, mock
 

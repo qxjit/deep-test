@@ -16,7 +16,7 @@ module DeepTest
       options = Options.new({})
       options.number_of_agents.should == 2
       options.timeout_in_seconds.should == 30
-      options.server_port.should == 6969
+      options.server_port.should == nil
       options.pattern.should == nil
       options.metrics_file.should == nil
     end
@@ -127,7 +127,7 @@ module DeepTest
     it "should use default option value when no command line option is present" do
       ["", nil].each do |blank_value|
         options = Options.from_command_line(blank_value)
-        options.server_port.should == 6969
+        options.ui == "DeepTest::UI::Console"
       end
     end
 
@@ -184,7 +184,7 @@ module DeepTest
     end
 
     it "should create drb object to connect to central_command" do
-      options = DeepTest::Options.new({})
+      options = DeepTest::Options.new(:server_port => 1000)
       central_command = options.central_command
       central_command.__drburi.should == "druby://#{options.origin_hostname}:#{options.server_port}"
     end

@@ -31,11 +31,6 @@ module DeepTest
           DeepTest.logger.debug { "dispatch deploy_agents" }
           @slave_controller.dispatch(:deploy_agents)
         end
-
-        def terminate_agents
-          DeepTest.logger.debug { "dispatch terminate_agents" }
-          @slave_controller.dispatch_with_options(:terminate_agents, :ignore_connection_error => true)
-        end
       end
     end
   end

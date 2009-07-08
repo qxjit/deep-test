@@ -50,11 +50,22 @@ module DeepTest
     end
 
     test "start returns instance of central_command" do
-      DRb.expects(:start_service)
-      DRb.expects(:uri)
-
+      DRb::DRbServer.expects(:new).returns stub(:uri => "druby://host:1111")
       central_command = CentralCommand.start Options.new({})
       assert_kind_of CentralCommand, central_command
+    end
+
+    test "start uses server port specifed in options" do
+      DRb::DRbServer.expects(:new).with(regexp_matches(/:9999/), anything).returns stub(:uri => "druby://host:1111")
+      CentralCommand.start Options.new(:server_port => 9999)
+    end
+
+    test "start sets server_port in options if none was specified" do
+      DRb::DRbServer.expects(:new).with(regexp_matches(/:0/), anything).returns(stub(:uri => "druby://host:50101"))
+
+      options = Options.new(:server_port => nil)
+      CentralCommand.start options
+      assert_equal 50101, options.server_port
     end
   end
 end

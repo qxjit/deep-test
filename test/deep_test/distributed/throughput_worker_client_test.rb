@@ -15,18 +15,6 @@ module DeepTest
         beachhead.expects(:deploy_agents)
         client.deploy_agents
       end
-
-      test "terminate_agents stops agents on agent server that was spawned in deploy_agents" do
-        beachhead = stub_everything
-        client = ThroughputWorkerClient.new(
-          Options.new({}),
-          landing_ship = stub_everything(:establish_beachhead => beachhead)
-        )
-
-        client.deploy_agents
-        beachhead.expects(:terminate_agents)
-        client.terminate_agents
-      end
     end
   end
 end

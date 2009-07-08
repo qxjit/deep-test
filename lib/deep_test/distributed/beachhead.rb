@@ -59,7 +59,7 @@ module DeepTest
         outie.close
 
         launch_mercy_killer grace_period
-        DRb.thread.join
+        wait_for_heartbeat_to_stop
       end
 
       def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
@@ -72,6 +72,17 @@ module DeepTest
         uri = innie.gets
         innie.close
         DRbObject.new_with_uri uri
+      end
+
+      def wait_for_heartbeat_to_stop
+        loop do
+          break if @heartbeat_stopped
+          sleep 1
+        end
+      end
+
+      def heartbeat_stopped
+        @heartbeat_stopped = true
       end
     end
   end

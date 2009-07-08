@@ -8,6 +8,10 @@ DeepTest::TestTask.new :deep_test_failing do |t|
   t.pattern = "negative_acceptance_tests/failing.rb"
 end
 
+DeepTest::TestTask.new :deep_test_passing do |t|
+  t.pattern = "negative_acceptance_tests/passing.rb"
+end
+
 DeepTest::TestTask.new :deep_test_failover_to_local do |t|
   t.number_of_agents = 1
   t.pattern = "negative_acceptance_tests/passing.rb"

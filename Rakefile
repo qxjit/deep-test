@@ -59,6 +59,7 @@ if rspec_present?
   
   Spec::Rake::SpecTask.new(:deep_spec) do |t|
     t.spec_files = FileList['spec/**/*_spec.rb']
+    t.deep_test({})
   end
 
   task :'deep_spec_1.1.8' do 

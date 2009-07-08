@@ -20,6 +20,22 @@ class SomeCustomException < RuntimeError
 end
 
 class Test::Unit::TestCase
+  class <<self
+    def dynamic_teardowns
+      @dynamic_teardowns ||= []
+    end
+
+    def on_teardown(&block)
+      dynamic_teardowns << block
+    end
+
+    def run_dynamic_teardowns
+      while td = dynamic_teardowns.shift
+        td.call rescue nil
+      end
+    end
+  end
+
   def setup
     @old_logger = DeepTest.logger
     DeepTest.logger = TestLogger.new
@@ -27,6 +43,7 @@ class Test::Unit::TestCase
 
   def teardown
     DeepTest.logger = @old_logger if @old_logger
+    Test::Unit::TestCase.run_dynamic_teardowns
   end
 
   def at(time, &block)

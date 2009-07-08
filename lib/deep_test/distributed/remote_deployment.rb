@@ -41,10 +41,6 @@ module DeepTest
         retry
       end
 
-      def terminate_agents
-        @beachheads.terminate_agents
-      end
-
       def fail_over(method, exception)
         @options.ui_instance.distributed_failover_to_local(method, exception)
         @beachheads = @failover_deployment

@@ -90,10 +90,35 @@ module DeepTest
 
     test "finishes running when no more work units are remaining" do
       central_command = mock
-      central_command.expects(:take_work).
-        raises(CentralCommand::NoWorkUnitsRemainingError)
+      central_command.expects(:take_work).raises(CentralCommand::NoWorkUnitsRemainingError)
 
       Agent.new(0, central_command, stub_everything).execute
+    end
+
+    test "finished running if a connection error is received" do
+      central_command = mock
+      central_command.expects(:take_work).raises(DRb::DRbConnError)
+
+      Agent.new(0, central_command, stub_everything).execute
+    end
+
+    test "finished running if take work takes too long" do
+      central_command = Object.new
+      def central_command.take_work; loop {sleep 0.1} end
+
+      Agent.new(0, central_command, stub_everything).execute
+    end
+
+
+    test "stops looking for work once it is stopped" do
+      central_command = mock
+      central_command.stubs(:take_work).raises(CentralCommand::NoWorkUnitsAvailableError)
+
+      agent = Agent.new(0, central_command, stub_everything)
+      t = Thread.new { agent.execute }
+      Thread.pass
+      agent.heartbeat_stopped
+      t.join
     end
 
     test "number is available to indentify agent" do

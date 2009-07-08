@@ -24,7 +24,7 @@ module DeepTest
                  end
 
         @listener.finished_work(self, work_unit, result)
-        @central_command.write_result result
+        Timeout.timeout(2) { @central_command.write_result result }
         if ENV['DEEP_TEST_SHOW_WORKER_DOTS'] == 'yes'
           $stdout.print '.'
           $stdout.flush
@@ -32,12 +32,19 @@ module DeepTest
       end
     rescue CentralCommand::NoWorkUnitsRemainingError
       DeepTest.logger.debug { "Agent #{number}: no more work to do" }
+    rescue DRb::DRbConnError, Timeout::Error
+      DeepTest.logger.debug { "Unable to contact DRb server.  Exiting" }
+    end
+
+    def heartbeat_stopped
+      @heartbeat_stopped = true
     end
 
     private
 
     def next_work_unit
-      @central_command.take_work
+      return nil if @heartbeat_stopped
+      Timeout.timeout(2) { @central_command.take_work }
     rescue CentralCommand::NoWorkUnitsAvailableError
       sleep 0.02
       retry

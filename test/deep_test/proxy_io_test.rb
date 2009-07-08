@@ -66,22 +66,6 @@ module DeepTest
       assert_equal old_stderr_const, STDERR
     end
 
-    test "replace_stdout_stderr! prints exceptions to new stdout" do
-      new_stdout = StringIO.new
-      assert_raises(Exception) do
-        ProxyIO.replace_stdout_stderr!(new_stdout, mock) do
-          e = Exception.new "my error"
-          e.set_backtrace %w[file1:1 file2:2]
-          raise e
-        end
-      end
-      assert_equal <<-end_expected, new_stdout.string
-Exception: my error
-file1:1
-file2:2
-      end_expected
-    end
-
     test "supress warnings restores verbose" do
       old_verbose = $VERBOSE
       ProxyIO.supress_warnings { raise "error" } rescue nil

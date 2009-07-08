@@ -34,16 +34,6 @@ module DeepTest
     def shutdown
       DeepTest.logger.debug { "Main: Shutting Down" }
       @central_command.done_with_work
-
-      first_exception = $!
-      begin
-        DeepTest.logger.debug { "Main: Stopping Agents" }
-        @deployment.terminate_agents
-      rescue DRb::DRbConnError
-        # Agents must have already stopped
-      rescue Exception => e
-        raise first_exception || e
-      end
     end
   end
 end

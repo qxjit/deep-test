@@ -10,10 +10,6 @@ module DeepTest
         @beachhead = @landing_ship.establish_beachhead(@options)
         @beachhead.deploy_agents
       end
-
-      def terminate_agents
-        @beachhead.terminate_agents
-      end
     end
   end
 end

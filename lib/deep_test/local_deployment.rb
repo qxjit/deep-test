@@ -26,10 +26,6 @@ module DeepTest
       central_command.medic.expect_live_monitors @agent_class
     end
 
-    def terminate_agents
-      warlock.stop_demons
-    end
-
     def number_of_agents
       @options.number_of_agents
     end

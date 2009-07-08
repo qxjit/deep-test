@@ -5,10 +5,10 @@ module DeepTest
     unless defined?(VALID_OPTIONS)
       VALID_OPTIONS = [
         Option.new(:distributed_hosts, nil),
-        Option.new(:number_of_agents,   nil),
+        Option.new(:number_of_agents,  nil),
         Option.new(:metrics_file,      nil),
         Option.new(:pattern,           nil),
-        Option.new(:server_port,       6969),
+        Option.new(:server_port,       nil),
         Option.new(:sync_options,      {}),
         Option.new(:timeout_in_seconds,30),
         Option.new(:ui,                "DeepTest::UI::Console"),

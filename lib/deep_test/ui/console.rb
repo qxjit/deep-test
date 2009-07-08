@@ -9,7 +9,6 @@ module DeepTest
         :establish_beachhead => "Spawning test environment processes",
         :load_files => "Loading test files for agents",
         :deploy_agents => "Deploying agents",
-        :terminate_agents => "Terminating agents"
       } unless defined?(METHOD_DESCRIPTIONS)
 
       def distributed_failover_to_local(method, exception)

@@ -64,8 +64,9 @@ module DeepTest
 
     def self.start(options)
       central_command = new(options)
-      DRb.start_service("druby://0.0.0.0:#{options.server_port}", central_command)
-      DeepTest.logger.info { "Started DeepTest service at #{DRb.uri}" }
+      server = DRb::DRbServer.new("druby://0.0.0.0:#{options.server_port || 0}", central_command)
+      DeepTest.logger.info { "Started DeepTest service at #{server.uri}" }
+      options.server_port = URI.parse(server.uri).port
       central_command
     end
 

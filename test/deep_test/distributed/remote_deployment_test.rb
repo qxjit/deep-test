@@ -71,21 +71,6 @@ module DeepTest
         deployment.deploy_agents
       end
 
-      test "terminate_agents stops agents on agent server that was spawned in load_files" do
-        beachhead = stub_everything
-        deployment = RemoteDeployment.new(
-          Options.new(:sync_options => {:source => "/tmp"}),
-          landing_ship = stub_everything(:establish_beachhead => beachhead),
-          failover_deployment = mock
-        )
-
-        deployment.expects(:load)
-        deployment.load_files ["filelist"]
-
-        beachhead.expects(:terminate_agents)
-        deployment.terminate_agents
-      end
-
       test "exception in deploy_agents causes failover to failover_deployment" do
         deployment = RemoteDeployment.new(
           options = Options.new(:sync_options => {:source => "/tmp"}, :ui => UI::Null),
@@ -104,9 +89,6 @@ module DeepTest
 
         failover_deployment.expects(:deploy_agents)
         deployment.deploy_agents
-
-        failover_deployment.expects(:terminate_agents)
-        deployment.terminate_agents
       end
 
       test "exception in push_code causes failover to failover_deployment" do
@@ -123,9 +105,6 @@ module DeepTest
 
         failover_deployment.expects(:deploy_agents)
         deployment.deploy_agents
-
-        failover_deployment.expects(:terminate_agents)
-        deployment.terminate_agents
       end
 
       test "exception in load_files causes failover to failover_deployment" do
@@ -149,9 +128,6 @@ module DeepTest
 
         failover_deployment.expects(:deploy_agents)
         deployment.deploy_agents
-
-        failover_deployment.expects(:terminate_agents)
-        deployment.terminate_agents
 
         assert_equal [], beachhead.calls
       end
