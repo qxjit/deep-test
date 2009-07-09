@@ -1,10 +1,6 @@
-require File.dirname(__FILE__) + "/../lib/deep_test"
-require File.dirname(__FILE__) + "/../test/fake_deadlock_error"
-require File.dirname(__FILE__) + "/../test/drb_test_help"
-require File.dirname(__FILE__) + "/../test/fake_central_command"
-require File.dirname(__FILE__) + "/../test/dynamic_teardown"
-require File.dirname(__FILE__) + "/thread_agent"
+require File.dirname(__FILE__) + '/../lib/deep_test'
 require 'spec'
+require File.dirname(__FILE__) + "/../infrastructure/load"
 
 describe "sandboxed rspec_options", :shared => true do
   attr_reader :options
