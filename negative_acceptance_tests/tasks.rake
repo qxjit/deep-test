@@ -19,7 +19,7 @@ DeepTest::TestTask.new :deep_test_failover_to_local do |t|
   t.sync_options = {:source => File.dirname(__FILE__), :rsync_options => "--exclude=.svn"}
 end
 
-DeepTest::TestTask.new :deep_test_with_host_down do |t|
+DeepTest::TestTask.new :deep_test_just_one_with_host_down do |t|
   t.number_of_agents = 1
   t.pattern = "negative_acceptance_tests/passing.rb"
   t.distributed_hosts = %w[localhost foobar_host]

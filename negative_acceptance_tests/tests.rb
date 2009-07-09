@@ -17,11 +17,10 @@ unit_tests do
   end
 
   test "Distributed DeepTest with a host down" do
-    result, output = run_rake :deep_test_with_host_down
+    result, output = run_rake :deep_test_just_one_with_host_down
     assert_equal true, result.success?, output
     assert_match /RSync Failed!!/, output
-    puts "should assert no failover, but need to change beachhead to not depend on rake first"
-    #assert_no_match /Failing over to local run/, output
+    assert_no_match /Failing over to local run/, output
   end
 
   test "DeepTest with agents that die" do
