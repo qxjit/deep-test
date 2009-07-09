@@ -22,7 +22,7 @@ module DeepTest
     Thread.new do
       Process.fork do
         DRb.stop_service # stop the primary server
-        DRb.instance_variable_get(:@server).each do |uri, server|
+        DRb.instance_variable_get(:@server).values.each do |server|
           server.stop_service
         end
         DRb::DRbConn.instance_eval do
