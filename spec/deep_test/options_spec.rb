@@ -150,8 +150,8 @@ module DeepTest
                             :sync_options => {:source => "/my/local/dir"},
                             :distributed_hosts => %w[host1 host2])
 
-      Distributed::RSync.should_receive(:push).with("host1", options, "/tmp/myhost_my_local_dir")
-      Distributed::RSync.should_receive(:push).with("host2", options, "/tmp/myhost_my_local_dir")
+      Distributed::RSync.should_receive(:push).with("host1", options.sync_options, "/tmp/myhost_my_local_dir")
+      Distributed::RSync.should_receive(:push).with("host2", options.sync_options, "/tmp/myhost_my_local_dir")
 
       options.new_landing_fleet.push_code(options)
     end

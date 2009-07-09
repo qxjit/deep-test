@@ -1,16 +1,16 @@
 module DeepTest
   module Distributed
     class RSync
-      def self.pull(address, options, destination)
-        sync(:pull, address, options, destination)
+      def self.pull(address, sync_options, destination)
+        sync(:pull, address, sync_options, destination)
       end
       
-      def self.push(address, options, destination)
-        sync(:push, address, options, destination)
+      def self.push(address, sync_options, destination)
+        sync(:push, address, sync_options, destination)
       end
 
-      def self.sync(operation, address, options, destination)
-        command = Args.new(address, options).send("#{operation}_command", 
+      def self.sync(operation, address, sync_options, destination)
+        command = Args.new(address, sync_options).send("#{operation}_command", 
                                                   destination)
 
         DeepTest.logger.debug { "rsycing: #{command}" }
@@ -19,10 +19,9 @@ module DeepTest
       end
 
       class Args
-        def initialize(address, options)
+        def initialize(address, sync_options)
           @address = address
-          @options = options
-          @sync_options = options.sync_options
+          @sync_options = sync_options
         end
 
         def pull_command(destination)

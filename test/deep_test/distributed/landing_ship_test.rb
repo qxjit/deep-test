@@ -7,7 +7,7 @@ module DeepTest
         Socket.stubs(:gethostname).returns("myhost")
         landing_ship = LandingShip.new(:address => "host", :work_dir => "/tmp")
         options = Options.new(:sync_options => {:source => "/my/local/dir"})
-        RSync.expects(:push).with("host", options, "/tmp/myhost_my_local_dir")
+        RSync.expects(:push).with("host", options.sync_options, "/tmp/myhost_my_local_dir")
         landing_ship.push_code(options)
       end
 

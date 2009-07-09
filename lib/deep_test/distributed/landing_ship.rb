@@ -6,10 +6,8 @@ module DeepTest
       end
 
       def push_code(options)
-        DeepTest.logger.debug { "mirror sync for #{options.origin_hostname}" }
         path = options.mirror_path(@config[:work_dir])
-        DeepTest.logger.debug { "Syncing #{options.sync_options[:source]} to #{path}" }
-        RSync.push(@config[:address], options, path)
+        RSync.push(@config[:address], options.sync_options, path)
       end
 
       def establish_beachhead(options)
