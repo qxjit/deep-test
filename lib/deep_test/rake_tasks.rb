@@ -11,19 +11,3 @@ DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/spec/extensions/spec_task"
 end
 
-task :'deep_test:establish_beachhead' do
-  require File.dirname(__FILE__) + "/../deep_test"
-  options = DeepTest::Options.from_command_line(ENV['OPTIONS'])
-  DeepTest.logger.debug { "mirror establish_beachhead for #{options.origin_hostname}" }
-
-  STDIN.close
-
-  beachhead = DeepTest::Distributed::Beachhead.new(
-    options.mirror_path('/tmp'), options, DeepTest::Distributed::SshClientConnectionInfo.new
-  ).daemonize(ENV['HOST'])
-
-  puts "Beachhead url: #{beachhead.__drburi}"
-  $stdout.flush
-
-  exit!(0)
-end

@@ -20,8 +20,8 @@ module DeepTest
         landing_ship.expects(:`).with(
           "ssh -4 remote_host " + 
           "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
-          "rake deep_test:establish_beachhead " + 
-          "OPTIONS=#{options.to_command_line} HOST=remote_host' 2>&1"
+          "OPTIONS=#{options.to_command_line} HOST=remote_host " + 
+          "ruby lib/deep_test/distributed/establish_beachhead.rb' 2>&1"
         ).returns("blah blah\nBeachhead url: druby://remote_host:9999\nblah")
 
         beachhead = landing_ship.establish_beachhead(options)
@@ -37,8 +37,8 @@ module DeepTest
         landing_ship.expects(:`).with(
           "ssh -4 remote_host -l me " + 
           "'#{ShellEnvironment.like_login} && cd /tmp/myhost_my_local_dir && " + 
-          "rake deep_test:establish_beachhead " + 
-          "OPTIONS=#{options.to_command_line} HOST=remote_host' 2>&1"
+          "OPTIONS=#{options.to_command_line} HOST=remote_host " + 
+          "ruby lib/deep_test/distributed/establish_beachhead.rb' 2>&1"
         ).returns("blah blah\nBeachhead url: druby://remote_host:9999\nblah")
 
         landing_ship.establish_beachhead(options)

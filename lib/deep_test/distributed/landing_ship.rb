@@ -11,7 +11,10 @@ module DeepTest
       end
 
       def establish_beachhead(options)
-        output  = `#{ssh_command(options)} '#{spawn_command(options)}' 2>&1`
+        command  = "#{ssh_command(options)} '#{spawn_command(options)}' 2>&1"
+        DeepTest.logger.debug { "Establishing Beachhed: #{command}" }
+        
+        output = `#{command}`
         output.each do |line|
           if line =~ /Beachhead url: (.*)/
             options.central_command.medic.expect_live_monitors Beachhead
@@ -34,8 +37,8 @@ module DeepTest
       def spawn_command(options)
         "#{ShellEnvironment.like_login} && " + 
         "cd #{options.mirror_path(@config[:work_dir])} && " + 
-        "rake deep_test:establish_beachhead " + 
-        "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]}"
+        "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]} " + 
+        "ruby lib/deep_test/distributed/establish_beachhead.rb" 
       end
     end
   end

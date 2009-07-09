@@ -1,4 +1,6 @@
 module DeepTest
+  LIB_ROOT = File.expand_path(File.dirname(__FILE__)) unless defined?(DeepTest::LIB_ROOT)
+
   class << self
     def logger
       @logger ||= DeepTest::Logger.new($stdout)
