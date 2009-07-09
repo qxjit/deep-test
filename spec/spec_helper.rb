@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + "/../lib/deep_test"
 require File.dirname(__FILE__) + "/../test/fake_deadlock_error"
 require File.dirname(__FILE__) + "/../test/drb_test_help"
 require File.dirname(__FILE__) + "/../test/fake_central_command"
+require File.dirname(__FILE__) + "/../test/dynamic_teardown"
 require File.dirname(__FILE__) + "/thread_agent"
 require 'spec'
 
@@ -15,9 +16,8 @@ describe "sandboxed rspec_options", :shared => true do
     ::Spec::Runner.use @options
   end
 
-  after(:each) do
-    ::Spec::Runner.use @original_rspec_options
-  end
+  after(:each) { ::Spec::Runner.use @original_rspec_options }
+  after(:each) { DynamicTeardown.run_dynamic_teardowns }
 
   class FakeReporter
     attr_reader :number_of_examples, :examples_finished, :number_of_errors

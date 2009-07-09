@@ -41,7 +41,7 @@ module DeepTest
   private
 
     def runner
-      File.expand_path(File.dirname(__FILE__) + "/../../script/internal/run_test_suite.rb")
+      File.expand_path(File.dirname(__FILE__) + "/test/run_test_suite.rb")
     end    
   end
 end

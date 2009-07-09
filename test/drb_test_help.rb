@@ -12,7 +12,7 @@ module DRbTestHelp
         drb_server.stop_service
       end
     else
-      Test::Unit::TestCase.on_teardown { drb_server.stop_service }
+      DynamicTeardown.on_teardown { drb_server.stop_service }
       return DRbObject.new_with_uri(drb_server.uri)
     end
   end
