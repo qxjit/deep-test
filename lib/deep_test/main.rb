@@ -25,7 +25,7 @@ module DeepTest
         end
       ensure
         DeepTest.logger.debug { "Main: Stopping CentralCommand" }
-        CentralCommand.stop
+        @central_command.stop
       end
 
       Kernel.exit(passed ? 0 : 1) if exit_when_done

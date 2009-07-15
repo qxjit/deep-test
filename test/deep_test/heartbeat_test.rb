@@ -1,5 +1,14 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
+$last_thread_list = Thread.list
+
+#set_trace_func proc { |event, file, line, id, binding, classname|
+#  (Thread.list - $last_thread_list).each do |t|
+#    puts "New thread: #{t.object_id}: #{event} #{File.basename(file)}:#{line} #{id} #{binding} #{classname}"
+#  end
+#  $last_thread_list = Thread.list
+#}
+
 module DeepTest
   unit_tests do
     class HeartbeatTestDemon
@@ -11,13 +20,14 @@ module DeepTest
     end
 
     test "beeps monitor at specified interval" do
-      monitor = Medic::Monitor.new HeartbeatTestDemon, 0.02
+      monitor = Medic::Monitor.new HeartbeatTestDemon, 0.01
       heartbeat = Heartbeat.new mock, monitor, 0.02
 
       begin
-        30.times do
+        20.times do
           Thread.pass
-          sleep 0.02
+          sleep 0.04
+          Thread.pass
           assert_equal false, monitor.fatal?
         end
       ensure

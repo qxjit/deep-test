@@ -24,8 +24,8 @@ module DeepTest
     end
 
     test "deploy_agents tells Medic to expect live Agents" do
-      central_command = FakeCentralCommand.new
-      options = Options.new(:number_of_agents => 1, :server_port => central_command.port)
+      options = Options.new(:number_of_agents => 1)
+      central_command = TestCentralCommand.start options
       deployment = LocalDeployment.new options, DieWithoutStartingHeartbeatAgent
       deployment.deploy_agents
       3.times do

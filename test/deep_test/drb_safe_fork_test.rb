@@ -5,30 +5,29 @@ module DeepTest
     include DRbTestHelp
 
     test "should not multiplex responses to multiple clients if fork happens from within a drb call" do
-      drb_server_for stub(:foo => "foo", :bar => "bar") do |drb_object|
-        innie, outie = IO.pipe
+      drb_object = drb_server_for(stub(:foo => "foo", :bar => "bar"))
+      innie, outie = IO.pipe
 
-        pid = DeepTest.drb_safe_fork do
-          drb_server_for RemoteObjectThatForksWithOpenConnections.new(drb_object) do |fork_object|
-            Signal.trap("TERM") {exit!}
-            innie.close
-            outie.puts Marshal.dump(fork_object)
-            outie.close
-            DRb.thread.join
-          end
-        end
-
-        begin
-          Process.detach pid
-
-          outie.close
-          fork_reference = Marshal.load(innie.read)
+      pid = DeepTest.drb_safe_fork do
+        drb_server_for RemoteObjectThatForksWithOpenConnections.new(drb_object) do |fork_object|
+          Signal.trap("TERM") {exit!}
           innie.close
-
-          fork_reference.assert_children_have_independent_streams
-        ensure
-          Process.kill "TERM", pid
+          outie.puts Marshal.dump(fork_object)
+          outie.close
+          DRb.thread.join
         end
+      end
+
+      begin
+        Process.detach pid
+
+        outie.close
+        fork_reference = Marshal.load(innie.read)
+        innie.close
+
+        fork_reference.assert_children_have_independent_streams
+      ensure
+        Process.kill "TERM", pid
       end
     end
 

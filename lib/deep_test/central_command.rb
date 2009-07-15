@@ -1,6 +1,9 @@
 module DeepTest
   class CentralCommand
     attr_reader :medic
+    attr_reader :drb_server
+    attr_reader :operator
+    attr_reader :switchboard
 
     def initialize(options)
       @options = options
@@ -33,11 +36,10 @@ module DeepTest
     end
 
     def take_work
-      raise NoWorkUnitsRemainingError if @done_with_work
-
       @work_queue.pop(true)
     rescue ThreadError => e
       if e.message == "queue empty"
+        raise NoWorkUnitsRemainingError if @done_with_work
         raise NoWorkUnitsAvailableError
       else
         raise
@@ -64,14 +66,54 @@ module DeepTest
 
     def self.start(options)
       central_command = new(options)
-      server = DRb::DRbServer.new("druby://0.0.0.0:#{options.server_port || 0}", central_command)
-      DeepTest.logger.info { "Started DeepTest service at #{server.uri}" }
-      options.server_port = URI.parse(server.uri).port
+      central_command.start
       central_command
     end
 
-    def self.stop
-      DRb.stop_service
+    def start
+      @drb_server = DRb::DRbServer.new("druby://0.0.0.0:#{@options.server_port || 0}", self)
+
+      DeepTest.logger.info { "Started DeepTest service at #{drb_server.uri}" }
+
+      @options.server_port = URI.parse(drb_server.uri).port
+      @switchboard = Telegraph::Switchboard.new
+      @operator = Telegraph::Operator.listen("0.0.0.0", 0, @switchboard)
+      @options.telegraph_port = @operator.port
+
+      @process_messages_thread = Thread.new { process_messages }
+    end
+
+    unless defined?(NeedWork)
+      NeedWork = "NeedWork" 
+      NoMoreWork = "NoMoreWork"
+    end
+
+    def process_messages
+      loop do
+        begin
+          return if @stop_process_messages
+          message, wire = switchboard.next_message(:timeout => 1)
+          begin
+            wire.send_message take_work
+          rescue NoWorkUnitsAvailableError
+            sleep 0.25
+            retry
+          rescue NoWorkUnitsRemainingError
+            wire.send_message NoMoreWork
+          end
+        rescue Telegraph::NoMessageAvailable
+          retry
+        rescue Exception => e
+          raise unless @stop_process_messages
+        end
+      end
+    end
+
+    def stop
+      @stop_process_messages = true
+      operator.shutdown
+      drb_server.stop_service
+      @process_messages_thread.join
     end
 
     def self.remote_reference(address, port)

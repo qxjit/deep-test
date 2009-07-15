@@ -9,6 +9,7 @@ module DeepTest
         Option.new(:metrics_file,      nil),
         Option.new(:pattern,           nil),
         Option.new(:server_port,       nil),
+        Option.new(:telegraph_port,    nil),
         Option.new(:sync_options,      {}),
         Option.new(:timeout_in_seconds,30),
         Option.new(:ui,                "DeepTest::UI::Console"),

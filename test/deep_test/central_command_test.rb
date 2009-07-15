@@ -52,20 +52,38 @@ module DeepTest
     test "start returns instance of central_command" do
       DRb::DRbServer.expects(:new).returns stub(:uri => "druby://host:1111")
       central_command = CentralCommand.start Options.new({})
+      DynamicTeardown.on_teardown { central_command.stop }
       assert_kind_of CentralCommand, central_command
     end
 
     test "start uses server port specifed in options" do
       DRb::DRbServer.expects(:new).with(regexp_matches(/:9999/), anything).returns stub(:uri => "druby://host:1111")
-      CentralCommand.start Options.new(:server_port => 9999)
+      central_command = CentralCommand.start Options.new(:server_port => 9999)
+      DynamicTeardown.on_teardown { central_command.stop }
     end
 
     test "start sets server_port in options if none was specified" do
       DRb::DRbServer.expects(:new).with(regexp_matches(/:0/), anything).returns(stub(:uri => "druby://host:50101"))
 
       options = Options.new(:server_port => nil)
-      CentralCommand.start options
+      central_command = CentralCommand.start options
+      DynamicTeardown.on_teardown { central_command.stop }
       assert_equal 50101, options.server_port
+    end
+
+    test "after starting CentralCommand responds to NeedWork messages by supplying new units of work" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+      central_command.write_work(:a)
+      central_command.write_work(:b)
+      central_command.write_work(:c)
+
+      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      [:a, :b, :c].each do |work_unit|
+        Thread.pass
+        wire.send_message CentralCommand::NeedWork
+        assert_equal work_unit, wire.next_message(:timeout => 2.0)
+      end
     end
   end
 end

@@ -16,11 +16,12 @@ class Test::Unit::TestCase
   def setup
     @old_logger = DeepTest.logger
     DeepTest.logger = TestLogger.new
+    DynamicTeardown.setup
   end
 
   def teardown
     DeepTest.logger = @old_logger if @old_logger
-    DynamicTeardown.run_dynamic_teardowns
+    DynamicTeardown.teardown
   end
 
   def at(time, &block)

@@ -1,15 +1,20 @@
 module DynamicTeardown
   class <<self
-    def dynamic_teardowns
-      @dynamic_teardowns ||= []
+    def setup
+      stack.push []
+    end
+
+    def stack
+      @stack ||= []
     end
 
     def on_teardown(&block)
-      dynamic_teardowns << block
+      stack.last << block
     end
 
-    def run_dynamic_teardowns
-      while td = dynamic_teardowns.shift
+    def teardown
+      teardowns = stack.pop
+      while td = teardowns.shift
         td.call rescue nil
       end
     end

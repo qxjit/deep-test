@@ -30,7 +30,7 @@ unit_tests do
   end
   
   test "DeepTest processes go away after the test run ends" do
-    Timeout.timeout(4) { run_rake :deep_test_passing }
+    Timeout.timeout(15) { run_rake :deep_test_passing }
   end
 
   def run_rake(task)

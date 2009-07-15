@@ -66,6 +66,7 @@ require "webrick"
 require "timeout"
 require "base64"
 
+require File.dirname(__FILE__) + "/telegraph"
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
 require File.dirname(__FILE__) + "/deep_test/extensions/drb_extension"
 

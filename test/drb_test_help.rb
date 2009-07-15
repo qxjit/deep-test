@@ -9,7 +9,9 @@ module DRbTestHelp
         drb_server.stop_service
       end
     else
-      DynamicTeardown.on_teardown { drb_server.stop_service }
+      DynamicTeardown.on_teardown do
+        drb_server.stop_service
+      end
       return DRbObject.new_with_uri(drb_server.uri)
     end
   end

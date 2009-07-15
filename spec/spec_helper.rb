@@ -13,7 +13,8 @@ describe "sandboxed rspec_options", :shared => true do
   end
 
   after(:each) { ::Spec::Runner.use @original_rspec_options }
-  after(:each) { DynamicTeardown.run_dynamic_teardowns }
+  before(:each) { DynamicTeardown.setup }
+  after(:each) { DynamicTeardown.teardown }
 
   class FakeReporter
     attr_reader :number_of_examples, :examples_finished, :number_of_errors

@@ -3,10 +3,11 @@ module DeepTest
     include Demon
     attr_reader :number
 
-    def initialize(number, central_command, listener)
+    def initialize(number, options, central_command, listener)
       @number = number
       @central_command = central_command
       @listener = listener
+      @wire = Telegraph::Wire.connect(options.origin_hostname, options.telegraph_port)
     end
 
     def execute
@@ -43,11 +44,16 @@ module DeepTest
     private
 
     def next_work_unit
-      return nil if @heartbeat_stopped
-      Timeout.timeout(2) { @central_command.take_work }
-    rescue CentralCommand::NoWorkUnitsAvailableError
-      sleep 0.02
-      retry
+      @wire.send_message CentralCommand::NeedWork
+      begin
+        return nil if @heartbeat_stopped
+        message = @wire.next_message(:timeout => 2)
+        return message == CentralCommand::NoMoreWork ? nil : message
+      rescue Telegraph::NoMessageAvailable
+        retry
+      rescue Telegraph::LineDead
+        return nil
+      end
     end
 
     def reconnect_to_database
