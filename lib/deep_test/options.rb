@@ -41,7 +41,7 @@ module DeepTest
       @origin_hostname = Socket.gethostname
       check_option_keys(hash)
       VALID_OPTIONS.each do |option|
-        send("#{option.name}=", hash[option.name] || option.default)
+        send("#{option.name}=", hash[option.name] || hash[option.name.to_s] || option.default)
       end
     end
 

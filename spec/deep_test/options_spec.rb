@@ -14,7 +14,6 @@ module DeepTest
 
     it "should have reasonable defaults" do
       options = Options.new({})
-      options.number_of_agents.should == 2
       options.timeout_in_seconds.should == 30
       options.server_port.should == nil
       options.pattern.should == nil
@@ -99,7 +98,7 @@ module DeepTest
     end
 
     it "should support strings as well as symbols" do
-      Options.new("number_of_agents" => 2).number_of_agents.should == 2
+      Options.new("timeout_in_seconds" => 2).timeout_in_seconds.should == 2
     end
 
     it "should raise error when invalid option is specifed" do
