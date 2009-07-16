@@ -9,6 +9,7 @@ module DeepTest
           sleep beat_interval
           begin
             break if @stopped
+            DeepTest.logger.debug { "Heartbeat for PID #{Process.pid} beeping" }
             Timeout.timeout(beat_interval * 2) { monitor.beep }
           rescue Exception => e
             break
