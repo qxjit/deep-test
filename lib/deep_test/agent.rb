@@ -3,14 +3,19 @@ module DeepTest
     include Demon
     attr_reader :number
 
-    def initialize(number, options, central_command, listener)
+    def initialize(number, options, listener)
       @number = number
-      @central_command = central_command
       @listener = listener
-      @wire = Telegraph::Wire.connect(options.origin_hostname, options.telegraph_port)
+      @options = options
+    end
+
+    def connect
+      @wire = Telegraph::Wire.connect(@options.origin_hostname, @options.telegraph_port)
     end
 
     def execute
+      connect
+
       reseed_random_numbers
       reconnect_to_database
 

@@ -8,7 +8,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
       central_command.done_with_work
 
-      Agent.new(0, options, central_command,stub_everything).execute
+      Agent.new(0, options, stub_everything).execute
 
       assert_kind_of ::Test::Unit::TestResult, central_command.take_result
     end
@@ -20,7 +20,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.failing_test)
       central_command.done_with_work
 
-      Agent.new(0, options, central_command, stub_everything).execute
+      Agent.new(0, options, stub_everything).execute
       
 
       result_1 = central_command.take_result
@@ -35,7 +35,7 @@ module DeepTest
       central_command = TestCentralCommand.start options
       central_command.done_with_work
       listener = stub_everything
-      agent = Agent.new(0, options, central_command, listener)
+      agent = Agent.new(0, options, listener)
       listener.expects(:starting).with(agent)
       agent.execute
     end
@@ -47,7 +47,7 @@ module DeepTest
       central_command.write_work work_unit
       central_command.done_with_work
       listener = stub_everything
-      agent = Agent.new(0, options, central_command, listener)
+      agent = Agent.new(0, options, listener)
       listener.expects(:starting_work).with(agent, work_unit)
       agent.execute
     end
@@ -59,7 +59,7 @@ module DeepTest
       central_command.write_work work_unit
       central_command.done_with_work
       listener = stub_everything
-      agent = Agent.new(0, options, central_command, listener)
+      agent = Agent.new(0, options, listener)
       listener.expects(:finished_work).with(agent, work_unit, TestResult.new(:result))
       agent.execute
     end
@@ -103,7 +103,7 @@ module DeepTest
       central_command.write_work work_unit
       central_command.done_with_work
 
-      Agent.new(0, options, central_command, stub_everything).execute
+      Agent.new(0, options, stub_everything).execute
       
       assert_equal Agent::Error.new(work_unit, exception), central_command.take_result
     end
@@ -123,7 +123,7 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
 
-      t = Thread.new { Agent.new(0, options, central_command, stub_everything).execute }
+      t = Thread.new { Agent.new(0, options, stub_everything).execute }
       Thread.pass
       central_command.write_work stub(:run => TestResult.new(:result))
       central_command.done_with_work
@@ -135,7 +135,7 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
       begin
-        t = Thread.new { Agent.new(0, options, central_command, stub_everything).execute }
+        t = Thread.new { Agent.new(0, options, stub_everything).execute }
         sleep 0.1
       ensure
         central_command.stop
@@ -147,7 +147,7 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
 
-      agent = Agent.new(0, options, central_command, stub_everything)
+      agent = Agent.new(0, options, stub_everything)
       t = Thread.new { agent.execute }
       Thread.pass
       agent.heartbeat_stopped
@@ -155,9 +155,7 @@ module DeepTest
     end
 
     test "number is available to indentify agent" do
-      options = Options.new({})
-      central_command = TestCentralCommand.start(options)
-      assert_equal 1, Agent.new(1, options, nil, nil).number
+      assert_equal 1, Agent.new(1, Options.new({}), nil).number
     end
     
     test "does not fork from rake" do
