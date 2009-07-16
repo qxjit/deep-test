@@ -25,11 +25,7 @@ module DeepTest
                  end
 
         @listener.finished_work(self, work_unit, result)
-        Timeout.timeout(2) { @central_command.write_result result }
-        if ENV['DEEP_TEST_SHOW_WORKER_DOTS'] == 'yes'
-          $stdout.print '.'
-          $stdout.flush
-        end
+        @wire.send_message result
       end
     rescue CentralCommand::NoWorkUnitsRemainingError
       DeepTest.logger.debug { "Agent #{number}: no more work to do" }
@@ -66,6 +62,8 @@ module DeepTest
 
 
     class Error
+      include CentralCommand::Result
+
       attr_accessor :work_unit, :error
 
       def initialize(work_unit, error)

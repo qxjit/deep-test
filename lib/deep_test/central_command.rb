@@ -1,3 +1,5 @@
+require 'set'
+
 module DeepTest
   class CentralCommand
     attr_reader :medic
@@ -86,6 +88,7 @@ module DeepTest
     unless defined?(NeedWork)
       NeedWork = "NeedWork" 
       NoMoreWork = "NoMoreWork"
+      module Result; end
     end
 
     def process_messages
@@ -93,19 +96,39 @@ module DeepTest
         begin
           return if @stop_process_messages
           message, wire = switchboard.next_message(:timeout => 1)
-          begin
-            wire.send_message take_work
-          rescue NoWorkUnitsAvailableError
-            sleep 0.25
-            retry
-          rescue NoWorkUnitsRemainingError
-            wire.send_message NoMoreWork
+
+          wires_waiting_for_work.each { |w| send_work wire }
+
+          case message
+          when NeedWork; send_work wire
+          when Result; write_result message
+          else raise UnexpectedMessageError, message.inspect
           end
+
         rescue Telegraph::NoMessageAvailable
           retry
         rescue Exception => e
           raise unless @stop_process_messages
         end
+      end
+    end
+
+    def wires_waiting_for_work
+      @wires_waiting_for_work ||= Set.new
+    end
+
+    def send_work(wire)
+      begin
+        wire.send_message take_work
+        wires_waiting_for_work.delete wire
+
+      rescue NoWorkUnitsAvailableError
+        wires_waiting_for_work.add wire
+
+      rescue NoWorkUnitsRemainingError
+        wire.send_message NoMoreWork
+        wires_waiting_for_work.delete wire
+
       end
     end
 
@@ -126,5 +149,6 @@ module DeepTest
     class NoWorkUnitsRemainingError < StandardError; end
     class NoAgentsRunningError < StandardError; end
     class CheckIfAgentsAreStillRunning < StandardError; end
+    class UnexpectedMessageError < StandardError; end
   end
 end

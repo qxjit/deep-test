@@ -60,7 +60,7 @@ module DeepTest
       central_command.done_with_work
       listener = stub_everything
       agent = Agent.new(0, options, central_command, listener)
-      listener.expects(:finished_work).with(agent, work_unit, :result)
+      listener.expects(:finished_work).with(agent, work_unit, TestResult.new(:result))
       agent.execute
     end
 
@@ -72,7 +72,7 @@ module DeepTest
       end
 
       def run
-        result
+        TestResult.new(result)
       end
 
       def ==(other)
@@ -108,7 +108,7 @@ module DeepTest
       assert_equal Agent::Error.new(work_unit, exception), central_command.take_result
     end
 
-    test "Agent::Error can marshal itself even if it's contents are not marshallable" do
+    test "Agent::Error can marshal itself even if the contents are not marshallable" do
       o = Object.new
       o.extend DRb::DRbUndumped
 
@@ -125,10 +125,10 @@ module DeepTest
 
       t = Thread.new { Agent.new(0, options, central_command, stub_everything).execute }
       Thread.pass
-      central_command.write_work stub(:run => :result)
+      central_command.write_work stub(:run => TestResult.new(:result))
       central_command.done_with_work
       t.join
-      assert_equal :result, central_command.take_result
+      assert_equal TestResult.new(:result), central_command.take_result
     end
 
     test "finish running if a connection error is received" do

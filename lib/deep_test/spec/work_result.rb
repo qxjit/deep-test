@@ -1,6 +1,8 @@
 module DeepTest
   module Spec
     class WorkResult
+      include CentralCommand::Result
+
       attr_reader :identifier, :output
 
       def initialize(identifier, error, output)

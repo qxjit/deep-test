@@ -1,6 +1,7 @@
 module DeepTest
   module Test
     class WorkResult < ::Test::Unit::TestResult
+      include CentralCommand::Result
       attr_reader :identifier
       attr_accessor :output
 

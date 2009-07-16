@@ -85,5 +85,31 @@ module DeepTest
         assert_equal work_unit, wire.next_message(:timeout => 2.0)
       end
     end
+
+    test "after starting CentralCommand responds to Result messages adding results to the queue" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      result_1, result_2, result_3 = TestResult.new(1), TestResult.new(2), TestResult.new(3)
+
+      [result_1, result_2, result_3].each do |result|
+        wire.send_message result
+      end
+
+      assert_equal result_1, central_command.take_result
+      assert_equal result_2, central_command.take_result
+      assert_equal result_3, central_command.take_result
+    end
+
+    test "will add results to queue with a worker waiting for work that is not available" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+
+      wire.send_message CentralCommand::NeedWork
+      wire.send_message TestResult.new(1)
+
+      assert_equal TestResult.new(1), central_command.take_result
+    end
   end
 end
