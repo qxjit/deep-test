@@ -5,8 +5,15 @@ module Telegraph
     def next_message(options = {:timeout => 0})
       debug { "Waiting for next message on any wire" }
       wire_streams = using_wires { |wires| wires.map {|w| w.stream } }
+
+      if wire_streams.empty?
+        Thread.pass 
+        raise NoMessageAvailable 
+      end
+
       readers, = IO.select wire_streams.select {|s| !s.closed?}, nil, nil, options[:timeout]
       raise NoMessageAvailable unless readers
+
       wire = using_wires {|wires| wires.detect {|w| w.stream == readers.first} }
       return wire.next_message(options.merge(:timeout => 0)), wire
     rescue LineDead => e
