@@ -8,7 +8,7 @@ module Telegraph
       readers, = IO.select wire_streams.select {|s| !s.closed?}, nil, nil, options[:timeout]
       raise NoMessageAvailable unless readers
       wire = using_wires {|wires| wires.detect {|w| w.stream == readers.first} }
-      return wire.next_message(options), wire
+      return wire.next_message(options.merge(:timeout => 0)), wire
     rescue LineDead => e
       debug { "LineDead: #{e.message} while reading message from wire" }
       raise NoMessageAvailable
@@ -24,7 +24,7 @@ module Telegraph
 
     def close_all_wires
       debug { "Closing all wires" }
-      using_wires {|w| w.each { |wire| wire.close } }
+      using_wires {|w| w.each { |wire| wire.close rescue nil } }
     end
 
     def using_wires

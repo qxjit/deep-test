@@ -23,7 +23,7 @@ module Telegraph
 
     def send_message(message)
       message_string = Marshal.dump(message)
-      debug { "sending message of size #{message_string.length}"}
+      debug { "send #{message_string[4..20]}... (#{message_string.length} bytes)" }
       @stream.write [message_string.length].pack("N") + message_string
     rescue IOError, Errno::EPIPE, Errno::ECONNRESET => e
       close rescue nil
@@ -36,7 +36,7 @@ module Telegraph
         size = @stream.read(4)
         raise LineDead, "connection closed" unless size
         message_string = @stream.read(size.unpack("N")[0])
-        debug { "read message of size #{message_string.length}" }
+        debug { "read #{message_string[4..20]}... (#{message_string.length} bytes)" }
         raise LineDead, "connection closed" unless message_string
         return Marshal.load(message_string)
       rescue IOError, Errno::ECONNRESET => e

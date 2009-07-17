@@ -26,8 +26,11 @@ module Telegraph
 
     def shutdown
       debug { "Shutting down" }
-      @socket.close
-      @switchboard.close_all_wires
+      begin
+        @socket.close
+      ensure
+        @switchboard.close_all_wires
+      end
     end
   end
 end
