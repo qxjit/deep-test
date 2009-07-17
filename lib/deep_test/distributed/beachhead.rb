@@ -42,7 +42,7 @@ module DeepTest
         @agents_deployed
       end
 
-      def forked(name, central_command, demon_args)
+      def forked(*args)
         $stdout.reopen("/dev/null")
         $stderr.reopen("/dev/null")
         super

@@ -89,6 +89,7 @@ module DeepTest
       NeedWork = "NeedWork" 
       NoMoreWork = "NoMoreWork"
       module Result; end
+      module Operation; end
     end
 
     def process_messages
@@ -102,6 +103,7 @@ module DeepTest
           case message
           when NeedWork; send_work wire
           when Result; write_result message
+          when Operation; message.execute
           else raise UnexpectedMessageError, message.inspect
           end
 

@@ -111,5 +111,26 @@ module DeepTest
 
       assert_equal TestResult.new(1), central_command.take_result
     end
+
+    class SetCalledGlobalToTrue
+      include CentralCommand::Operation
+      def execute; $called = true; end
+    end
+
+    test "will execute Operations read from the wire" do
+      $called = false
+      DynamicTeardown.on_teardown { $called = nil }
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire.send_message SetCalledGlobalToTrue.new
+
+      Timeout.timeout(2) do
+        loop do
+          break if $called
+          sleep 0.25
+        end
+      end
+    end
   end
 end

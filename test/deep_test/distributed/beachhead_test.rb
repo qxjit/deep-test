@@ -49,9 +49,10 @@ module DeepTest
       end
 
       test "service is removed after grace period if agents have not been started" do
-        central_command = FakeCentralCommand.new
+        options = Options.new({:number_of_agents => 0})
+        central_command = TestCentralCommand.start(options)
         begin
-          beachhead = Beachhead.new "", Options.new(:number_of_agents => 1, :server_port => central_command.port), stub(:address => "localhost")
+          beachhead = Beachhead.new "", options, stub(:address => "localhost")
           beachhead.daemonize("localhost", 0.25)
           # Have to sleep long enough to warlock to reap dead process
           sleep 1.0
@@ -62,9 +63,10 @@ module DeepTest
       end
 
       test "service is not removed after grace period if agents have been started" do
-        central_command = FakeCentralCommand.new
+        options = Options.new({:number_of_agents => 0})
+        central_command = TestCentralCommand.start(options)
         begin
-          beachhead = Beachhead.new "", Options.new(:number_of_agents => 0, :server_port => central_command.port), stub(:address => "localhost")
+          beachhead = Beachhead.new "", options, stub(:address => "localhost")
           # Since we're not actually starting agents, we don't want to exit when none are running for this test
           beachhead.warlock.stubs(:exit_when_none_running)
           remote_reference = beachhead.daemonize("localhost", 0.25)

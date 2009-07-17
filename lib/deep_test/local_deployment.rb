@@ -8,7 +8,7 @@ module DeepTest
     end
 
     def warlock
-      @warlock ||= Warlock.new central_command
+      @warlock ||= Warlock.new @options, central_command
     end
 
     def load_files(files)

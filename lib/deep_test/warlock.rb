@@ -1,6 +1,7 @@
 module DeepTest
   class Warlock
-    def initialize(central_command)
+    def initialize(options, central_command)
+      @options = options
       @central_command = central_command
       @demons_semaphore = Mutex.new
       @demons = []
@@ -25,7 +26,7 @@ module DeepTest
             #
             @demons_semaphore.unlock if @demons_semaphore.locked?
 
-            demon.forked name, @central_command, demon_args
+            demon.forked name, @options, @central_command, demon_args
 
             exit
           end
