@@ -182,12 +182,6 @@ module DeepTest
       }.should raise_error("No source directory specified in sync_options")
     end
 
-    it "should create drb object to connect to central_command" do
-      options = DeepTest::Options.new(:server_port => 1000)
-      central_command = options.central_command
-      central_command.__drburi.should == "druby://#{options.origin_hostname}:#{options.server_port}"
-    end
-
     it "should be gathering metrics if metrics file is set" do
       options = DeepTest::Options.new(:metrics_file => "filename")
       options.should be_gathering_metrics

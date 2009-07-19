@@ -94,10 +94,6 @@ module DeepTest
       Distributed::LandingFleet.new self, landing_ships
     end
 
-    def central_command
-      CentralCommand.remote_reference(origin_hostname, server_port)
-    end
-
     protected
 
     def check_option_keys(hash)

@@ -27,10 +27,6 @@ module DeepTest
         nil
       end
 
-      def central_command
-        CentralCommand.remote_reference @connection_info.address, @options.server_port
-      end
-
       def deploy_agents
         @agents_deployed = true
         super

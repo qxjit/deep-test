@@ -1,5 +1,7 @@
 module DeepTest
   class Main
+    attr_reader :central_command
+
     def initialize(options, deployment, runner, central_command = nil)
       @options = options
       @deployment = deployment
@@ -19,7 +21,7 @@ module DeepTest
         @deployment.deploy_agents
         begin
           DeepTest.logger.debug { "Loader Starting (#{$$})" }
-          passed = @runner.process_work_units
+          passed = @runner.process_work_units(central_command)
         ensure
           shutdown
         end

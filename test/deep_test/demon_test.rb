@@ -13,7 +13,7 @@ module DeepTest
       operator = TestOperator.listen(options)
       ProcDemon.new(proc do
         puts "hello stdout"
-      end).forked("name", options, FakeCentralCommand.new, [])
+      end).forked("name", options, [])
 
       assert_equal ProxyIO::Stdout::Output.new("hello stdout"), operator.next_message[0]
       assert_equal ProxyIO::Stdout::Output.new("\n"), operator.next_message[0]

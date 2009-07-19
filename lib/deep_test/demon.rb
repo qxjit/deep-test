@@ -1,6 +1,6 @@
 module DeepTest
   module Demon
-    def forked(name, options, central_command, demon_args)
+    def forked(name, options, demon_args)
       ProxyIO.replace_stdout_stderr!(Telegraph::Wire.connect(options.origin_hostname, options.telegraph_port)) do
         begin
           catch(:exit_demon) do

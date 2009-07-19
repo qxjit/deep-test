@@ -8,15 +8,11 @@ module DeepTest
     end
 
     def warlock
-      @warlock ||= Warlock.new @options, central_command
+      @warlock ||= Warlock.new @options
     end
 
     def load_files(files)
       files.each {|f| load f}
-    end
-
-    def central_command
-      @options.central_command
     end
 
     def deploy_agents

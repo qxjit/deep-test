@@ -7,7 +7,7 @@ module DeepTest
 
       it "should run each test using central_command" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           it("passes1") {}
@@ -16,7 +16,7 @@ module DeepTest
 
         agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
-          runner.process_work_units.should == true
+          runner.process_work_units(central_command).should == true
         end
         agent.wait_until_done
 
@@ -29,7 +29,7 @@ module DeepTest
 
       it "should return failure when a spec fails" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           it("passes") {}; 
@@ -38,14 +38,14 @@ module DeepTest
 
         agent = ThreadAgent.new(central_command, 2)
         Timeout.timeout(5) do
-          runner.process_work_units.should == false
+          runner.process_work_units(central_command).should == false
         end
         agent.wait_until_done
       end
 
       it "should return success when there are pending examples" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           it("pending") {pending {1.should == 2}}; 
@@ -53,14 +53,14 @@ module DeepTest
 
         agent = ThreadAgent.new(central_command, 1)
         Timeout.timeout(5) do
-          runner.process_work_units.should == true
+          runner.process_work_units(central_command).should == true
         end
         agent.wait_until_done
       end
 
       it "should return failure when a pending example passes" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
@@ -68,14 +68,14 @@ module DeepTest
 
         agent = ThreadAgent.new(central_command, 1)
         Timeout.timeout(5) do
-          runner.process_work_units.should == false
+          runner.process_work_units(central_command).should == false
         end
         agent.wait_until_done
       end
 
       it "should return failure when a agent error occurs" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           it("pending") {pending {1.should == 1}}; 
@@ -83,7 +83,7 @@ module DeepTest
 
         central_command.write_result Agent::Error.new("example", RuntimeError.new)
         capture_stdout do
-          runner.process_work_units.should == false
+          runner.process_work_units(central_command).should == false
         end
 
         options.reporter.number_of_errors.should == 1
@@ -91,14 +91,14 @@ module DeepTest
 
       it "should raise error if duplicate spec is found" do
         central_command = FakeCentralCommand.new
-        runner = Runner.new(options, Options.new({}).to_command_line, central_command)
+        runner = Runner.new(options, Options.new({}).to_command_line)
 
         describe("test") do
           2.times {it("example") {}}; 
         end
 
         lambda {
-          runner.process_work_units
+          runner.process_work_units(central_command)
         }.should raise_error
       end
     end

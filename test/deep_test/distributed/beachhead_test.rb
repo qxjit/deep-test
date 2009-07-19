@@ -24,17 +24,8 @@ module DeepTest
         assert_equal nil, beachhead.load_files(["/source/path/my/file.rb"])
       end
 
-      test "central_command is retrieved using client connection information" do
-        beachhead = Beachhead.new("/tmp", options = Options.new({}), mock(:address => "address"))
-        DeepTest::CentralCommand.expects(:remote_reference).
-          with("address", options.server_port).returns(:central_command_reference)
-
-        assert_equal :central_command_reference, beachhead.central_command
-      end
-
       test "deploy_agents returns nil so nothing is serialized over DRb" do
-        central_command = FakeCentralCommand.new
-        beachhead = Beachhead.new "", Options.new(:number_of_agents => 0, :server_port => central_command.port), stub(:address => "localhost")
+        beachhead = Beachhead.new "", Options.new(:number_of_agents => 0), stub(:address => "localhost")
         # Since we're not actually starting agents, we don't want to exit when none are running for this test
         beachhead.warlock.stubs(:exit_when_none_running).returns(:not_nil)
         assert_equal nil, beachhead.deploy_agents
@@ -42,7 +33,6 @@ module DeepTest
 
       test "service is removed after grace period if agents have not been started" do
         options = Options.new({:number_of_agents => 0})
-        central_command = TestCentralCommand.start(options)
         begin
           beachhead = Beachhead.new "", options, stub(:address => "localhost")
           beachhead.daemonize("localhost", 0.25)
@@ -56,7 +46,7 @@ module DeepTest
 
       test "service is not removed after grace period if agents have been started" do
         options = Options.new({:number_of_agents => 0})
-        central_command = TestCentralCommand.start(options)
+        TestCentralCommand.start options
         begin
           beachhead = Beachhead.new "", options, stub(:address => "localhost")
           # Since we're not actually starting agents, we don't want to exit when none are running for this test

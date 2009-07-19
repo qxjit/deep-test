@@ -2,7 +2,6 @@ require 'set'
 
 module DeepTest
   class CentralCommand
-    attr_reader :drb_server
     attr_reader :operator
     attr_reader :switchboard
 
@@ -71,16 +70,12 @@ module DeepTest
     end
 
     def start
-      @drb_server = DRb::DRbServer.new("druby://0.0.0.0:#{@options.server_port || 0}", self)
-
-      DeepTest.logger.info { "Started DeepTest service at #{drb_server.uri}" }
-
-      @options.server_port = URI.parse(drb_server.uri).port
       @switchboard = Telegraph::Switchboard.new
       @operator = Telegraph::Operator.listen("0.0.0.0", 0, @switchboard)
       @options.telegraph_port = @operator.port
-
       @process_messages_thread = Thread.new { process_messages }
+
+      DeepTest.logger.info { "Started DeepTest service at on port #{@operator.port}" }
     end
 
     unless defined?(NeedWork)
@@ -135,14 +130,7 @@ module DeepTest
     def stop
       @stop_process_messages = true
       operator.shutdown
-      drb_server.stop_service
       @process_messages_thread.join
-    end
-
-    def self.remote_reference(address, port)
-      central_command = DRbObject.new_with_uri("druby://#{address}:#{port}")
-      DeepTest.logger.debug { "Connecting to DeepTest central_command at #{central_command.__drburi}" }
-      central_command
     end
 
     class NoWorkUnitsAvailableError < StandardError; end

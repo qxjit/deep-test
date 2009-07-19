@@ -1,7 +1,7 @@
 module DeepTest
   module Spec
     class Runner < ::Spec::Runner::ExampleGroupRunner
-      def initialize(options, deep_test_options, central_command = nil)
+      def initialize(options, deep_test_options)
         super(options)
         if ::Spec::VERSION::MAJOR == 1 &&
            ::Spec::VERSION::MINOR == 1 &&
@@ -10,26 +10,28 @@ module DeepTest
         end
         @deep_test_options = DeepTest::Options.from_command_line(deep_test_options)
         DeepTest.init @deep_test_options
-        @main = Main.new @deep_test_options, @deep_test_options.new_deployment, self, central_command
-        @central_command = central_command
+      end
+
+      def main
+        @main ||= Main.new @deep_test_options, @deep_test_options.new_deployment, self
       end
 
       def central_command
         # Can't create central_command as default argument to initialize
         # because Main hasn't been invoked at 
         # instantiation time
-        @central_command ||= @deep_test_options.central_command
+        @central_command ||= main.central_command
       end
 
       def load_files(files)
-        @main.load_files files
+        main.load_files files
       end
 
       def run
-        @main.run
+        main.run
       end
 
-      def process_work_units
+      def process_work_units(central_command)
         prepare
 
         examples = (example_groups.map do |g|
