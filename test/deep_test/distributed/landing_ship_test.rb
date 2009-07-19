@@ -43,17 +43,6 @@ module DeepTest
 
         landing_ship.establish_beachhead(options)
       end
-
-      test "establish_beachhead tells Medic to expect live Beachhead processes" do
-        landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
-        central_command = FakeCentralCommand.new
-        options = Options.new(:sync_options => {:source => "/my/local/dir"}, :server_port => central_command.port)
-                                                
-        landing_ship.expects(:`).returns "Beachhead url: druby://remote_host:9999"
-
-        options.central_command.medic.expects(:expect_live_monitors).with(Beachhead)
-        landing_ship.establish_beachhead(options)
-      end
     end
   end
 end

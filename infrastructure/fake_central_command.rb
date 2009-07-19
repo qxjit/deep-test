@@ -4,7 +4,6 @@ module DeepTest
 
     attr_accessor :debug, :simulate_no_agents_running_error
     attr_accessor :stdout, :stderr
-    attr_accessor :medic
     attr_reader :remote_reference
 
     def initialize
@@ -13,7 +12,6 @@ module DeepTest
       @semaphore = Mutex.new
       @stdout = StringIO.new
       @stderr = StringIO.new
-      @medic = Medic.new 0.1
       @remote_reference = drb_server_for self
     end
 

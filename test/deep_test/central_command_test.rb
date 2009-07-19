@@ -23,21 +23,12 @@ module DeepTest
       end
     end
 
-    test "take_result returns argument to write_result when it is available" do
-      central_command = CentralCommand.new Options.new({})
-      central_command.medic.assign_monitor Agent
-      t = Thread.new {central_command.take_result}
-      central_command.write_result :result
-      assert_equal :result, t.value
+    test "take_result raises NoAgentsRunningError if agents are connected" do
+      central_command = CentralCommand.start Options.new({}) 
+      DynamicTeardown.on_teardown { central_command.stop }
+      assert_raises(CentralCommand::NoAgentsRunningError) {central_command.take_result}
     end
-
-    test "take_result raises NoAgentsRunningError if agent triage is fatal when it is called" do
-      central_command = CentralCommand.new Options.new({}) 
-      at("12:00:00") { central_command.medic.assign_monitor Agent }
-      at("12:00:06") do
-        assert_raises(CentralCommand::NoAgentsRunningError) {central_command.take_result}
-      end
-    end
+    
 
     test "write_work returns nil" do
       central_command = CentralCommand.new Options.new({})

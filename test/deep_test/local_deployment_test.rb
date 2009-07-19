@@ -15,23 +15,5 @@ module DeepTest
 
       deployment.load_files([:file_1, :file_2])
     end
-
-    class DieWithoutStartingHeartbeatAgent < Agent
-      def self.heartbeat_interval; 0.05; end
-      def forked(*args)
-        exit(0)
-      end
-    end
-
-    test "deploy_agents tells Medic to expect live Agents" do
-      options = Options.new(:number_of_agents => 1)
-      central_command = TestCentralCommand.start options
-      deployment = LocalDeployment.new options, DieWithoutStartingHeartbeatAgent
-      deployment.deploy_agents
-      3.times do
-        sleep DieWithoutStartingHeartbeatAgent.heartbeat_interval + central_command.medic.fatal_heartbeat_padding
-        assert_equal true, central_command.medic.triage(DieWithoutStartingHeartbeatAgent).fatal?
-      end
-    end
   end
 end

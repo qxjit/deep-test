@@ -40,14 +40,6 @@ module DeepTest
         assert_equal nil, beachhead.deploy_agents
       end
 
-      test "wait_for_heartbeat_to_stop returns once the heartbeat stops" do
-        beachhead = Beachhead.new "", Options.new({}), stub
-        t = Thread.new { beachhead.wait_for_heartbeat_to_stop }
-        Thread.pass
-        beachhead.heartbeat_stopped
-        t.join
-      end
-
       test "service is removed after grace period if agents have not been started" do
         options = Options.new({:number_of_agents => 0})
         central_command = TestCentralCommand.start(options)

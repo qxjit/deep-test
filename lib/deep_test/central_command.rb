@@ -2,7 +2,6 @@ require 'set'
 
 module DeepTest
   class CentralCommand
-    attr_reader :medic
     attr_reader :drb_server
     attr_reader :operator
     attr_reader :switchboard
@@ -11,7 +10,6 @@ module DeepTest
       @options = options
       @work_queue = Queue.new
       @result_queue = Queue.new
-      @medic = Medic.new
 
       if Metrics::Gatherer.enabled?
         require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
@@ -31,7 +29,7 @@ module DeepTest
     end
 
     def take_result
-      raise NoAgentsRunningError if medic.triage(Agent).fatal?
+      raise NoAgentsRunningError unless @switchboard.any_live_wires?
       Timeout.timeout(1, CheckIfAgentsAreStillRunning) { @result_queue.pop }
     rescue CheckIfAgentsAreStillRunning
       retry

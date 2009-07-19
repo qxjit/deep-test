@@ -143,17 +143,6 @@ module DeepTest
       t.join
     end
 
-    test "stops looking for work once it is stopped" do
-      options = Options.new({})
-      central_command = TestCentralCommand.start(options)
-
-      agent = Agent.new(0, options, stub_everything)
-      t = Thread.new { agent.execute }
-      Thread.pass
-      agent.heartbeat_stopped
-      t.join
-    end
-
     test "number is available to indentify agent" do
       assert_equal 1, Agent.new(1, Options.new({}), nil).number
     end

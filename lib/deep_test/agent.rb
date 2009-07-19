@@ -38,16 +38,9 @@ module DeepTest
       DeepTest.logger.debug { "Unable to contact DRb server.  Exiting" }
     end
 
-    def heartbeat_stopped
-      @heartbeat_stopped = true
-    end
-
-    private
-
     def next_work_unit
       @wire.send_message CentralCommand::NeedWork
       begin
-        return nil if @heartbeat_stopped
         message = @wire.next_message(:timeout => 2)
         return message == CentralCommand::NoMoreWork ? nil : message
       rescue Telegraph::NoMessageAvailable

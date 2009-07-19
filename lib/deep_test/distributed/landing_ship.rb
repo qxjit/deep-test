@@ -17,7 +17,6 @@ module DeepTest
         output = `#{command}`
         output.each do |line|
           if line =~ /Beachhead url: (.*)/
-            options.central_command.medic.expect_live_monitors Beachhead
             return DRb::DRbObject.new_with_uri($1)
           end
         end
