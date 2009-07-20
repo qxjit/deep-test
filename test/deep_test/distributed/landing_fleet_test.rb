@@ -27,45 +27,28 @@ module DeepTest
         fleet.establish_beachhead(options)
       end
 
-      test "establish_beachhead returns Beachheads with each agent" do
-        server_1 = mock(:establish_beachhead => :beachhead_1)
-        server_2 = mock(:establish_beachhead => :beachhead_2)
+      test "load_files is invoked on all server" do
+        server_1, server_2 = mock, mock
         options = Options.new({:ui => "UI::Null"})
 
         fleet = LandingFleet.new(options, [server_1, server_2])
 
-        LandingFleet::Beachheads.
-          expects(:new).with(options, [:beachhead_1, :beachhead_2])
+        server_1.expects(:load_files).with(['a'])
+        server_2.expects(:load_files).with(['a'])
 
-        fleet.establish_beachhead(options)
+        fleet.load_files(['a'])
       end
 
-      test "Beachheads dispatches deploy_agents" do
+      test "deploy_agents is invoked on all server" do
         server_1, server_2 = mock, mock
+        options = Options.new({:ui => "UI::Null"})
 
-        beachheads = LandingFleet::Beachheads.new(
-          Options.new({:ui => "UI::Null"}),
-          [server_1, server_2]
-        )
+        fleet = LandingFleet.new(options, [server_1, server_2])
 
         server_1.expects(:deploy_agents)
         server_2.expects(:deploy_agents)
 
-        beachheads.deploy_agents
-      end
-
-      test "Beachheads dispatches load_files" do
-        server_1, server_2 = mock, mock
-
-        beachheads = LandingFleet::Beachheads.new(
-          Options.new({:ui => "UI::Null"}),
-          [server_1, server_2]
-        )
-
-        server_1.expects(:load_files).with(:filelist)
-        server_2.expects(:load_files).with(:filelist)
-
-        beachheads.load_files :filelist
+        fleet.deploy_agents
       end
     end
   end

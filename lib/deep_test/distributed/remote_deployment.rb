@@ -16,8 +16,8 @@ module DeepTest
 
         t = Thread.new do
           @landing_fleet.push_code(@options)
-          @beachheads = @landing_fleet.establish_beachhead(@options)
-          @beachheads.load_files filelist
+          @landing_fleet.establish_beachhead(@options)
+          @landing_fleet.load_files filelist
         end
 
         filelist[1..-1].each {|f| load f}
@@ -34,7 +34,7 @@ module DeepTest
       end
 
       def deploy_agents
-        @beachheads.deploy_agents
+        @landing_fleet.deploy_agents
       rescue => e
         raise if failed_over?
         fail_over("deploy_agents", e)
@@ -43,11 +43,11 @@ module DeepTest
 
       def fail_over(method, exception)
         @options.ui_instance.distributed_failover_to_local(method, exception)
-        @beachheads = @failover_deployment
+        @landing_fleet = @failover_deployment
       end
 
       def failed_over?
-        @beachheads == @failover_deployment
+        @landing_fleet == @failover_deployment
       end
     end
   end

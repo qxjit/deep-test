@@ -16,6 +16,7 @@ module DeepTest
     end
 
     def deploy_agents
+      DeepTest.logger.debug { "Deploying #{number_of_agents} #{@agent_class}s" }
       each_agent do |agent_num|
         warlock.start "agent #{agent_num}", @agent_class.new(agent_num, @options, @options.new_listener_list)
       end        

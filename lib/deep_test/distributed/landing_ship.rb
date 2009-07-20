@@ -16,11 +16,25 @@ module DeepTest
         
         output = `#{command}`
         output.each do |line|
-          if line =~ /Beachhead url: (.*)/
-            return DRb::DRbObject.new_with_uri($1)
+          if line =~ /Beachhead port: (.+)/
+            @wire = Telegraph::Wire.connect(@config[:address], $1.to_i)
           end
         end
-        raise "LandingShip unable to establish Beachhead.  Output from #{@config[:address]} was:\n#{output}"
+        raise "LandingShip unable to establish Beachhead.  Output from #{@config[:address]} was:\n#{output}" unless @wire
+      end
+
+      def load_files(files)
+        @wire.send_message Beachhead::LoadFiles.new(files)
+      end
+
+      def deploy_agents
+        @wire.send_message Beachhead::DeployAgents
+        begin
+          message = @wire.next_message :timeout => 1
+          raise "Unexpected message from Beachhead: #{message.inspect}" unless message == Beachhead::Done
+        rescue Telegraph::NoMessageAvailable
+          retry
+        end
       end
 
       def ssh_command(options)
@@ -36,7 +50,7 @@ module DeepTest
       def spawn_command(options)
         "#{ShellEnvironment.like_login} && " + 
         "cd #{options.mirror_path(@config[:work_dir])} && " + 
-        "OPTIONS=#{options.to_command_line} HOST=#{@config[:address]} " + 
+        "OPTIONS=#{options.to_command_line} " + 
         "ruby lib/deep_test/distributed/establish_beachhead.rb" 
       end
     end

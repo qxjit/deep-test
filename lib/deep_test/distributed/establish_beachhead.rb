@@ -4,13 +4,12 @@ DeepTest.logger.debug { "mirror establish_beachhead for #{options.origin_hostnam
 
 STDIN.close
 
-beachhead = DeepTest::Distributed::Beachhead.new(
+beachhead_port = DeepTest::Distributed::Beachhead.new(
   File.join(options.mirror_path('/tmp'), File.basename(options.sync_options[:source])), 
-  options, 
-  DeepTest::Distributed::SshClientConnectionInfo.new
-).daemonize(ENV['HOST'])
+  options
+).daemonize
 
-puts "Beachhead url: #{beachhead.__drburi}"
+puts "Beachhead port: #{beachhead_port}"
 $stdout.flush
 
 exit!(0)

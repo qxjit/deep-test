@@ -8,7 +8,7 @@ module DeepTest
             execute *demon_args
           end
         rescue Exception => e
-          DeepTest.logger.debug { "Exception in #{name} (#{Process.pid}): #{e.message}" }
+          DeepTest.logger.info { "Exception in #{name} (#{Process.pid}): #{e.message}" }
           raise
         end
       end

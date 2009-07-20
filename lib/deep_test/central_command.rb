@@ -28,9 +28,9 @@ module DeepTest
     end
 
     def take_result
-      raise NoAgentsRunningError unless @switchboard.any_live_wires?
       Timeout.timeout(1, CheckIfAgentsAreStillRunning) { @result_queue.pop }
     rescue CheckIfAgentsAreStillRunning
+      raise NoAgentsRunningError unless @switchboard.any_live_wires?
       retry
     end
 

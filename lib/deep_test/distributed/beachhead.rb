@@ -5,9 +5,8 @@ module DeepTest
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 
-      def initialize(base_path, options, connection_info)
+      def initialize(base_path, options)
         super options
-        @connection_info = connection_info
         @base_path = base_path
       end
 
@@ -24,14 +23,12 @@ module DeepTest
         files.each do |file|
           load resolver.resolve(file)
         end
-        nil
       end
 
       def deploy_agents
         @agents_deployed = true
         super
         warlock.exit_when_none_running
-        nil
       end
 
       def agents_deployed?
@@ -44,30 +41,57 @@ module DeepTest
         super
       end
 
-      def execute(address, innie, outie, grace_period)
+      def execute(innie, outie, grace_period)
         innie.close
 
-        DRb.start_service "drubyall://#{address}:0", self
+        switchboard = Telegraph::Switchboard.new
+        operator = Telegraph::Operator.listen "0.0.0.0", 0, switchboard
 
-        DeepTest.logger.info { "Beachhead started at #{DRb.uri}" }
+        DeepTest.logger.info { "Beachhead started on port #{operator.port}" }
 
-        outie.write DRb.uri
+        outie.write operator.port
         outie.close
 
         launch_mercy_killer grace_period
-        DRb.thread.join
+
+        loop do
+          begin
+            message, wire = switchboard.next_message :timeout => 1
+
+            case message
+            when LoadFiles
+              load_files message.files
+            when DeployAgents
+              deploy_agents
+              wire.send_message Done
+              operator.shutdown
+            end
+          rescue Telegraph::NoMessageAvailable
+            retry
+          end
+        end
       end
 
-      def daemonize(address, grace_period = MERCY_KILLING_GRACE_PERIOD)
+      def daemonize(grace_period = MERCY_KILLING_GRACE_PERIOD)
         innie, outie = IO.pipe
 
-        warlock.start "Beachhead", self, 
-                      address, innie, outie, grace_period
+        warlock.start "Beachhead", self, innie, outie, grace_period
 
         outie.close
-        uri = innie.gets
+        port = innie.gets
         innie.close
-        DRbObject.new_with_uri uri
+        port.to_i
+      end
+
+      unless defined? DeployAgents
+        DeployAgents = "DeployAgents"
+        Done = "Done"
+        class LoadFiles
+          attr_reader :files
+          def initialize(files)
+            @files = files
+          end
+        end
       end
     end
   end

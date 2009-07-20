@@ -46,7 +46,7 @@ module DeepTest
       include CentralCommand::Operation
       attr_reader :s
       def initialize(s); @s = s; end
-      def execute; stream.write @s; end
+      def execute; stream.write s; end
       def ==(other); self.class == other.class && s == other.s; end
     end
 

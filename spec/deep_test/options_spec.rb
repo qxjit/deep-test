@@ -15,7 +15,6 @@ module DeepTest
     it "should have reasonable defaults" do
       options = Options.new({})
       options.timeout_in_seconds.should == 30
-      options.server_port.should == nil
       options.pattern.should == nil
       options.metrics_file.should == nil
     end
@@ -31,10 +30,6 @@ module DeepTest
     it "should support distributed_hosts" do
       Options.new(:distributed_hosts => %w[host1 host2]).
         distributed_hosts.should == %w[host1 host2]
-    end
-
-    it "should support server_port" do
-      Options.new(:server_port => 10).server_port.should == 10
     end
 
     it "should support sync_options" do
