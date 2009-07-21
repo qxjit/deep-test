@@ -4,6 +4,11 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
 require 'yaml'
+
+require 'rubygems'
+gem 'rspec', '=1.1.8'
+require 'spec/rake/spectask'
+
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 require "deep_test/rake_tasks"
 
@@ -41,30 +46,23 @@ DeepTest::TestTask.new(:distributed_test) do |t|
                     :rsync_options => "--exclude=.svn"}
 end
 
-def rspec_present?
-  defined?(Spec)
+Spec::Rake::SpecTask.new(:spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
-if rspec_present?
-  Spec::Rake::SpecTask.new(:spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-  end
-  
-  Spec::Rake::SpecTask.new(:deep_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2
-  end
-
-  Spec::Rake::SpecTask.new(:distributed_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :number_of_workers => 2, 
-                :distributed_server => "druby://localhost:8000",
-                :sync_options => {:source => File.dirname(__FILE__), 
-                                  :local => true,
-                                  :rsync_options => "--exclude=.svn"}
-  end
+Spec::Rake::SpecTask.new(:deep_spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test :number_of_workers => 2
 end
 
+Spec::Rake::SpecTask.new(:distributed_spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test :number_of_workers => 2, 
+              :distributed_server => "druby://localhost:8000",
+              :sync_options => {:source => File.dirname(__FILE__), 
+                                :local => true,
+                                :rsync_options => "--exclude=.svn"}
+end
 
 DeepTest::TestTask.new(:distribute_tests_to_minis) do |t|
   t.number_of_workers = 2
@@ -177,8 +175,6 @@ task :publish_rdoc => [:rerdoc] do
   sh "chmod -R 775 doc"
   sh "scp -rqp doc/* #{username}@rubyforge.org:/var/www/gforge-projects/deep-test"
 end
-
-Gem::manage_gems
 
 specification = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY

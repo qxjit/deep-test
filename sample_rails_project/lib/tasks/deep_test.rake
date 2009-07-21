@@ -1,3 +1,6 @@
+require 'rubygems'
+gem 'rspec', '=1.1.8'
+require 'spec/rake/spectask'
 $LOAD_PATH << File.dirname(__FILE__) + "/../../../lib"
 require 'deep_test/rake_tasks'
 

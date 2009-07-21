@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'spec/runner/example_group_runner'
 require 'spec/example/example_group_methods'
 require 'spec/rake/spectask'
