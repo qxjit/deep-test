@@ -11,35 +11,6 @@ module DeepTest
     end
   end  
 
-  # Fork in a separate thread.  If we fork from a DRb thread
-  #  (a thread handling a method call invoked over drb),
-  #  DRb still thinks the current object is the DRb Front Object,
-  #  and reports its uri as the same as in the parent process, even
-  #  if you restart DRb service.
-  #
-  # Stop all drb servers in child process to ensure that objects passed
-  #  over drb to children are treated as remote objects.
-  #
-  def self.drb_safe_fork
-    Thread.new do
-      Process.fork do
-        DRb.stop_service # stop the primary server
-        DRb.instance_variable_get(:@server).values.each do |server|
-          server.stop_service
-        end
-        DRb::DRbConn.instance_eval do
-          @mutex.synchronize do
-            @pool.each do |conn|
-              conn.close if conn.alive?
-            end
-            @pool.clear
-          end
-        end
-        yield
-      end
-    end.value
-  end
-
   def self.init(options)
     return if @initialized
     @initialized = true
@@ -58,7 +29,6 @@ module DeepTest
 end
 
 require "logger"
-require "drb"
 require "timeout"
 require "thread"
 require "socket"
@@ -68,7 +38,6 @@ require "base64"
 
 require File.dirname(__FILE__) + "/telegraph"
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
-require File.dirname(__FILE__) + "/deep_test/extensions/drb_extension"
 
 require File.dirname(__FILE__) + "/deep_test/demon"
 require File.dirname(__FILE__) + "/deep_test/deadlock_detector"

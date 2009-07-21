@@ -60,8 +60,7 @@ module DeepTest
     end
 
     # Don't store UI instances in the options instance, which will
-    # need to be dumped over DRb.  UI instances may not be dumpable
-    # and we don't want to have to start yet another DRb Server
+    # need to be dumped over Telegraph since UI instances may not be dumpable.
     #
     UI_INSTANCES = {} unless defined?(UI_INSTANCES)
     def ui_instance

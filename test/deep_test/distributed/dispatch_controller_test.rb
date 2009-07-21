@@ -81,24 +81,6 @@ module DeepTest
         controller.dispatch(:method_call_2)
       end
 
-      test "receiver is dropped when connection is refused" do
-        receiver_1, receiver_2 = mock, mock
-        receiver_1.expects(:method_call_1).raises(DRb::DRbConnError)
-        receiver_1.expects(:method_call_2).never
-
-        receiver_2.expects(:method_call_1).returns(:value)
-        receiver_2.expects(:method_call_2)
-
-        controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
-          [receiver_1, receiver_2]
-        )
-
-        assert_equal [:value], controller.dispatch(:method_call_1)
-
-        controller.dispatch(:method_call_2)
-      end
-      
       test "receiver is dropped when any exception occurs" do
         receiver = mock
         receiver.expects(:method_call).raises(Exception)
@@ -130,20 +112,6 @@ module DeepTest
 [DeepTest] file1:1
 [DeepTest] file2:2
         end_log
-      end
-
-      test "no error is printed if dispatching without error" do
-        receiver_1 =  mock
-        receiver_1.expects(:method_call_1).raises(DRb::DRbConnError)
-
-        controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
-          [receiver_1]
-        )
-
-        DeepTest.logger.expects(:error).never
-
-        controller.dispatch_with_options(:method_call_1, :ignore_connection_error => true)
       end
 
       test "dispatch calls notifies ui of start and stop of dispatch" do

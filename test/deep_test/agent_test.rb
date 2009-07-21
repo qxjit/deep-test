@@ -110,7 +110,7 @@ module DeepTest
 
     test "Agent::Error can marshal itself even if the contents are not marshallable" do
       o = Object.new
-      o.extend DRb::DRbUndumped
+      def o._dump; raise "error"; end
 
       error = Agent::Error.new o, Exception.new("my error")
       error_through_marshalling = Marshal.load Marshal.dump(error)

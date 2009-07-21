@@ -1,7 +1,7 @@
 module DeepTest
   module Distributed
     class Beachhead < LocalDeployment
-      include Demon, DRb::DRbUndumped
+      include Demon
 
       MERCY_KILLING_GRACE_PERIOD = 10 * 60 unless defined?(MERCY_KILLING_GRACE_PERIOD)
 

@@ -34,8 +34,6 @@ module DeepTest
       end
     rescue CentralCommand::NoWorkUnitsRemainingError
       DeepTest.logger.debug { "Agent #{number}: no more work to do" }
-    rescue DRb::DRbConnError, Timeout::Error
-      DeepTest.logger.debug { "Unable to contact DRb server.  Exiting" }
     end
 
     def next_work_unit

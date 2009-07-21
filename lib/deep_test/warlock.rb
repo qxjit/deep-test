@@ -15,7 +15,7 @@ module DeepTest
       begin
         pid = nil
         @demons_semaphore.synchronize do 
-          pid = DeepTest.drb_safe_fork do
+          pid = fork do
             # Fork leaves the semaphore locked and we'll never make it
             # to end of synchronize block.
             #
