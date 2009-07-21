@@ -47,12 +47,10 @@ module DeepTest
 
     def write_result(result)
       @result_queue.push result
-      nil
     end
 
     def write_work(work_unit)
       @work_queue.push work_unit
-      nil
     end
 
     def stdout
@@ -89,15 +87,19 @@ module DeepTest
       loop do
         begin
           return if @stop_process_messages
-          message, wire = switchboard.next_message(:timeout => 1)
-
-          wires_waiting_for_work.each { |w| send_work wire }
+          wires_waiting_for_work.each { |w| send_work w }
+          message, wire = switchboard.next_message(:timeout => 0.5)
 
           case message
-          when NeedWork; send_work wire
-          when Result; write_result message
-          when Operation; message.execute
-          else raise UnexpectedMessageError, message.inspect
+          when NeedWork
+            send_work wire
+          when Result 
+            write_result message
+            send_work wire
+          when Operation
+            message.execute
+          else 
+            raise UnexpectedMessageError, message.inspect
           end
 
         rescue Telegraph::NoMessageAvailable

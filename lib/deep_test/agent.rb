@@ -20,6 +20,8 @@ module DeepTest
       reconnect_to_database
 
       @listener.starting(self)
+      @wire.send_message CentralCommand::NeedWork
+
       while work_unit = next_work_unit
         @listener.starting_work(self, work_unit)
 
@@ -37,7 +39,6 @@ module DeepTest
     end
 
     def next_work_unit
-      @wire.send_message CentralCommand::NeedWork
       begin
         message = @wire.next_message(:timeout => 2)
         return message == CentralCommand::NoMoreWork ? nil : message

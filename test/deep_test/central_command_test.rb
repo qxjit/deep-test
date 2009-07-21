@@ -29,17 +29,6 @@ module DeepTest
       assert_raises(CentralCommand::NoAgentsRunningError) {central_command.take_result}
     end
     
-
-    test "write_work returns nil" do
-      central_command = CentralCommand.new Options.new({})
-      assert_equal nil, central_command.write_work(:a)
-    end
-
-    test "write_result returns nil" do
-      central_command = CentralCommand.new Options.new({})
-      assert_equal nil, central_command.write_result(:a)
-    end
-
     test "start returns instance of central_command" do
       central_command = CentralCommand.start Options.new({})
       DynamicTeardown.on_teardown { central_command.stop }
@@ -75,6 +64,23 @@ module DeepTest
       assert_equal result_2, central_command.take_result
       assert_equal result_3, central_command.take_result
     end
+
+    test "after starting CentralCommand responds to Result by supplying a new unit of work" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+      central_command.write_work(:a)
+      central_command.write_work(:b)
+      central_command.write_work(:c)
+
+      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      result_1, result_2, result_3 = TestResult.new(1), TestResult.new(2), TestResult.new(3)
+      [[result_1, :a], [result_2, :b], [result_3, :c]].each do |result, work_unit|
+        Thread.pass
+        wire.send_message result_1
+        assert_equal work_unit, wire.next_message(:timeout => 2.0)
+      end
+    end
+
 
     test "will add results to queue with a worker waiting for work that is not available" do
       central_command = CentralCommand.start(options = Options.new({}))
