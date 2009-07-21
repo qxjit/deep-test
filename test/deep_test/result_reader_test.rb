@@ -9,7 +9,7 @@ module DeepTest
     end
 
     test "reads all as many results as requested" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       1.upto(4) {|i| central_command.write_result FakeResult.new(i)}
       work_units = {1 => "One", 2 => "Two", 3 => "Three"}
       ResultReader.new(central_command).read(work_units) {}
@@ -17,8 +17,7 @@ module DeepTest
     end
 
     test "returns unread tests on NoAgentsRunningError" do
-      central_command = FakeCentralCommand.new
-      central_command.simulate_no_agents_running_error = true
+      central_command = TestCentralCommand.start Options.new({})
       work_units = {1 => "One"}
       FailureMessage.expects(:show)
       ResultReader.new(central_command).read(work_units) {}
@@ -26,7 +25,7 @@ module DeepTest
     end
 
     test "yields each result" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       1.upto(3) {|i| central_command.write_result FakeResult.new(i)}
       results = []
       work_units = {1 => "One", 2 => "Two", 3 => "Three"}
@@ -38,7 +37,7 @@ module DeepTest
     end
 
     test "keeps attempting to read results when none are available" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       work_units = {1 => "One", 2 => "Two", 3 => "Three"}
       t = Thread.new {ResultReader.new(central_command).read(work_units) {}}
       1.upto(4) {|i| central_command.write_result FakeResult.new(i)}
@@ -47,7 +46,7 @@ module DeepTest
     end
 
     test "doesn't yield empty results" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       results = []
       t = Thread.new {ResultReader.new(central_command).read(1 => "One") {|r| results << r}}
       central_command.write_result FakeResult.new(1)
@@ -56,7 +55,7 @@ module DeepTest
     end
 
     test "prints output if result has output" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result mock(:output => "output", :identifier => 1)
 
       out = capture_stdout do
@@ -67,7 +66,7 @@ module DeepTest
     end
 
     test "doesn't print any output if output is nil" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result mock(:output => nil, :identifier => 1)
 
       out = capture_stdout do
@@ -81,7 +80,7 @@ module DeepTest
       error = RuntimeError.new "message"
       error.set_backtrace ['a', 'b']
 
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result Agent::Error.new("work_unit", error)
 
 
@@ -93,7 +92,7 @@ module DeepTest
     end
 
     test "doesn't yield Agent::Error results" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result Agent::Error.new("work_unit", RuntimeError.new)
 
 
@@ -106,7 +105,7 @@ module DeepTest
     end
 
     test "doesn't modify original work unit hash" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result FakeResult.new(1)
       work_units = {1 => "One"}
       ResultReader.new(central_command).read(work_units) {} 
@@ -114,7 +113,7 @@ module DeepTest
     end
 
     test "returns remaining tests that didn't have errors" do
-      central_command = FakeCentralCommand.new
+      central_command = TestCentralCommand.start Options.new({})
       central_command.write_result FakeResult.new(1)
       central_command.write_result Agent::Error.new("work_unit", RuntimeError.new)
 

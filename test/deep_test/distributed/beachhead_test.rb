@@ -22,7 +22,7 @@ module DeepTest
           beachhead = Beachhead.new "", options
           beachhead.daemonize(0.25)
           # Have to sleep long enough to warlock to reap dead process
-          sleep 1.0
+          sleep 2.0
           assert_equal 0, beachhead.warlock.demon_count
         ensure
           beachhead.warlock.stop_demons

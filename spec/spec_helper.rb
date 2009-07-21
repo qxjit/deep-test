@@ -13,8 +13,18 @@ describe "sandboxed rspec_options", :shared => true do
   end
 
   after(:each) { ::Spec::Runner.use @original_rspec_options }
+
   before(:each) { DynamicTeardown.setup }
   after(:each) { DynamicTeardown.teardown }
+
+  before(:each) do
+    @old_logger = DeepTest.logger
+    DeepTest.logger = TestLogger.new
+  end
+
+  after(:each) do
+    DeepTest.logger = @old_logger if @old_logger
+  end
 
   class FakeReporter
     attr_reader :number_of_examples, :examples_finished, :number_of_errors
