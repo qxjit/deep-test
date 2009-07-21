@@ -4,8 +4,12 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
 require 'yaml'
+
+require 'rubygems'
+gem('rspec', ENV['RSPEC_VERSION'] || '1.1.12')
+require 'spec/rake/spectask'
+
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
-gem('rspec', ENV['RSPEC_VERSION']) if ENV['RSPEC_VERSION']
 
 require "deep_test/rake_tasks"
 
@@ -48,34 +52,32 @@ DeepTest::TestTask.new(:distributed_test) do |t|
                     :rsync_options => "--exclude=.svn"}
 end
 
-def rspec_present?
-  defined?(Spec)
+Spec::Rake::SpecTask.new(:spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
-if rspec_present?
-  Spec::Rake::SpecTask.new(:spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-  end
-  
-  Spec::Rake::SpecTask.new(:deep_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test({})
-  end
+Spec::Rake::SpecTask.new(:spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+end
 
-  task :'deep_spec_1.1.8' do 
-    sh 'rake deep_spec RSPEC_VERSION=1.1.8'
-  end
+Spec::Rake::SpecTask.new(:deep_spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test({})
+end
 
-  task :'deep_spec_1.1.12' do
-    sh 'rake deep_spec RSPEC_VERSION=1.1.12'
-  end
+task :'deep_spec_1.1.8' do 
+  sh 'rake deep_spec RSPEC_VERSION=1.1.8'
+end
 
-  Spec::Rake::SpecTask.new(:distributed_spec) do |t|
-    t.spec_files = FileList['spec/**/*_spec.rb']
-    t.deep_test :distributed_hosts => %w[localhost],
-                :sync_options => {:source => File.dirname(__FILE__), 
-                                  :rsync_options => "--exclude=.svn"}
-  end
+task :'deep_spec_1.1.12' do
+  sh 'rake deep_spec RSPEC_VERSION=1.1.12'
+end
+
+Spec::Rake::SpecTask.new(:distributed_spec) do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.deep_test :distributed_hosts => %w[localhost],
+              :sync_options => {:source => File.dirname(__FILE__), 
+                                :rsync_options => "--exclude=.svn"}
 end
 
 Rake::TestTask.new(:negative_acceptance_tests) do |t|

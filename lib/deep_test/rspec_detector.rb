@@ -1,10 +1,8 @@
 module DeepTest
   class RSpecDetector
     def self.if_rspec_available
-      require "rubygems"
-      # requiring 'spec' directly blows up unit-record
-      require "spec/version"
       if defined?(::Spec)
+        require 'spec/version'
         if ::Spec::VERSION::MAJOR == 1 &&
            ::Spec::VERSION::MINOR == 1 &&
            ::Spec::VERSION::TINY  >= 8
@@ -18,7 +16,6 @@ module DeepTest
           end
         end
       end
-    rescue LoadError, Gem::LoadError
     end
   end
 end

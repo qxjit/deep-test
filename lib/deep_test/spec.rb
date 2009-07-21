@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'spec/runner/example_group_runner'
 if ::Spec::VERSION::MAJOR == 1 &&
    ::Spec::VERSION::MINOR == 1 &&

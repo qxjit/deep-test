@@ -1,5 +1,8 @@
-require File.dirname(__FILE__) + '/../lib/deep_test'
+require 'rubygems'
+gem('rspec', ENV['RSPEC_VERSION'] || '1.1.12')
 require 'spec'
+
+require File.dirname(__FILE__) + '/../lib/deep_test'
 require File.dirname(__FILE__) + "/../infrastructure/load"
 
 describe "sandboxed rspec_options", :shared => true do
