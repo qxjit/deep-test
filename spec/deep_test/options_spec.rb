@@ -14,13 +14,8 @@ module DeepTest
 
     it "should have reasonable defaults" do
       options = Options.new({})
-      options.timeout_in_seconds.should == 30
       options.pattern.should == nil
       options.metrics_file.should == nil
-    end
-
-    it "should support timeout_in_seconds" do
-      Options.new(:timeout_in_seconds => 2).timeout_in_seconds.should == 2
     end
 
     it "should support pattern" do
@@ -93,7 +88,7 @@ module DeepTest
     end
 
     it "should support strings as well as symbols" do
-      Options.new("timeout_in_seconds" => 2).timeout_in_seconds.should == 2
+      Options.new("server_port" => 2).server_port.should == 2
     end
 
     it "should raise error when invalid option is specifed" do
@@ -103,18 +98,14 @@ module DeepTest
     end
 
     it "should convert to command line option string" do
-      options = Options.new(:number_of_agents => 1, :timeout_in_seconds => 3)
-      options.to_command_line.should == 
-        Base64.encode64(Marshal.dump(options)).gsub("\n","")
+      options = Options.new(:number_of_agents => 1)
+      options.to_command_line.should == Base64.encode64(Marshal.dump(options)).gsub("\n","")
     end
 
     it "should parse from command line option string" do
-      options = Options.new(:number_of_agents => 2, 
-                            :timeout_in_seconds => 3,
-                            :pattern => '*')
+      options = Options.new(:number_of_agents => 2, :pattern => '*')
       parsed_options = Options.from_command_line(options.to_command_line)
       parsed_options.number_of_agents.should == 2
-      parsed_options.timeout_in_seconds.should == 3
       parsed_options.pattern.should == '*'
     end
 

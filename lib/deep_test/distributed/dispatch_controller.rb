@@ -19,9 +19,7 @@ module DeepTest
           Thread.new do
             begin
               Thread.current[:receiver] = r
-              Timeout.timeout(@options.timeout_in_seconds) do
-                r.send method_name, *args
-              end
+              r.send method_name, *args
             rescue Exception => e
               Thread.current[:original_exception] = e
               raise

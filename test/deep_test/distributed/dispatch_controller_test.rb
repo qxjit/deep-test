@@ -50,43 +50,12 @@ module DeepTest
         end
       end
 
-      test "dispatch omits results that are taking too long" do
-        receiver = Object.new
-        def receiver.sleep_100_millis
-          sleep 0.1
-        end
-
-        controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
-          [receiver]
-        )
-
-        assert_equal [], controller.dispatch(:sleep_100_millis)
-      end
-
-      test "after timeout, no further calls are sent to that receiver" do
-        receiver_1, receiver_2 = mock, mock
-        receiver_1.expects(:method_call_1).raises(Timeout::Error.new("message"))
-        receiver_1.expects(:method_call_2).never
-
-        receiver_2.expects(:method_call_1)
-        receiver_2.expects(:method_call_2)
-
-        controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
-          [receiver_1, receiver_2]
-        )
-
-        controller.dispatch(:method_call_1)
-        controller.dispatch(:method_call_2)
-      end
-
       test "receiver is dropped when any exception occurs" do
         receiver = mock
         receiver.expects(:method_call).raises(Exception)
 
         controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
+          Options.new({:ui => "UI::Null"}),
           [receiver]
         )
 
@@ -101,7 +70,7 @@ module DeepTest
         receiver.expects(:method_call).raises(e)
 
         controller = DispatchController.new(
-          Options.new({:ui => "UI::Null", :timeout_in_seconds => 0.05}),
+          Options.new({:ui => "UI::Null"}),
           [receiver]
         )
 
