@@ -73,7 +73,7 @@ module DeepTest
       @options.server_port = @operator.port
       @process_messages_thread = Thread.new { process_messages }
 
-      DeepTest.logger.info { "Started DeepTest service at on port #{@operator.port}" }
+      DeepTest.logger.info { "Started DeepTest service on port #{@operator.port}" }
     end
 
     unless defined?(NeedWork)
