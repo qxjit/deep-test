@@ -42,7 +42,7 @@ module DeepTest
       central_command.write_work(:b)
       central_command.write_work(:c)
 
-      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire = Telegraph::Wire.connect("localhost", options.server_port)
       [:a, :b, :c].each do |work_unit|
         Thread.pass
         wire.send_message CentralCommand::NeedWork
@@ -53,7 +53,7 @@ module DeepTest
     test "after starting CentralCommand responds to Result messages adding results to the queue" do
       central_command = CentralCommand.start(options = Options.new({}))
       DynamicTeardown.on_teardown { central_command.stop }
-      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire = Telegraph::Wire.connect("localhost", options.server_port)
       result_1, result_2, result_3 = TestResult.new(1), TestResult.new(2), TestResult.new(3)
 
       [result_1, result_2, result_3].each do |result|
@@ -72,7 +72,7 @@ module DeepTest
       central_command.write_work(:b)
       central_command.write_work(:c)
 
-      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire = Telegraph::Wire.connect("localhost", options.server_port)
       result_1, result_2, result_3 = TestResult.new(1), TestResult.new(2), TestResult.new(3)
       [[result_1, :a], [result_2, :b], [result_3, :c]].each do |result, work_unit|
         Thread.pass
@@ -85,7 +85,7 @@ module DeepTest
     test "will add results to queue with a worker waiting for work that is not available" do
       central_command = CentralCommand.start(options = Options.new({}))
       DynamicTeardown.on_teardown { central_command.stop }
-      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire = Telegraph::Wire.connect("localhost", options.server_port)
 
       wire.send_message CentralCommand::NeedWork
       wire.send_message TestResult.new(1)
@@ -103,7 +103,7 @@ module DeepTest
       DynamicTeardown.on_teardown { $called = nil }
       central_command = CentralCommand.start(options = Options.new({}))
       DynamicTeardown.on_teardown { central_command.stop }
-      wire = Telegraph::Wire.connect("localhost", options.telegraph_port)
+      wire = Telegraph::Wire.connect("localhost", options.server_port)
       wire.send_message SetCalledGlobalToTrue.new
 
       Timeout.timeout(2) do

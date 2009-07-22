@@ -70,7 +70,7 @@ module DeepTest
     def start
       @switchboard = Telegraph::Switchboard.new
       @operator = Telegraph::Operator.listen("0.0.0.0", 0, @switchboard)
-      @options.telegraph_port = @operator.port
+      @options.server_port = @operator.port
       @process_messages_thread = Thread.new { process_messages }
 
       DeepTest.logger.info { "Started DeepTest service at on port #{@operator.port}" }

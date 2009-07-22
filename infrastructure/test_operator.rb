@@ -3,7 +3,7 @@ module DeepTest
     def self.listen(options = nil)
       operator = super("localhost", 0, Telegraph::Switchboard.new)
       DynamicTeardown.on_teardown { operator = shutdown }
-      options.telegraph_port = operator.port if options
+      options.server_port = operator.port if options
       operator 
     end
 

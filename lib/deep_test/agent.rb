@@ -10,7 +10,7 @@ module DeepTest
     end
 
     def connect
-      @wire = Telegraph::Wire.connect(@options.origin_hostname, @options.telegraph_port)
+      @wire = Telegraph::Wire.connect(@options.origin_hostname, @options.server_port)
     end
 
     def execute
