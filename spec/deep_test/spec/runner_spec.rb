@@ -86,11 +86,28 @@ module DeepTest
         central_command = TestCentralCommand.start deep_test_options
         runner = Runner.new(options, deep_test_options.to_command_line)
 
-        describe("test") do
-          it("pending") {pending {1.should == 1}}; 
-        end
+        describe("test") { it("does") {} }
 
         central_command.write_result Agent::Error.new("example", RuntimeError.new)
+        capture_stdout do
+          runner.process_work_units(central_command).should == false
+        end
+
+        options.reporter.number_of_errors.should == 1
+      end
+
+      it "should return a singl efailure when multiple agent error occurs" do
+        deep_test_options = Options.new({})
+        central_command = TestCentralCommand.start deep_test_options
+        runner = Runner.new(options, deep_test_options.to_command_line)
+
+        describe("test") do
+          it("does a") {}
+          it("does b") {}
+        end
+
+        central_command.write_result Agent::Error.new("example 1", RuntimeError.new)
+        central_command.write_result Agent::Error.new("example 2", RuntimeError.new)
         capture_stdout do
           runner.process_work_units(central_command).should == false
         end

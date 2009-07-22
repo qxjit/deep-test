@@ -7,8 +7,10 @@ module DeepTest
             Signal.trap("TERM") { throw :exit_demon }
             execute *demon_args
           end
+        rescue SystemExit => e
+          raise
         rescue Exception => e
-          DeepTest.logger.info { "Exception in #{name} (#{Process.pid}): #{e.message}" }
+          FailureMessage.show self.class.name, "Process #{Process.pid} exiting with excetion: #{e.class}: #{e.message}"
           raise
         end
       end

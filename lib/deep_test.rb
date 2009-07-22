@@ -17,9 +17,9 @@ module DeepTest
     Metrics::Gatherer.setup(options)
   end
 
-  class WorkUnitNeverReceivedError < StandardError
-    def initialize
-      super "DeepTest result never received.  Maybe an error was printed above?"
+  class IncompleteTestRunError < StandardError
+    def initialize(count)
+      super "#{count} tests were not run because the DeepTest Agents died"
     end
 
     def backtrace

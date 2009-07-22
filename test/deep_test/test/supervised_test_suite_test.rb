@@ -43,13 +43,28 @@ module DeepTest
         class AgentErrorTestCase < ::Test::Unit::TestCase
           test("1") {}
         end
-        test_case = AgentErrorTestCase.new("test_1")
 
         central_command = TestCentralCommand.start options
-        supervised_suite = SupervisedTestSuite.new(test_case, central_command)
+        supervised_suite = SupervisedTestSuite.new(AgentErrorTestCase.suite, central_command)
         result = ::Test::Unit::TestResult.new
 
-        central_command.write_result Agent::Error.new(test_case, RuntimeError.new)
+        central_command.write_result Agent::Error.new(AgentErrorTestCase.new("test_1"), RuntimeError.new)
+        capture_stdout {supervised_suite.run(result) {}}
+
+        assert_equal 1, result.error_count
+      end
+
+      test "multiple agent errors are consolidated to be one error" do
+        options = Options.new({})
+        class MultipleAgentErrorTestCase < ::Test::Unit::TestCase
+          test("1") {}; test("2") {}
+        end
+        central_command = TestCentralCommand.start options
+        supervised_suite = SupervisedTestSuite.new(MultipleAgentErrorTestCase.suite, central_command)
+        result = ::Test::Unit::TestResult.new
+
+        central_command.write_result Agent::Error.new(MultipleAgentErrorTestCase.new("test_1"), RuntimeError.new)
+        central_command.write_result Agent::Error.new(MultipleAgentErrorTestCase.new("test_2"), RuntimeError.new)
         capture_stdout {supervised_suite.run(result) {}}
 
         assert_equal 1, result.error_count

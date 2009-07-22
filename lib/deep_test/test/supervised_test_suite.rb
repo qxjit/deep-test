@@ -37,8 +37,8 @@ module DeepTest
             yield ::Test::Unit::TestCase::FINISHED, test.name if block_given?
           end
 
-        missing_tests.each do |name, test_case|
-          result.add_error ::Test::Unit::Error.new(name, WorkUnitNeverReceivedError.new)
+        if missing_tests.any?
+          result.add_error ::Test::Unit::Error.new("DeepTest Test Run", IncompleteTestRunError.new(missing_tests.size))
         end
       ensure
         DeepTest.logger.debug { "SupervisedTestSuite: exiting with #{missing_tests.size} results left" }

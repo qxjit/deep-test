@@ -52,15 +52,16 @@ module DeepTest
 
         success = true
 
-        missing_exmaples = ResultReader.new(central_command).read(examples_by_location) do |example, result|
+        missing_examples = ResultReader.new(central_command).read(examples_by_location) do |example, result|
           @options.reporter.example_finished(example, result.error)
           success &= result.success?
         end
 
-        success &= missing_exmaples.empty?
+        success &= missing_examples.empty?
 
-        missing_exmaples.each do |identifier, example|
-          @options.reporter.example_finished(example, WorkUnitNeverReceivedError.new)
+        if missing_examples.any?
+          @options.reporter.example_finished(examples_by_location[missing_examples.keys.first],
+                                             IncompleteTestRunError.new(missing_examples.size))
         end
 
         success
