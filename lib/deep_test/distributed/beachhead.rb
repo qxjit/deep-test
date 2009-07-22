@@ -18,10 +18,17 @@ module DeepTest
       end
 
       def load_files(files)
+        spec_support_path = File.expand_path(File.dirname(__FILE__) + "/../spec") 
         Dir.chdir @base_path
         resolver = FilenameResolver.new(@base_path)
         files.each do |file|
           load resolver.resolve(file)
+        end
+
+        # Load rspec support if rspec is available now that we've loaded the host project files
+        #
+        DeepTest::RSpecDetector.if_rspec_available do
+          require spec_support_path
         end
       end
 

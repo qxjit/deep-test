@@ -1,6 +1,4 @@
 module DeepTest
-  LIB_ROOT = File.expand_path(File.dirname(__FILE__)) unless defined?(DeepTest::LIB_ROOT)
-
   class << self
     def logger
       @logger ||= DeepTest::Logger.new($stdout)
@@ -37,6 +35,7 @@ require "timeout"
 require "base64"
 
 require File.dirname(__FILE__) + "/telegraph"
+require File.dirname(__FILE__) + "/deep_test/lib_root"
 require File.dirname(__FILE__) + "/deep_test/extensions/object_extension"
 
 require File.dirname(__FILE__) + "/deep_test/demon"
