@@ -17,7 +17,6 @@ In your Rakefile:
   DeepTest::TestTask.new "task_name" do |t|
     t.number_of_agents = 2   # optional, defaults to number of cores
     t.timeout_in_seconds = 30 # optional, defaults to 30
-    t.server_port = 6969      # optional, defaults to 6969
     t.pattern = "test/**/*_test.rb"
     t.libs << "test" # may be necessary for Rails >= 2.1.x
   end
@@ -28,7 +27,6 @@ In your Rakefile:
     t.spec_files = FileList['spec/**/*_spec.rb']
     t.deep_test :number_of_agents => 2,   # optional, defaults to number of cores
                 :timeout_in_seconds => 30, # optional, defaults to 30
-                :server_port => 6969       # optional, defaults to 6969
   end
 
 
