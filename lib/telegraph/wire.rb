@@ -5,10 +5,17 @@ module Telegraph
     attr_reader :stream
 
     def self.connect(host, port)
-      new TCPSocket.new(host, port)
+      wire = new TCPSocket.new(host, port)
+      return wire unless block_given?
+      begin
+        yield wire
+      ensure
+        wire.close
+      end
     end
 
     def initialize(stream)
+      @sequence = AckSequence.new
       @stream = stream
     end
 
@@ -21,30 +28,42 @@ module Telegraph
       @stream.closed?
     end
 
-    def send_message(message)
-      message_string = Marshal.dump(message)
-      debug { "send #{message_string[4..20]}... (#{message_string.length} bytes)" }
-      @stream.write [message_string.length].pack("N") + message_string
+    def send_message(body, options = {})
+      sequence_ack = options[:ack] ? options[:ack].sequence_number : nil
+      message = Message.new(body, @sequence.next, sequence_ack)
+      message.write stream
+      unacked_sequences_numbers[message.sequence_number] = message if options[:need_ack]
     rescue IOError, Errno::EPIPE, Errno::ECONNRESET => e
       close rescue nil
       raise LineDead, e.message
     end
 
+    def process_messages(options = {:timeout => 0})
+      yield next_message(options) while true
+    rescue NoMessageAvailable
+      retry
+    end
+
     def next_message(options = {:timeout => 0})
       begin
         raise NoMessageAvailable unless IO.select [@stream], nil, nil, options[:timeout]
-        size = @stream.read(4)
-        raise LineDead, "connection closed" unless size
-        message_string = @stream.read(size.unpack("N")[0])
-        debug { "read #{message_string[4..20]}... (#{message_string.length} bytes)" }
-        raise LineDead, "connection closed" unless message_string
-        return Marshal.load(message_string)
+        message = Message.read(@stream)
+        unacked_sequences_numbers.delete message.sequence_ack if message.sequence_ack
+        return message
       rescue IOError, Errno::ECONNRESET => e
         raise LineDead, e.message
       end
     rescue LineDead
       close rescue nil
       raise
+    end
+
+    def unacked_sequences_numbers
+      @unacked_sequences_numbers ||= {}
+    end
+
+    def unacked_messages
+      unacked_sequences_numbers.values
     end
   end
 end

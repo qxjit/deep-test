@@ -90,14 +90,14 @@ module DeepTest
           wires_waiting_for_work.each { |w| send_work w }
           message, wire = switchboard.next_message(:timeout => 0.5)
 
-          case message
+          case message.body
           when NeedWork
             send_work wire
           when Result 
-            write_result message
+            write_result message.body
             send_work wire
           when Operation
-            message.execute
+            message.body.execute
           else 
             raise UnexpectedMessageError, message.inspect
           end

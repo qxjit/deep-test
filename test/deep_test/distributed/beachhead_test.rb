@@ -57,7 +57,7 @@ module DeepTest
           wire = Telegraph::Wire.connect("localhost", port)
           wire.send_message Beachhead::LoadFiles.new([])
           wire.send_message Beachhead::DeployAgents
-          assert_equal Beachhead::Done, wire.next_message(:timeout => 1)
+          assert_equal Beachhead::Done, wire.next_message(:timeout => 1).body
         ensure
           beachhead.warlock.stop_demons
         end

@@ -31,7 +31,7 @@ module DeepTest
         @wire.send_message Beachhead::DeployAgents
         begin
           message = @wire.next_message :timeout => 1
-          raise "Unexpected message from Beachhead: #{message.inspect}" unless message == Beachhead::Done
+          raise "Unexpected message from Beachhead: #{message.inspect}" unless message.body == Beachhead::Done
         rescue Telegraph::NoMessageAvailable
           retry
         end

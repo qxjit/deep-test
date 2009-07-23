@@ -2,6 +2,12 @@ module Telegraph
   class Switchboard
     include Logging
 
+    def process_messages(options = {:timeout => 0})
+      yield next_message(options) while true
+    rescue NoMessageAvailable
+      retry
+    end
+
     def next_message(options = {:timeout => 0})
       debug { "Waiting for next message on any wire" }
 

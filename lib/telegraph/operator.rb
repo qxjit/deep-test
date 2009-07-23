@@ -4,7 +4,9 @@ module Telegraph
   class Operator
     include Logging
 
-    def self.listen(host, port, switchboard)
+    attr_reader :switchboard
+
+    def self.listen(host, port, switchboard = Switchboard.new)
       new TCPServer.new(host, port), switchboard
     end
 

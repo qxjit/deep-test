@@ -65,9 +65,9 @@ module DeepTest
           begin
             message, wire = switchboard.next_message :timeout => 1
 
-            case message
+            case message.body
             when LoadFiles
-              load_files message.files
+              load_files message.body.files
             when DeployAgents
               deploy_agents
               wire.send_message Done

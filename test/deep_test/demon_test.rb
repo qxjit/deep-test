@@ -15,8 +15,8 @@ module DeepTest
         puts "hello stdout"
       end).forked("name", options, [])
 
-      assert_equal ProxyIO::Stdout::Output.new("hello stdout"), operator.next_message[0]
-      assert_equal ProxyIO::Stdout::Output.new("\n"), operator.next_message[0]
+      assert_equal ProxyIO::Stdout::Output.new("hello stdout"), operator.next_message[0].body
+      assert_equal ProxyIO::Stdout::Output.new("\n"), operator.next_message[0].body
     end
   end
 end

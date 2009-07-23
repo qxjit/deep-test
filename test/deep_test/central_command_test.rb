@@ -46,7 +46,7 @@ module DeepTest
       [:a, :b, :c].each do |work_unit|
         Thread.pass
         wire.send_message CentralCommand::NeedWork
-        assert_equal work_unit, wire.next_message(:timeout => 2.0)
+        assert_equal work_unit, wire.next_message(:timeout => 2.0).body
       end
     end
 
@@ -77,7 +77,7 @@ module DeepTest
       [[result_1, :a], [result_2, :b], [result_3, :c]].each do |result, work_unit|
         Thread.pass
         wire.send_message result_1
-        assert_equal work_unit, wire.next_message(:timeout => 2.0)
+        assert_equal work_unit, wire.next_message(:timeout => 2.0).body
       end
     end
 

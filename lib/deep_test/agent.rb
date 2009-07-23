@@ -40,7 +40,7 @@ module DeepTest
 
     def next_work_unit
       begin
-        message = @wire.next_message(:timeout => 2)
+        message = @wire.next_message(:timeout => 2).body
         return message == CentralCommand::NoMoreWork ? nil : message
       rescue Telegraph::NoMessageAvailable
         retry

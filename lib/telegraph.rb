@@ -1,5 +1,7 @@
 require 'socket'
 require File.dirname(__FILE__) + "/telegraph/logging"
+require File.dirname(__FILE__) + "/telegraph/ack_sequence"
+require File.dirname(__FILE__) + "/telegraph/message"
 require File.dirname(__FILE__) + "/telegraph/wire"
 require File.dirname(__FILE__) + "/telegraph/operator"
 require File.dirname(__FILE__) + "/telegraph/switchboard"
