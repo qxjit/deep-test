@@ -22,26 +22,26 @@ module DeepTest
       @listener.starting(self)
       @wire.send_message CentralCommand::NeedWork
 
-      while work_unit = next_work_unit
-        @listener.starting_work(self, work_unit)
+      while work_unit_message = next_work_unit_message
+        @listener.starting_work(self, work_unit_message.body)
 
         result = begin
-                   work_unit.run
+                   work_unit_message.body.run
                  rescue Exception => error
-                   Error.new(work_unit, error)
+                   Error.new(work_unit_message.body, error)
                  end
 
-        @listener.finished_work(self, work_unit, result)
-        send_result result
+        @listener.finished_work(self, work_unit_message.body, result)
+        send_result work_unit_message, result
       end
     rescue CentralCommand::NoWorkUnitsRemainingError
       DeepTest.logger.debug { "Agent #{number}: no more work to do" }
     end
 
-    def next_work_unit
+    def next_work_unit_message
       begin
-        message = @wire.next_message(:timeout => 2).body
-        return message == CentralCommand::NoMoreWork ? nil : message
+        message = @wire.next_message(:timeout => 2)
+        return message.body == CentralCommand::NoMoreWork ? nil : message
       rescue Telegraph::NoMessageAvailable
         retry
       rescue Telegraph::LineDead
@@ -49,8 +49,8 @@ module DeepTest
       end
     end
 
-    def send_result(result)
-      @wire.send_message result
+    def send_result(work_unit_message, result)
+      @wire.send_message result, :ack => work_unit_message
     end
 
     def reconnect_to_database

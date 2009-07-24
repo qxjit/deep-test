@@ -116,16 +116,27 @@ module DeepTest
 
     def send_work(wire)
       begin
-        wire.send_message take_work
+        wire.send_message take_work, :need_ack => true
         wires_waiting_for_work.delete wire
 
       rescue NoWorkUnitsAvailableError
+        put_abandonded_work_back_on_the_queue
         wires_waiting_for_work.add wire
 
       rescue NoWorkUnitsRemainingError
         wire.send_message NoMoreWork
         wires_waiting_for_work.delete wire
 
+      end
+    end
+
+    def put_abandonded_work_back_on_the_queue
+      closed_wires = switchboard.using_wires { |wires| wires.select {|w| w.closed? }}
+      closed_wires.each do |wire|
+        wire.unacked_messages.each do |m|
+          write_work m.body
+          switchboard.drop_wire wire
+        end
       end
     end
 

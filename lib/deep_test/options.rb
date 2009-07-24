@@ -95,7 +95,7 @@ module DeepTest
 
     def check_option_keys(hash)
       hash.keys.each do |key|
-        raise InvalidOptionError.new(key) unless VALID_OPTIONS.any? {|o| o.name == key.to_sym}
+        raise InvalidOptionError.new("#{key} is not a valid option") unless VALID_OPTIONS.any? {|o| o.name == key.to_sym}
       end
     end
 

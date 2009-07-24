@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 module DeepTest
   unit_tests do
-    test "puts result on central_command" do
+    test "puts result on central_command with acknowledgement of work" do
       options = Options.new({})
       central_command = TestCentralCommand.start options
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
@@ -10,6 +10,7 @@ module DeepTest
 
       Agent.new(0, options, stub_everything).execute
 
+      assert_equal [], central_command.switchboard.live_wires.first.unacked_messages
       assert_kind_of ::Test::Unit::TestResult, central_command.take_result
     end
 
@@ -21,7 +22,6 @@ module DeepTest
       central_command.done_with_work
 
       Agent.new(0, options, stub_everything).execute
-      
 
       result_1 = central_command.take_result
       result_2 = central_command.take_result

@@ -81,16 +81,33 @@ module DeepTest
       end
     end
 
-
     test "will add results to queue with a worker waiting for work that is not available" do
       central_command = CentralCommand.start(options = Options.new({}))
       DynamicTeardown.on_teardown { central_command.stop }
-      wire = Telegraph::Wire.connect("localhost", options.server_port)
 
-      wire.send_message CentralCommand::NeedWork
-      wire.send_message TestResult.new(1)
+      Telegraph::Wire.connect("localhost", options.server_port) do |wire|
+        wire.send_message CentralCommand::NeedWork
+        wire.send_message TestResult.new(1)
+      end
 
       assert_equal TestResult.new(1), central_command.take_result
+    end
+
+    test "will distributed work units that have not received results from dead workers when other work runs out" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+
+      central_command.write_work(:a)
+
+      Telegraph::Wire.connect("localhost", options.server_port) do |wire|
+        wire.send_message CentralCommand::NeedWork
+        assert_equal :a, wire.next_message(:timeout => 1).body
+      end
+
+      Telegraph::Wire.connect("localhost", options.server_port) do |wire|
+        wire.send_message CentralCommand::NeedWork
+        assert_equal :a, wire.next_message(:timeout => 1).body
+      end
     end
 
     class SetCalledGlobalToTrue

@@ -34,6 +34,11 @@ unit_tests do
     test "#{framework}: DeepTest processes go away after the test run ends" do
       Timeout.timeout(15) { run_rake framework, :passing }
     end
+
+    test "#{framework}: DeepTest with work taken and not done" do
+      result, output = run_rake framework, :with_work_taken_and_not_done 
+      assert_equal true, result.success?
+    end
   end
 
   def run_rake(framework, task)
