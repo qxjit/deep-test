@@ -10,7 +10,7 @@ unit_tests do
   test "stop_all delegates to worker implementation" do
     server = DeepTest::Distributed::RemoteWorkerServer.new("", implementation = mock)
     implementation.expects(:stop_all)
-    server.stop_all
+    server.stop_all.join
   end
 
   test "stop_all returns without waiting for stops" do
