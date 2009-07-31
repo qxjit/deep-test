@@ -7,7 +7,9 @@ module DeepTest
     end
 
     def remaining_result_count
-      @result_queue.size
+      @results_mutex.synchronize do
+        @results.size
+      end
     end
   end
 end

@@ -43,8 +43,10 @@ module DeepTest
         message = @wire.next_message(:timeout => 2)
         return message.body == CentralCommand::NoMoreWork ? nil : message
       rescue Telegraph::NoMessageAvailable
+        DeepTest.logger.debug { "Agent: NoMessageAvailable" }
         retry
       rescue Telegraph::LineDead
+        DeepTest.logger.debug { "Agent: LineDead" }
         return nil
       end
     end

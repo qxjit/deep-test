@@ -1,5 +1,12 @@
 require 'set'
 
+Signal.trap("USR2") do
+  caller.each do |line|
+    puts line
+  end
+  raise
+end
+
 module DeepTest
   class CentralCommand
     attr_reader :operator
@@ -8,17 +15,16 @@ module DeepTest
     def initialize(options)
       @options = options
       @work_queue = Queue.new
-      @result_queue = Queue.new
+      @results_mutex = Mutex.new
+      @results_condvar = ConditionVariable.new
+      @results = []
 
       if Metrics::Gatherer.enabled?
         require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
         @work_queue.extend Metrics::QueueLockWaitTimeMeasurement
-        @result_queue.extend Metrics::QueueLockWaitTimeMeasurement
         Metrics::Gatherer.section("central_command queue lock wait times") do |s|
           s.measurement("work queue total pop wait time", @work_queue.total_pop_time)
           s.measurement("work queue total push wait time", @work_queue.total_push_time)
-          s.measurement("result queue total pop wait time", @result_queue.total_pop_time)
-          s.measurement("result queue total push wait time", @result_queue.total_push_time)
         end
       end
     end
@@ -28,10 +34,16 @@ module DeepTest
     end
 
     def take_result
-      Timeout.timeout(1, CheckIfAgentsAreStillRunning) { @result_queue.pop }
-    rescue CheckIfAgentsAreStillRunning
-      raise NoAgentsRunningError unless @switchboard.any_live_wires?
-      retry
+      @results_mutex.synchronize do
+        loop do
+          if @results.any?
+            return @results.shift
+          else
+            raise NoAgentsRunningError unless @switchboard.any_live_wires?
+            @results_condvar.wait @results_mutex
+          end
+        end
+      end
     end
 
     def take_work
@@ -46,7 +58,10 @@ module DeepTest
     end
 
     def write_result(result)
-      @result_queue.push result
+      @results_mutex.synchronize do
+        @results << result
+        @results_condvar.signal
+      end
     end
 
     def write_work(work_unit)
@@ -88,6 +103,12 @@ module DeepTest
         begin
           return if @stop_process_messages
           wires_waiting_for_work.each { |w| send_work w }
+
+          @results_mutex.synchronize do
+            # make take_result wake up and check if any agents are running
+            @results_condvar.signal
+          end
+
           message, wire = switchboard.next_message(:timeout => 0.5)
 
           case message.body
