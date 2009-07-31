@@ -1,12 +1,5 @@
 require 'set'
 
-Signal.trap("USR2") do
-  caller.each do |line|
-    puts line
-  end
-  raise
-end
-
 module DeepTest
   class CentralCommand
     attr_reader :operator
@@ -39,8 +32,8 @@ module DeepTest
           if @results.any?
             return @results.shift
           else
-            raise NoAgentsRunningError unless @switchboard.any_live_wires?
             @results_condvar.wait @results_mutex
+            raise NoAgentsRunningError unless @results.any? || @switchboard.any_live_wires?
           end
         end
       end

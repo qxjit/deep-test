@@ -63,18 +63,17 @@ module DeepTest
 
         loop do
           begin
-            message, wire = switchboard.next_message :timeout => 1
-
-            case message.body
-            when LoadFiles
-              load_files message.body.files
-            when DeployAgents
-              deploy_agents
-              wire.send_message Done
-              operator.shutdown
+            switchboard.process_messages :timeout => 1 do |message, wire|
+              case message.body
+              when LoadFiles
+                load_files message.body.files
+              when DeployAgents
+                deploy_agents
+                wire.send_message Done
+                operator.shutdown
+                break
+              end
             end
-          rescue Telegraph::NoMessageAvailable
-            retry
           end
         end
       end

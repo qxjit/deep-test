@@ -14,10 +14,22 @@ module Telegraph
       @socket = socket
       @switchboard = switchboard
       @accept_thread = Thread.new do
+        @socket.listen 100
         loop do
-          client = @socket.accept
-          debug { "Accepted connection: #{client.inspect}" }
-          @switchboard.add_wire Wire.new(client)
+          if @should_shutdown
+            @socket.close
+            @switchboard.close_all_wires
+            break
+          end
+
+          begin
+            client = @socket.accept_nonblock
+            debug { "Accepted connection: #{client.inspect}" }
+            @switchboard.add_wire Wire.new(client)
+          rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+            connection_ready, = IO.select([@socket], nil, nil, 0.25)
+            retry if connection_ready
+          end
         end
       end
     end
@@ -28,11 +40,8 @@ module Telegraph
 
     def shutdown
       debug { "Shutting down" }
-      begin
-        @socket.close
-      ensure
-        @switchboard.close_all_wires
-      end
+      @should_shutdown = true
+      @accept_thread.join
     end
   end
 end

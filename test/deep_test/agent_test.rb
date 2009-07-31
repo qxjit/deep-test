@@ -8,7 +8,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.passing_test)
       central_command.done_with_work
 
-      Agent.new(0, options, stub_everything).execute
+      Agent.new(0, options, stub_everything).execute(StringIO.new, StringIO.new)
 
       assert_equal [], central_command.switchboard.live_wires.first.unacked_messages
       assert_kind_of ::Test::Unit::TestResult, central_command.take_result
@@ -21,7 +21,7 @@ module DeepTest
       central_command.write_work Test::WorkUnit.new(TestFactory.failing_test)
       central_command.done_with_work
 
-      Agent.new(0, options, stub_everything).execute
+      Agent.new(0, options, stub_everything).execute(StringIO.new, StringIO.new)
 
       result_1 = central_command.take_result
       result_2 = central_command.take_result
@@ -37,7 +37,7 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, options, listener)
       listener.expects(:starting).with(agent)
-      agent.execute
+      agent.execute(StringIO.new, StringIO.new)
     end
 
     test "notifies listener that it is about to do work" do
@@ -49,7 +49,7 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, options, listener)
       listener.expects(:starting_work).with(agent, work_unit)
-      agent.execute
+      agent.execute(StringIO.new, StringIO.new)
     end
 
     test "notifies listener that it has done work" do
@@ -61,7 +61,23 @@ module DeepTest
       listener = stub_everything
       agent = Agent.new(0, options, listener)
       listener.expects(:finished_work).with(agent, work_unit, TestResult.new(:result))
-      agent.execute
+      agent.execute(StringIO.new, StringIO.new)
+    end
+
+    test "connect indicates it has connected" do
+      options = Options.new({})
+      central_command = TestCentralCommand.start(options)
+      agent = Agent.new(0, options, stub_everything)
+      agent.connect(io = StringIO.new)
+      assert_equal "Connected\n", io.string
+    end
+
+    test "connect closes stream even if there is an error" do
+      options = Options.new({})
+      agent = Agent.new(0, options, stub_everything)
+      io = StringIO.new
+      assert_raises(Errno::EADDRNOTAVAIL) { agent.connect io }
+      assert_equal true, io.closed?
     end
 
     class ResultWorkUnit
@@ -103,7 +119,7 @@ module DeepTest
       central_command.write_work work_unit
       central_command.done_with_work
 
-      Agent.new(0, options, stub_everything).execute
+      Agent.new(0, options, stub_everything).execute(StringIO.new, StringIO.new)
       
       assert_equal Agent::Error.new(work_unit, exception), central_command.take_result
     end
@@ -123,7 +139,7 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
 
-      t = Thread.new { Agent.new(0, options, stub_everything).execute }
+      t = Thread.new { Agent.new(0, options, stub_everything).execute(StringIO.new, StringIO.new) }
       Thread.pass
       central_command.write_work stub(:run => TestResult.new(:result))
       central_command.done_with_work
@@ -135,7 +151,7 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
       begin
-        t = Thread.new { Agent.new(0, options, stub_everything).execute }
+        t = Thread.new { Agent.new(0, options, stub_everything).execute(StringIO.new, StringIO.new) }
         sleep 0.1
       ensure
         central_command.stop

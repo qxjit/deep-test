@@ -20,8 +20,12 @@ module Telegraph
     end
 
     def close
-      debug { "closing stream" }
-      @stream.close
+      if @stream.closed?
+        debug { "stream already closed" }
+      else
+        debug { "closing stream #{@stream.inspect}" }
+        @stream.close
+      end
     end
 
     def closed?

@@ -25,6 +25,7 @@ module DeepTest
             #
             @demons_semaphore.unlock if @demons_semaphore.locked?
 
+            close_open_network_connections
             demon.forked name, @options, demon_args
 
             exit
@@ -39,6 +40,15 @@ module DeepTest
       rescue => e
         puts "exception starting #{name}: #{e}"
         puts "\t" + e.backtrace.join("\n\t")
+      end
+    end
+
+    def close_open_network_connections
+      ObjectSpace.each_object(BasicSocket) do |sock|
+        begin
+          sock.close 
+        rescue IOError
+        end
       end
     end
 

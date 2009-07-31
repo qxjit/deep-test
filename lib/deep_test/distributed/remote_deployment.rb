@@ -34,6 +34,7 @@ module DeepTest
       end
 
       def deploy_agents
+        DeepTest.logger.debug { "RemoteDeployment deploying agents with #{@landing_fleet}" }
         @landing_fleet.deploy_agents
       rescue => e
         raise if failed_over?
@@ -42,6 +43,7 @@ module DeepTest
       end
 
       def fail_over(method, exception)
+        DeepTest.logger.debug { "RemoteDeployment failing over on #{method}." }
         @options.ui_instance.distributed_failover_to_local(method, exception)
         @landing_fleet = @failover_deployment
       end

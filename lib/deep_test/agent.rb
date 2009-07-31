@@ -9,12 +9,17 @@ module DeepTest
       @options = options
     end
 
-    def connect
+    def connect(stream_to_parent_process)
+      DeepTest.logger.debug { "Agent: Connecting to #{@options.origin_hostname}:#{@options.server_port}" }
       @wire = Telegraph::Wire.connect(@options.origin_hostname, @options.server_port)
+      stream_to_parent_process.puts "Connected"
+    ensure
+      stream_to_parent_process.close rescue nil
     end
 
-    def execute
-      connect
+    def execute(stream_from_child_process, stream_to_parent_process)
+      stream_from_child_process.close
+      connect stream_to_parent_process
 
       reseed_random_numbers
       reconnect_to_database

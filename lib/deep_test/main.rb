@@ -20,7 +20,7 @@ module DeepTest
         @options.new_listener_list.before_starting_agents
         @deployment.deploy_agents
         begin
-          DeepTest.logger.debug { "Loader Starting (#{$$})" }
+          DeepTest.logger.debug { "Main: About to process work units (#{$$})" }
           passed = @runner.process_work_units(central_command)
         ensure
           shutdown

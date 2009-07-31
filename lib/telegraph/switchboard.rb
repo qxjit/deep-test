@@ -9,9 +9,10 @@ module Telegraph
     end
 
     def next_message(options = {:timeout => 0})
-      debug { "Waiting for next message on any wire" }
+      debug { "Waiting for next message on any of #{live_wires.size} wires for #{options[:timeout]} seconds" }
 
       if live_wires.empty?
+        sleep 0.01
         Thread.pass 
         raise NoMessageAvailable 
       end

@@ -4,7 +4,7 @@ module DeepTest
 
     def initialize(options)
       super(0, options, ListenerList.new([]))
-      @thread = Thread.new { execute }
+      @thread = Thread.new { execute(StringIO.new, StringIO.new) }
       @work_done = 0
     end
 
