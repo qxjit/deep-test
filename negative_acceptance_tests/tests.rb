@@ -37,7 +37,17 @@ unit_tests do
 
     test "#{framework}: DeepTest with work taken and not done" do
       result, output = run_rake framework, :with_work_taken_and_not_done 
-      assert_equal true, result.success?
+      assert_equal true, result.success?, output
+    end
+
+    test "#{framework}: DeepTest with metrics" do
+      FileUtils.rm_f "negative_acceptance_tests/metrics.data"
+      result, output = run_rake framework, :with_metrics
+      assert_equal true, result.success?, output
+      metrics = File.read("negative_acceptance_tests/metrics.data")
+      assert_match /Metrics Data/, metrics
+      assert_match /Agents Performing Work:/, metrics
+      assert_match /Agents Retrieving Work:/, metrics
     end
   end
 

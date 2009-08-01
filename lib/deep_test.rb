@@ -65,6 +65,9 @@ require File.dirname(__FILE__) + "/deep_test/distributed/remote_deployment"
 require File.dirname(__FILE__) + "/deep_test/distributed/beachhead"
 require File.dirname(__FILE__) + "/deep_test/distributed/rsync"
 
+require File.dirname(__FILE__) + "/deep_test/metrics/data"
+require File.dirname(__FILE__) + "/deep_test/metrics/measurement"
+
 DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/deep_test/spec"
 end

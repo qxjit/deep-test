@@ -31,7 +31,9 @@ module DeepTest
         @listener.starting_work(self, work_unit_message.body)
 
         result = begin
-                   work_unit_message.body.run
+                   Metrics::Measurement.send_home("Agents Performing Work", @wire, @options) do
+                     work_unit_message.body.run
+                   end
                  rescue Exception => error
                    Error.new(work_unit_message.body, error)
                  end
@@ -44,15 +46,17 @@ module DeepTest
     end
 
     def next_work_unit_message
-      begin
-        message = @wire.next_message(:timeout => 2)
-        return message.body == CentralCommand::NoMoreWork ? nil : message
-      rescue Telegraph::NoMessageAvailable
-        DeepTest.logger.debug { "Agent: NoMessageAvailable" }
-        retry
-      rescue Telegraph::LineDead
-        DeepTest.logger.debug { "Agent: LineDead" }
-        return nil
+      Metrics::Measurement.send_home("Agents Retrieving Work", @wire, @options) do
+        begin
+          message = @wire.next_message(:timeout => 2)
+          next message.body == CentralCommand::NoMoreWork ? nil : message
+        rescue Telegraph::NoMessageAvailable
+          DeepTest.logger.debug { "Agent: NoMessageAvailable" }
+          retry
+        rescue Telegraph::LineDead
+          DeepTest.logger.debug { "Agent: LineDead" }
+          next nil
+        end
       end
     end
 

@@ -34,7 +34,6 @@ end
 
 DeepTest::TestTask.new :deep_test do |t|
   t.pattern = "test/**/*_test.rb"
-  t.metrics_file = "deep_test.metrics"
 end
 
 DeepTest::TestTask.new(:manual_distributed_test) do |t|

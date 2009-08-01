@@ -4,6 +4,7 @@ module DeepTest
   class CentralCommand
     attr_reader :operator
     attr_reader :switchboard
+    attr_reader :data
 
     def initialize(options)
       @options = options
@@ -11,6 +12,7 @@ module DeepTest
       @results_mutex = Mutex.new
       @results_condvar = ConditionVariable.new
       @results = []
+      @data = Metrics::Data.new
     end
 
     def done_with_work
@@ -103,6 +105,8 @@ module DeepTest
             send_work wire
           when Operation
             message.body.execute
+          when Metrics::Measurement
+            data.add message.body
           else 
             raise UnexpectedMessageError, message.inspect
           end
@@ -149,6 +153,7 @@ module DeepTest
       @stop_process_messages = true
       operator.shutdown
       @process_messages_thread.join
+      data.save @options.metrics_file if @options.gathering_metrics?
     end
 
     class NoWorkUnitsAvailableError < StandardError; end

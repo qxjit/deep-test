@@ -2,4 +2,5 @@ deep_test.metrics
 doc
 pkg
 tags
+negative_acceptance_tests/metrics.data
 

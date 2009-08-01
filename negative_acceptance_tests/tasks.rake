@@ -41,6 +41,11 @@ DeepTest::TestTask.new :deep_test_with_work_taken_and_not_done do |t|
   t.pattern = "negative_acceptance_tests/passing_test.rb"
 end
 
+DeepTest::TestTask.new :deep_test_with_metrics do |t|
+  t.pattern = "negative_acceptance_tests/passing_test.rb"
+  t.metrics_file = "negative_acceptance_tests/metrics.data"
+end
+
 Spec::Rake::SpecTask.new :deep_spec_failing do |t|
   t.deep_test :number_of_agents => 1
   t.spec_files = FileList["negative_acceptance_tests/failing_spec.rb"]
@@ -74,4 +79,9 @@ Spec::Rake::SpecTask.new :deep_spec_with_work_taken_and_not_done do |t|
   t.spec_files = FileList['negative_acceptance_tests/kill_agent_one_on_start_work.rb',
                           "negative_acceptance_tests/passing_test.rb"]
   t.deep_test :number_of_agents => 2, :listener => "KillAgentOneOnStartWork"
+end
+
+Spec::Rake::SpecTask.new :deep_spec_with_metrics do |t|
+  t.deep_test :number_of_agents => 1, :metrics_file => "negative_acceptance_tests/metrics.data"
+  t.spec_files = FileList["negative_acceptance_tests/passing_spec.rb"]
 end

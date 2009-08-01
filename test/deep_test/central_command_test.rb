@@ -93,7 +93,7 @@ module DeepTest
       assert_equal TestResult.new(1), central_command.take_result
     end
 
-    test "will distributed work units that have not received results from dead workers when other work runs out" do
+    test "will distribute work units that have not received results from dead workers when other work runs out" do
       central_command = CentralCommand.start(options = Options.new({}))
       DynamicTeardown.on_teardown { central_command.stop }
 
@@ -108,6 +108,19 @@ module DeepTest
         wire.send_message CentralCommand::NeedWork
         assert_equal :a, wire.next_message(:timeout => 1).body
       end
+    end
+
+    test "will add measurements to data when received over the wire" do
+      central_command = CentralCommand.start(options = Options.new({}))
+      DynamicTeardown.on_teardown { central_command.stop }
+
+      Telegraph::Wire.connect("localhost", options.server_port) do |wire|
+        wire.send_message Metrics::Measurement.new("category", 1, "units")
+      end
+
+      sleep 0.05
+
+      assert_match /category: 1.0 avg/, central_command.data.summary
     end
 
     class SetCalledGlobalToTrue
