@@ -11,15 +11,6 @@ module DeepTest
       @results_mutex = Mutex.new
       @results_condvar = ConditionVariable.new
       @results = []
-
-      if Metrics::Gatherer.enabled?
-        require File.dirname(__FILE__) + "/metrics/queue_lock_wait_time_measurement"
-        @work_queue.extend Metrics::QueueLockWaitTimeMeasurement
-        Metrics::Gatherer.section("central_command queue lock wait times") do |s|
-          s.measurement("work queue total pop wait time", @work_queue.total_pop_time)
-          s.measurement("work queue total push wait time", @work_queue.total_push_time)
-        end
-      end
     end
 
     def done_with_work

@@ -9,12 +9,6 @@ module DeepTest
     end
   end  
 
-  def self.init(options)
-    return if @initialized
-    @initialized = true
-    Metrics::Gatherer.setup(options)
-  end
-
   class IncompleteTestRunError < StandardError
     def initialize(count)
       super "#{count} tests were not run because the DeepTest Agents died"
@@ -70,8 +64,6 @@ require File.dirname(__FILE__) + "/deep_test/distributed/landing_fleet"
 require File.dirname(__FILE__) + "/deep_test/distributed/remote_deployment"
 require File.dirname(__FILE__) + "/deep_test/distributed/beachhead"
 require File.dirname(__FILE__) + "/deep_test/distributed/rsync"
-
-require File.dirname(__FILE__) + "/deep_test/metrics/gatherer"
 
 DeepTest::RSpecDetector.if_rspec_available do
   require File.dirname(__FILE__) + "/deep_test/spec"
