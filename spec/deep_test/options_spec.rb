@@ -154,6 +154,24 @@ module DeepTest
       options.origin_hostname.should == local_hostname
     end
 
+    it "should connect_to_central_command on localhost when there is no SSH info" do
+      Telegraph::Wire.should_receive(:connect).with("localhost", 9999).and_yield(:wire)
+      yielded_wire = nil
+      Options.new(:server_port => 9999).connect_to_central_command { |yielded_wire| }
+      yielded_wire.should == :wire
+    end
+
+    it "should connect_to_central_command on remote address where there is SSH info" do
+      Telegraph::Wire.should_receive(:connect).with("remote_address", 9999).and_yield(:wire)
+      yielded_wire = nil
+
+      options = Options.new(:server_port => 9999)
+      options.ssh_client_connection_info = mock("connection_info", :address => "remote_address")
+      options.connect_to_central_command { |yielded_wire| }
+
+      yielded_wire.should == :wire
+    end
+
     it "should be able to calculate mirror_path based on base an sync_options" do
       Socket.should_receive(:gethostname).and_return("hostname")
       options = Options.new(:sync_options => {:source => "/my/source/path"})

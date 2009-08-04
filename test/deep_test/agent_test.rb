@@ -68,8 +68,13 @@ module DeepTest
       options = Options.new({})
       central_command = TestCentralCommand.start(options)
       agent = Agent.new(0, options, stub_everything)
-      agent.connect(io = StringIO.new)
-      assert_equal "Connected\n", io.string
+      yielded = false
+      agent.connect(io = StringIO.new) do
+        yielded = true
+        assert_equal "Connected\n", io.string
+        assert_equal true, io.closed?
+      end
+      assert yielded, "connect didn't yield"
     end
 
     test "connect closes stream even if there is an error" do

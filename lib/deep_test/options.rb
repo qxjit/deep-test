@@ -16,6 +16,7 @@ module DeepTest
     end
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
+    attr_accessor :ssh_client_connection_info
 
     def number_of_agents
       return CpuInfo.new.count unless @number_of_agents
@@ -56,6 +57,13 @@ module DeepTest
 
     def origin_hostname
       (Socket.gethostname == @origin_hostname) ? 'localhost' : @origin_hostname
+    end
+
+    def connect_to_central_command
+      address = ssh_client_connection_info ? ssh_client_connection_info.address : "localhost"
+      Telegraph::Wire.connect(address, server_port) do |wire|
+        yield wire
+      end
     end
 
     # Don't store UI instances in the options instance, which will
