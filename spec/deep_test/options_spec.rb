@@ -172,18 +172,23 @@ module DeepTest
       yielded_wire.should == :wire
     end
 
-    it "should be able to calculate mirror_path based on base an sync_options" do
+    it "should be able to calculate mirror_path based on sync_options" do
       Socket.should_receive(:gethostname).and_return("hostname")
-      options = Options.new(:sync_options => {:source => "/my/source/path"})
-      options.mirror_path("/mirror/base/path").should == 
-        "/mirror/base/path/hostname_my_source_path"
+      options = Options.new(:sync_options => {:source => "/my/source/path", :remote_base_dir => "/mirror/base/path"})
+      options.mirror_path.should == "/mirror/base/path/hostname_my_source_path"
     end
 
     it "should raise a useful error if no source is specified" do
-      options = DeepTest::Options.new(:sync_options => {})
+      options = DeepTest::Options.new(:sync_options => {:remote_base_dir => "/mirror/base/path/"})
       lambda {
-        options.mirror_path("base")
+        options.mirror_path
       }.should raise_error("No source directory specified in sync_options")
+    end
+
+    it "should default to /tmp if no remote_base_dir is specified in sync_options" do
+      Socket.should_receive(:gethostname).and_return("hostname")
+      options = DeepTest::Options.new(:sync_options => {:source => "/my/source/path"})
+      options.mirror_path.should == "/tmp/hostname_my_source_path"
     end
 
     it "should be gathering metrics if metrics file is set" do

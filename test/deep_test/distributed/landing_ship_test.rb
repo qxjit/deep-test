@@ -6,7 +6,7 @@ module DeepTest
       test "generates a local working copy path based on host and source of request" do
         Socket.stubs(:gethostname).returns("myhost")
         Telegraph::Wire.stubs(:connect).returns :wire
-        landing_ship = LandingShip.new(:address => "host", :work_dir => "/tmp")
+        landing_ship = LandingShip.new(:address => "host")
         options = Options.new(:sync_options => {:source => "/my/local/dir"})
         RSync.expects(:push).with("host", options.sync_options, "/tmp/myhost_my_local_dir")
         landing_ship.push_code(options)
@@ -15,7 +15,7 @@ module DeepTest
       test "establish_beachhead launches beachhead process on remote machine" do
         Socket.stubs(:gethostname).returns("myhost")
         Telegraph::Wire.stubs(:connect).returns :wire
-        landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
+        landing_ship = LandingShip.new(:address => "remote_host")
         options = Options.new(:sync_options => {:source => "/my/local/dir"})
 
         landing_ship.expects(:`).with(
@@ -31,7 +31,7 @@ module DeepTest
       test "establish_beachhead launches beachhead process on remote machine with usernames specified in sync_options" do
         Socket.stubs(:gethostname).returns("myhost")
         Telegraph::Wire.stubs(:connect).returns :wire
-        landing_ship = LandingShip.new(:address => "remote_host", :work_dir => "/tmp")
+        landing_ship = LandingShip.new(:address => "remote_host")
         options = Options.new(:sync_options => {:username => "me", :source => "/my/local/dir"})
 
         landing_ship.expects(:`).with(

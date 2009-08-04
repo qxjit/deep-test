@@ -78,10 +78,10 @@ module DeepTest
       Base64.encode64(Marshal.dump(self)).gsub("\n","")
     end
 
-    def mirror_path(base)
+    def mirror_path
       raise "No source directory specified in sync_options" unless sync_options[:source]
       relative_mirror_path = @origin_hostname + sync_options[:source].gsub('/','_')
-      "#{base}/#{relative_mirror_path}"
+      "#{sync_options[:remote_base_dir] || '/tmp'}/#{relative_mirror_path}"
     end
 
     def new_deployment
@@ -94,7 +94,7 @@ module DeepTest
 
     def new_landing_fleet
       landing_ships = distributed_hosts.map do |host|
-        Distributed::LandingShip.new :address => host, :work_dir => '/tmp'
+        Distributed::LandingShip.new :address => host
       end
       Distributed::LandingFleet.new self, landing_ships
     end

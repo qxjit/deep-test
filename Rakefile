@@ -48,7 +48,8 @@ DeepTest::TestTask.new(:distributed_test) do |t|
   t.pattern = "test/**/*_test.rb"
   t.distributed_hosts = %w[localhost]
   t.sync_options = {:source => File.dirname(__FILE__), 
-                    :rsync_options => "--exclude=.svn"}
+                    :rsync_options => "--exclude=.svn",
+                    :remote_base_dir => "/tmp/deep_test"}
 end
 
 Spec::Rake::SpecTask.new(:spec) do |t|

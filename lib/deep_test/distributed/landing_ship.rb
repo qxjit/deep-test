@@ -6,8 +6,7 @@ module DeepTest
       end
 
       def push_code(options)
-        path = options.mirror_path(@config[:work_dir])
-        RSync.push(@config[:address], options.sync_options, path)
+        RSync.push(@config[:address], options.sync_options, options.mirror_path)
       end
 
       def establish_beachhead(options)
@@ -49,7 +48,7 @@ module DeepTest
 
       def spawn_command(options)
         "#{ShellEnvironment.like_login} && " + 
-        "cd #{options.mirror_path(@config[:work_dir])} && " + 
+        "cd #{options.mirror_path} && " + 
         "OPTIONS=#{options.to_command_line} " + 
         "ruby lib/deep_test/distributed/establish_beachhead.rb" 
       end

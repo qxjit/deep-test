@@ -6,7 +6,7 @@ DeepTest.logger.debug { "mirror establish_beachhead for #{options.origin_hostnam
 STDIN.close
 
 beachhead_port = DeepTest::Distributed::Beachhead.new(
-  File.join(options.mirror_path('/tmp'), File.basename(options.sync_options[:source])), 
+  File.join(options.mirror_path, File.basename(options.sync_options[:source])), 
   options
 ).daemonize
 

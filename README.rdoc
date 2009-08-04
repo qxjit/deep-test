@@ -131,7 +131,8 @@ below in your Rakefile.
     t.distributed_hosts = %w[host1 host2]
     t.sync_options = {
       :source => <absolute path of project root on machine>,
-      :username => "username"
+      :username => "username",
+      :remote_base_dir => <absolute path to keep working copies in on remote machine> # defaults to /tmp
     }
   end
 
