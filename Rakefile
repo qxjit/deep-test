@@ -55,10 +55,6 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
-Spec::Rake::SpecTask.new(:spec) do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-end
-
 Spec::Rake::SpecTask.new(:deep_spec) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
   t.deep_test({})
