@@ -16,7 +16,7 @@ module DeepTest
     end
 
     attr_accessor *VALID_OPTIONS.map {|o| o.name}
-    attr_accessor :ssh_client_connection_info
+    attr_accessor :ssh_client_connection_info, :environment_log_level
 
     def number_of_agents
       return CpuInfo.new.count unless @number_of_agents
@@ -42,6 +42,7 @@ module DeepTest
       VALID_OPTIONS.each do |option|
         send("#{option.name}=", hash[option.name] || hash[option.name.to_s] || option.default)
       end
+      self.environment_log_level = ENV['DEEP_TEST_LOG_LEVEL']
     end
 
     def gathering_metrics?

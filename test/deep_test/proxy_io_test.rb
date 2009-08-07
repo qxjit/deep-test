@@ -88,6 +88,13 @@ module DeepTest
       assert_equal old_stderr_const, STDERR
     end
 
+    test "reconnect the logger to the new stdout" do
+      old_stderr_global, old_stderr_const = $stderr, STDERR
+      ProxyIO.replace_stdout_stderr!(mock) do 
+        assert_equal $stdout, DeepTest.logger.io_stream
+      end
+    end
+
     test "supress warnings restores verbose" do
       old_verbose = $VERBOSE
       ProxyIO.supress_warnings { raise "error" } rescue nil

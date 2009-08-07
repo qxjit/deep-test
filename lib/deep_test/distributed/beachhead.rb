@@ -54,7 +54,7 @@ module DeepTest
         switchboard = Telegraph::Switchboard.new
         operator = Telegraph::Operator.listen "0.0.0.0", 0, switchboard
 
-        DeepTest.logger.info { "Beachhead started on port #{operator.port}" }
+        DeepTest.logger.debug { "Beachhead started on port #{operator.port}" }
 
         outie.write operator.port
         outie.close

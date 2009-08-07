@@ -26,6 +26,8 @@ module DeepTest
       supress_warnings { Object.const_set :STDERR, ProxyIO.new(Stderr, wire) }
       $stderr = STDERR
 
+      DeepTest.logger = nil
+
       yield
     ensure
       $stdout = old_stdout_global
