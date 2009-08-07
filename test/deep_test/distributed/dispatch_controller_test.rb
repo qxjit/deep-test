@@ -77,10 +77,10 @@ module DeepTest
         Timewarp.freeze("2009-09-22 12:01:33") do
           controller.dispatch(:method_call)
           assert_equal <<-end_log, DeepTest.logger.logged_output
-[DeepTest] 2009-09-22 12:01:33 Exception while dispatching method_call to #{receiver.inspect}:
-[DeepTest] 2009-09-22 12:01:33 Exception: message
-[DeepTest] 2009-09-22 12:01:33 file1:1
-[DeepTest] 2009-09-22 12:01:33 file2:2
+[DeepTest@#{Socket.gethostname}] 2009-09-22 12:01:33 Exception while dispatching method_call to #{receiver.inspect}:
+[DeepTest@#{Socket.gethostname}] 2009-09-22 12:01:33 Exception: message
+[DeepTest@#{Socket.gethostname}] 2009-09-22 12:01:33 file1:1
+[DeepTest@#{Socket.gethostname}] 2009-09-22 12:01:33 file2:2
           end_log
         end
       end

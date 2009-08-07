@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + "/../../deep_test"
 options = DeepTest::Options.from_command_line(ENV['OPTIONS'])
 ENV['DEEP_TEST_LOG_LEVEL'] = options.environment_log_level
 options.ssh_client_connection_info = DeepTest::Distributed::SshClientConnectionInfo.new
+
 DeepTest.logger.debug { "mirror establish_beachhead for #{options.origin_hostname}" }
 
 STDIN.close

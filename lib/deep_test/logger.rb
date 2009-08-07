@@ -2,7 +2,8 @@ module DeepTest
   class Logger < ::Logger
     def initialize(*args)
       super
-      self.formatter = proc { |severity, time, progname, msg| "[DeepTest] #{time.strftime "%F %T"} #{msg}\n" }
+      hostname = Socket.gethostname
+      self.formatter = proc { |severity, time, progname, msg| "[DeepTest@#{hostname}] #{time.strftime "%F %T"} #{msg}\n" }
       self.level = configured_log_level
     end
 

@@ -8,7 +8,7 @@ module DeepTest
     
     test "formatter uses msg only" do
       time = Time.parse("2009-09-22 12:01:33")
-      assert_equal "[DeepTest] 2009-09-22 12:01:33 my_msg\n", DeepTest.logger.formatter.call(nil, time, nil, "my_msg")
+      assert_equal "[DeepTest@#{Socket.gethostname}] 2009-09-22 12:01:33 my_msg\n", DeepTest.logger.formatter.call(nil, time, nil, "my_msg")
     end
 
     Logger::Severity.constants.each do |severity|
@@ -17,18 +17,20 @@ module DeepTest
         assert_raises(ArgumentError) { logger.send severity.downcase, "a"  }
       end
 
+      THE_DATE = '\d{4}-\d\d-\d\d \d\d:\d\d:\d\d' unless defined?(THE_DATE)
+
       test "#{severity.downcase} can be called with a block" do
         logger = Logger.new(out = StringIO.new)
         logger.level = Logger.const_get(severity)
         logger.send(severity.downcase) { "a" }
-        assert_match /\[DeepTest\] \d{4}-\d\d-\d\d \d\d:\d\d:\d\d a\n/, out.string
+        assert_match /\[DeepTest@#{Socket.gethostname}\] #{THE_DATE} a\n/, out.string
       end
 
       test "#{severity.downcase} rescues errors from block and logs them" do
         logger = Logger.new(out = StringIO.new)
         logger.level = Logger.const_get(severity)
-        logger.send(severity.downcase) { raise Exception, "my error" }
-        assert_match /\[DeepTest\] \d{4}-\d\d-\d\d \d\d:\d\d:\d\d Exception: my error occurred logging on #{__FILE__}:#{__LINE__ - 1}:in `send'\n/,
+        logger.send(severity.downcase) { raise Exception, "e" }
+        assert_match /\[DeepTest@#{Socket.gethostname}\] #{THE_DATE} Exception: e occurred logging on #{__FILE__}:#{__LINE__ - 1}:in `send'\n/,
                     out.string
       end
     end

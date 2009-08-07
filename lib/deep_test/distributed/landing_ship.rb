@@ -11,10 +11,13 @@ module DeepTest
 
       def establish_beachhead(options)
         command  = "#{ssh_command(options)} '#{spawn_command(options)}' 2>&1"
-        DeepTest.logger.debug { "Establishing Beachhed: #{command}" }
+        DeepTest.logger.debug { "Establishing Beachhead: #{command}" }
         
         output = `#{command}`
         output.each do |line|
+          if DeepTest.logger.level == Logger::DEBUG
+            puts output
+          end
           if line =~ /Beachhead port: (.+)/
             @wire = Telegraph::Wire.connect(@config[:address], $1.to_i)
           end
